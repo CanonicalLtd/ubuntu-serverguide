@@ -10,24 +10,6 @@ The LXC API deals with a 'container'. The LXD API deals with 'remotes', which se
 
 LXD uses LXC under the covers for some container management tasks. However, it keeps its own container configuration information and has its own conventions, so that it is best not to use classic LXC commands by hand with LXD containers. This document will focus on how to configure and administer LXD on Ubuntu systems.
 
-Online Resources
-Installation
-Kernel preparation
-Configuration
-Creating your first container
-LXD Server Configuration
-Container configuration
-Profiles
-Nesting
-Limits
-UID mappings and Privileged containers
-Apparmor
-Seccomp
-Raw LXC configuration
-Images and containers
-Troubleshooting
-
-
 ## Online Resources
 
 There is excellent documentation for getting started with LXD in the online LXD README. There is also an online server allowing you to try out LXD remotely. Stephane Graber also has an excellent blog series on LXD 2.0. Finally, there is great documentation on how to drive lxd using juju.
