@@ -142,7 +142,7 @@ lxc config set core.https_address :8443
 
 This will tell LXD to listen to port 8843 on all addresses.
 
-## Authentication
+### Authentication
 
 By default, LXD will allow all members of group 'lxd' (which by default includes all members of group admin) to talk to it over the UNIX socket. Communication over the network is authorized using server and client certificates.
 
@@ -168,7 +168,7 @@ lxc config set core.trust_password PASSWORD
 
 The password can then be provided when the client registers r1 as a known remote.
 
-## Backing store
+### Backing store
 
 LXD supports several backing stores. The recommended backing store is ZFS, however this is not available on all platforms. Supported backing stores include:
 
@@ -232,7 +232,7 @@ Once this is done, container1 will be able to start sub-containers.
 
 In order to run unprivileged (the default in LXD) containers nested under an unprivileged container, you will need to ensure a wide enough UID mapping. Please see the 'UID mapping' section below.
 
-## Docker
+### Docker
 
 In order to facilitate running docker containers inside a LXD container, a 'docker' profile is provided. To launch a new container with the docker profile, you can run:
 
@@ -324,7 +324,7 @@ lxc launch ubuntu:lts trusty1
 The 'lts' alias always refers to the latest released LTS image.
 
 
-## Snapshots
+### Snapshots
 
 Containers can be renamed and live-migrated using the 'lxc move' command:
 
@@ -349,7 +349,7 @@ New containers can also be created by copying a container or snapshot:
 lxc copy u1/YYYY-MM-DD testcontainer
 ```
 
-## Publishing images
+### Publishing images
 
 When a container or container snapshot is ready for consumption by others, it can be published as a new image using;
 
@@ -370,7 +370,7 @@ lxc image edit foo-2.0
 ```
 and changing the value of the public field.
 
-## Image export and import
+### Image export and import
 
 Image can be exported as, and imported from, tarballs:
 
