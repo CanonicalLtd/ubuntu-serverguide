@@ -16,8 +16,7 @@ delegated to him.
 the long-standing cgroups filesystem interface. [Manager] will describe the
 cgroup manager.
 
-# Overview {#cgroups-overview}
-
+## Overview 
 Cgroups are the generalized feature for grouping tasks. The actual resource
 tracking and limits are implemented by subsystems. A hierarchy is a set of
 subsystems mounted together. For instance, if the memory and devices
@@ -66,35 +65,41 @@ In addition, named cgroups can be created with no bound subsystems for the
 sake of process tracking. As an example, systemd does this to track services
 and user sessions.
 
-# Filesystem {#cgroups-fs}
-
+## Filesystem 
 A hierarchy is created by mounting an instance of the cgroup filesystem with
 each of the desired subsystems listed as a mount option. For instance,
 
-    mount -t cgroup -o devices,memory,freezer cgroup /cgroup1
+```bash
+mount -t cgroup -o devices,memory,freezer cgroup /cgroup1
+```
 
 would instantiate a hierarchy with the devices and memory cgroups comounted. A
 child cgroup "child1" can be created using 'mkdir'
 
-    mkdir /cgroup1/child1
+```bash
+mkdir /cgroup1/child1
+```
 
 and tasks can be moved into the new child cgroup by writing their process IDs
 into the 'tasks' or 'cgroup.procs' file:
 
-    sleep 100 &
-    echo $! > /cgroup1/child1/cgroup.procs
+```bash
+sleep 100 &
+echo $! > /cgroup1/child1/cgroup.procs
+```
 
 Other administration is done through files in the cgroup directories. For
 instance, to freeze all tasks in child1,
 
-    echo FROZEN > /cgroup1/child1/freezer.state
+```bash
+echo FROZEN > /cgroup1/child1/freezer.state
+```
 
 A great deal of information about cgroups and its subsystems can be found
 under the cgroups documentation directory in the kernel source tree (see
 Resources).
 
-# Delegation {#cgroups-delegation}
-
+## Delegation 
 Cgroup files and directories can be owned by non-root users, enabling
 delegation of cgroup administration. In general, the kernel enforces the
 hierarchical constraints on limits, so that for instance if devices cgroup
@@ -106,8 +111,7 @@ they own, safely allowing them to contrain their own jobs using child cgroups.
 This feature is relied upon, for instance, for unprivileged container creation
 in lxc.
 
-# Manager {#cgroups-manager}
-
+## Manager 
 The cgroup manager (cgmanager) provides a D-Bus service allowing programs and
 users to administer cgroups without needing direct knowledge of or access to
 the cgroup filesystem. For requests from tasks in the same namespaces as the
@@ -126,19 +130,22 @@ cgmanager.
 A simple example of creating a new cgroup in which to run a cpu-intensive
 compile would look like:
 
-    cgm create cpuset build1
-    cgm movepid cpuset build1 $$
-    cgm setvalue cpuset build1 cpuset.cpus 1
-    make
+```bash
+cgm create cpuset build1
+cgm movepid cpuset build1 $$
+cgm setvalue cpuset build1 cpuset.cpus 1
+make
+```
 
-# Resources {#cgroups-resources}
-
+## Resources 
 -   Manual pages referenced above can be found at:
 
-        cgm
-        cgconfig.conf
-        cgmanager
-        cgproxy
+```bash
+    cgm
+    cgconfig.conf
+    cgmanager
+    cgproxy
+```
 
 -   The upstream cgmanager project is hosted at [linuxcontainers.org].
 

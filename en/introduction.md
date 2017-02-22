@@ -14,8 +14,7 @@ Guide].
 A HTML version of the manual is available online at [the Ubuntu Documentation
 website].
 
-# Support {#ubuntu-support}
-
+## Support 
 There are a couple of different ways that Ubuntu Server Edition is supported:
 commercial support and community support. The main commercial support (and
 development funding) is available from Canonical, Ltd. They supply reasonably-

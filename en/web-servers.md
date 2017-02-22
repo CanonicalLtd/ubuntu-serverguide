@@ -5,8 +5,7 @@ clients, which are known as Web browsers, and serving them HTTP responses
 along with optional data contents, which usually are Web pages such as HTML
 documents and linked objects (images, etc.).
 
-# HTTPD - Apache2 Web Server {#httpd}
-
+## HTTPD - Apache2 Web Server 
 Apache is the most commonly used Web server on Linux systems. Web servers are
 used to serve Web pages requested by client computers. Clients typically
 request and view Web pages using Web browser applications such as Firefox,
@@ -17,12 +16,16 @@ of its Fully Qualified Domain Name (FQDN) and a path to the required resource.
 For example, to view the home page of the [Ubuntu Web site] a user will enter
 only the FQDN:
 
-    www.ubuntu.com
+```bash
+www.ubuntu.com
+```
 
 To view the [community] sub-page, a user will enter the FQDN followed by a
 path:
 
-    www.ubuntu.com/community
+```bash
+www.ubuntu.com/community
+```
 
 The most common protocol used to transfer Web pages is the Hyper Text Transfer
 Protocol (HTTP). Protocols such as Hyper Text Transfer Protocol over Secure
@@ -35,16 +38,16 @@ scripting languages such as Python and Perl. This configuration is termed LAMP
 (Linux, Apache, MySQL and Perl/Python/PHP) and forms a powerful and robust
 platform for the development and deployment of Web-based applications.
 
-## Installation {#http-installation}
-
+### Installation 
 The Apache2 web server is available in Ubuntu Linux. To install Apache2:
 
 At a terminal prompt enter the following command:
 
-    sudo apt install apache2
+```bash
+sudo apt install apache2
+```
 
-## Configuration {#http-configuration}
-
+### Configuration 
 Apache2 is configured by placing *directives* in plain text configuration
 files. These *directives* are separated between the following files and
 directories:
@@ -101,8 +104,7 @@ set by the *TypesConfig* directive, typically via
 `/etc/apache2/mods-available/mime.conf`, which might also include additions
 and overrides, and is `/etc/mime.types` by default.
 
-### Basic Settings {#http-basic-settings}
-
+#### Basic Settings 
 This section explains Apache2 server essential configuration parameters. Refer
 to the [Apache2 Documentation] for more details.
 
@@ -116,21 +118,29 @@ to the [Apache2 Documentation] for more details.
     modify the default virtual host, edit the file
     `/etc/apache2/sites-available/000-default.conf`.
 
-    > **Note**
-    >
-    > The directives set for a virtual host only apply to that particular
-    > virtual host. If a directive is set server-wide and not defined within
-    > the virtual host settings, the default setting is used. For example, you
-    > can define a Webmaster email address and not define individual email
-    > addresses for each virtual host.
+```bash
+> **Note**
+>
+> The directives set for a virtual host only apply to that particular
+> virtual host. If a directive is set server-wide and not defined within
+> the virtual host settings, the default setting is used. For example, you
+> can define a Webmaster email address and not define individual email
+> addresses for each virtual host.
+```
 
-    If you wish to configure a new virtual host or site, copy that file into
-    the same directory with a name you choose. For example:
+```bash
+If you wish to configure a new virtual host or site, copy that file into
+the same directory with a name you choose. For example:
+```
 
-        sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/mynewsite.conf
+```bash
+    sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/mynewsite.conf
+```
 
-    Edit the new file to configure the new site using some of the directives
-    described below.
+```bash
+Edit the new file to configure the new site using some of the directives
+described below.
+```
 
 -   The *ServerAdmin* directive specifies the email address to be advertised
     for the server's administrator. The default value is webmaster@localhost.
@@ -158,15 +168,21 @@ to the [Apache2 Documentation] for more details.
     file should be ubunturocks.com. Add this directive to the new virtual host
     file you created earlier (`/etc/apache2/sites-available/mynewsite.conf`).
 
-    You may also want your site to respond to www.ubunturocks.com, since many
-    users will assume the www prefix is appropriate. Use the *ServerAlias*
-    directive for this. You may also use wildcards in the
-    ServerAlias directive.
+```bash
+You may also want your site to respond to www.ubunturocks.com, since many
+users will assume the www prefix is appropriate. Use the *ServerAlias*
+directive for this. You may also use wildcards in the
+ServerAlias directive.
+```
 
-    For example, the following configuration will cause your site to respond
-    to any domain request ending in *.ubunturocks.com*.
+```bash
+For example, the following configuration will cause your site to respond
+to any domain request ending in *.ubunturocks.com*.
+```
 
-        ServerAlias *.ubunturocks.com
+```bash
+    ServerAlias *.ubunturocks.com
+```
 
 -   The *DocumentRoot* directive specifies where Apache2 should look for the
     files that make up the site. The default value is /var/www/html, as
@@ -176,23 +192,24 @@ to the [Apache2 Documentation] for more details.
 
 Enable the new *VirtualHost* using the a2ensite utility and restart Apache2:
 
-    sudo a2ensite mynewsite
-    sudo systemctl restart apache2.service
+```bash
+sudo a2ensite mynewsite
+sudo systemctl restart apache2.service
+```
 
-> **Note**
->
-> Be sure to replace *mynewsite* with a more descriptive name for the
-> VirtualHost. One method is to name the file after the *ServerName* directive
-> of the VirtualHost.
+!!! Note: Be sure to replace *mynewsite* with a more descriptive name for the
+VirtualHost. One method is to name the file after the *ServerName* directive
+of the VirtualHost.
 
 Similarly, use the a2dissite utility to disable sites. This is can be useful
 when troubleshooting configuration problems with multiple VirtualHosts:
 
-    sudo a2dissite mynewsite
-    sudo systemctl restart apache2.service
+```bash
+sudo a2dissite mynewsite
+sudo systemctl restart apache2.service
+```
 
-### Default Settings
-
+#### Default Settings
 This section explains configuration of the Apache2 server default settings.
 For example, if you add a virtual host, the settings you configure for the
 virtual host take precedence for that virtual host. For a directive not
@@ -202,19 +219,21 @@ defined within the virtual host settings, the default value is used.
     requests an index of a directory by specifying a forward slash (/) at the
     end of the directory name.
 
-    For example, when a user requests the page
-    http://www.example.com/this\_directory/, he or she will get either the
-    DirectoryIndex page if it exists, a server-generated directory list if it
-    does not and the Indexes option is specified, or a Permission Denied page
-    if neither is true. The server will try to find one of the files listed in
-    the DirectoryIndex directive and will return the first one it finds. If it
-    does not find any of these files and if *Options Indexes* is set for that
-    directory, the server will generate and return a list, in HTML format, of
-    the subdirectories and files in the directory. The default value, found in
-    `/etc/apache2/mods-available/dir.conf` is "index.html index.cgi index.pl
-    index.php index.xhtml index.htm". Thus, if Apache2 finds a file in a
-    requested directory matching any of these names, the first will
-    be displayed.
+```bash
+For example, when a user requests the page
+http://www.example.com/this\_directory/, he or she will get either the
+DirectoryIndex page if it exists, a server-generated directory list if it
+does not and the Indexes option is specified, or a Permission Denied page
+if neither is true. The server will try to find one of the files listed in
+the DirectoryIndex directive and will return the first one it finds. If it
+does not find any of these files and if *Options Indexes* is set for that
+directory, the server will generate and return a list, in HTML format, of
+the subdirectories and files in the directory. The default value, found in
+`/etc/apache2/mods-available/dir.conf` is "index.html index.cgi index.pl
+index.php index.xhtml index.htm". Thus, if Apache2 finds a file in a
+requested directory matching any of these names, the first will
+be displayed.
+```
 
 -   The *ErrorDocument* directive allows you to specify a file for Apache2 to
     use for specific error events. For example, if a user requests a resource
@@ -240,51 +259,70 @@ defined within the virtual host settings, the default value is used.
     per-server. *Options* is one of these directives. A Directory stanza is
     enclosed in XML-like tags, like so:
 
-        <Directory /var/www/html/mynewsite>
-        ...
-        </Directory>
+```bash
+    <Directory /var/www/html/mynewsite>
+    ...
+    </Directory>
+```
 
-    The *Options* directive within a Directory stanza accepts one or more of
-    the following values (among others), separated by spaces:
+```bash
+The *Options* directive within a Directory stanza accepts one or more of
+the following values (among others), separated by spaces:
+```
 
-    -   **ExecCGI** - Allow execution of CGI scripts. CGI scripts are not
-        executed if this option is not chosen.
+```bash
+-   **ExecCGI** - Allow execution of CGI scripts. CGI scripts are not
+    executed if this option is not chosen.
+```
 
-        > **Tip**
-        >
-        > Most files should not be executed as CGI scripts. This would be
-        > very dangerous. CGI scripts should kept in a directory separate from
-        > and outside your DocumentRoot, and only this directory should have
-        > the ExecCGI option set. This is the default, and the default
-        > location for CGI scripts is `/usr/lib/cgi-bin`.
+```bash
+    > **Tip**
+    >
+    > Most files should not be executed as CGI scripts. This would be
+    > very dangerous. CGI scripts should kept in a directory separate from
+    > and outside your DocumentRoot, and only this directory should have
+    > the ExecCGI option set. This is the default, and the default
+    > location for CGI scripts is `/usr/lib/cgi-bin`.
+```
 
-    -   **Includes** - Allow server-side includes. Server-side includes allow
-        an HTML file to *include* other files. See [Apache SSI documentation
-        (Ubuntu community)] for more information.
+```bash
+-   **Includes** - Allow server-side includes. Server-side includes allow
+    an HTML file to *include* other files. See [Apache SSI documentation
+    (Ubuntu community)] for more information.
+```
 
-    -   **IncludesNOEXEC** - Allow server-side includes, but disable the
-        *\#exec* and *\#include* commands in CGI scripts.
+```bash
+-   **IncludesNOEXEC** - Allow server-side includes, but disable the
+    *\#exec* and *\#include* commands in CGI scripts.
+```
 
-    -   **Indexes** - Display a formatted list of the directory's contents, if
-        no *DirectoryIndex* (such as index.html) exists in the
-        requested directory.
+```bash
+-   **Indexes** - Display a formatted list of the directory's contents, if
+    no *DirectoryIndex* (such as index.html) exists in the
+    requested directory.
+```
 
-        > **Caution**
-        >
-        > For security reasons, this should usually not be set, and certainly
-        > should not be set on your DocumentRoot directory. Enable this option
-        > carefully on a per-directory basis only if you are certain you want
-        > users to see the entire contents of the directory.
+```bash
+    > **Caution**
+    >
+    > For security reasons, this should usually not be set, and certainly
+    > should not be set on your DocumentRoot directory. Enable this option
+    > carefully on a per-directory basis only if you are certain you want
+    > users to see the entire contents of the directory.
+```
 
-    -   **Multiview** - Support content-negotiated multiviews; this option is
-        disabled by default for security reasons. See the [Apache2
-        documentation on this option].
+```bash
+-   **Multiview** - Support content-negotiated multiviews; this option is
+    disabled by default for security reasons. See the [Apache2
+    documentation on this option].
+```
 
-    -   **SymLinksIfOwnerMatch** - Only follow symbolic links if the target
-        file or directory has the same owner as the link.
+```bash
+-   **SymLinksIfOwnerMatch** - Only follow symbolic links if the target
+    file or directory has the same owner as the link.
+```
 
-### httpd Settings
-
+#### httpd Settings
 This section explains some basic httpd daemon configuration settings.
 
 **LockFile** - The LockFile directive sets the path to the lockfile used when
@@ -303,18 +341,15 @@ requests. This setting determines the server's access. Any files inaccessible
 to this user will also be inaccessible to your website's visitors. The default
 value for User is "www-data".
 
-> **Warning**
->
-> Unless you know exactly what you are doing, do not set the User directive to
-> root. Using root as the User will create large security holes for your Web
-> server.
+!!! Warning: Unless you know exactly what you are doing, do not set the User directive to
+root. Using root as the User will create large security holes for your Web
+server.
 
 **Group** - The Group directive is similar to the User directive. Group sets
 the group under which the server will answer requests. The default group is
 also "www-data".
 
-### Apache2 Modules {#apache-modules}
-
+#### Apache2 Modules 
 Apache2 is a modular server. This implies that only the most basic
 functionality is included in the core server. Extended features are available
 through modules which can be loaded into Apache2. By default, a base set of
@@ -331,22 +366,27 @@ You can install additional Apache2 modules and use them with your Web server.
 For example, run the following command at a terminal prompt to install the
 *MySQL Authentication* module:
 
-    sudo apt install libapache2-mod-auth-mysql
+```bash
+sudo apt install libapache2-mod-auth-mysql
+```
 
 See the `/etc/apache2/mods-available` directory, for additional modules.
 
 Use the a2enmod utility to enable a module:
 
-    sudo a2enmod auth_mysql
-    sudo systemctl restart apache2.service
+```bash
+sudo a2enmod auth_mysql
+sudo systemctl restart apache2.service
+```
 
 Similarly, a2dismod will disable a module:
 
-    sudo a2dismod auth_mysql
-    sudo systemctl restart apache2.service
+```bash
+sudo a2dismod auth_mysql
+sudo systemctl restart apache2.service
+```
 
-## HTTPS Configuration
-
+### HTTPS Configuration
 The mod\_ssl module adds an important feature to the Apache2 server - the
 ability to encrypt communications. Thus, when your browser is communicating
 using SSL, the https:// prefix is used at the beginning of the Uniform
@@ -355,7 +395,9 @@ Resource Locator (URL) in the browser navigation bar.
 The mod\_ssl module is available in apache2-common package. Execute the
 following command at a terminal prompt to enable the mod\_ssl module:
 
-    sudo a2enmod ssl
+```bash
+sudo a2enmod ssl
+```
 
 There is a default HTTPS configuration file in
 `/etc/apache2/sites-available/default-ssl.conf`. In order for Apache2 to
@@ -367,38 +409,39 @@ information on generating a key and obtaining a certificate see [???]
 
 To configure Apache2 for HTTPS, enter the following:
 
-    sudo a2ensite default-ssl
+```bash
+sudo a2ensite default-ssl
+```
 
-> **Note**
->
-> The directories `/etc/ssl/certs` and `/etc/ssl/private` are the default
-> locations. If you install the certificate and key in another directory make
-> sure to change *SSLCertificateFile* and *SSLCertificateKeyFile*
-> appropriately.
+!!! Note: The directories `/etc/ssl/certs` and `/etc/ssl/private` are the default
+locations. If you install the certificate and key in another directory make
+sure to change *SSLCertificateFile* and *SSLCertificateKeyFile*
+appropriately.
 
 With Apache2 now configured for HTTPS, restart the service to enable the new
 settings:
 
-    sudo systemctl restart apache2.service
+```bash
+sudo systemctl restart apache2.service
+```
 
-> **Note**
->
-> Depending on how you obtained your certificate you may need to enter a
-> passphrase when Apache2 starts.
+!!! Note: Depending on how you obtained your certificate you may need to enter a
+passphrase when Apache2 starts.
 
 You can access the secure server pages by typing https://your\_hostname/url/
 in your browser address bar.
 
-## Sharing Write Permission {#http-directory-permissions}
-
+### Sharing Write Permission 
 For more than one user to be able to write to the same directory it will be
 necessary to grant write permission to a group they share in common. The
 following example grants shared write permission to `/var/www/html` to the
 group "webmasters".
 
-    sudo chgrp -R webmasters /var/www/html
-    sudo find /var/www/html -type d -exec chmod g=rwxs "{}" \;
-    sudo find /var/www/html -type f -exec chmod g=rw  "{}" \;
+```bash
+sudo chgrp -R webmasters /var/www/html
+sudo find /var/www/html -type d -exec chmod g=rwxs "{}" \;
+sudo find /var/www/html -type f -exec chmod g=rw  "{}" \;
+```
 
 These commands recursively set the group permission on all files and
 directories in /var/www/html to read write and set user id. This has the
@@ -406,13 +449,10 @@ effect of having the files and directories inherit their group and permission
 from their parrent. Many admins find this useful for allowing multiple users
 to edit files in a directory tree.
 
-> **Note**
->
-> If access must be granted to more than one group per directory, enable
-> Access Control Lists (ACLs).
+!!! Note: If access must be granted to more than one group per directory, enable
+Access Control Lists (ACLs).
 
-## References {#http-references}
-
+### References 
 -   [Apache2 Documentation][Apache2 Documentation] contains in depth
     information on Apache2 configuration directives. Also, see the apache2-doc
     package for the official Apache2 docs.
@@ -428,8 +468,7 @@ to edit files in a directory tree.
 -   Usually integrated with PHP and MySQL the [Apache MySQL PHP Ubuntu Wiki]
     page is a good resource.
 
-# PHP - Scripting Language {#php}
-
+## PHP - Scripting Language 
 PHP is a general-purpose scripting language suited for Web development. PHP
 scripts can be embedded into HTML. This section explains how to install and
 configure PHP in an Ubuntu System with Apache2 and MySQL.
@@ -438,41 +477,49 @@ This section assumes you have installed and configured Apache2 Web Server and
 MySQL Database Server. You can refer to the Apache2 and MySQL sections in this
 document to install and configure Apache2 and MySQL respectively.
 
-## Installation {#php-installation}
-
+### Installation 
 PHP is available in Ubuntu Linux. Unlike python and perl, which are installed
 in the base system, PHP must be added.
 
 To install PHP and the Apache PHP module you can enter the following command
 at a terminal prompt:
 
-    sudo apt install php libapache2-mod-php
+```bash
+sudo apt install php libapache2-mod-php
+```
 
 You can run PHP scripts at a terminal prompt. To run PHP scripts at a terminal
 prompt you should install the php-cli package. To install php-cli you can
 enter the following command at a terminal prompt:
 
-    sudo apt install php-cli
+```bash
+sudo apt install php-cli
+```
 
 You can also execute PHP scripts without installing the Apache PHP module. To
 accomplish this, you should install the php-cgi package. You can run the
 following command at a terminal prompt to install the php-cgi package:
 
-    sudo apt install php-cgi
+```bash
+sudo apt install php-cgi
+```
 
 To use MySQL with PHP you should install the php-mysql package. To install
 php-mysql you can enter the following command at a terminal prompt:
 
-    sudo apt install php-mysql
+```bash
+sudo apt install php-mysql
+```
 
 Similarly, to use PostgreSQL with PHP you should install the php-pgsql
 package. To install php-pgsql you can enter the following command at a
 terminal prompt:
 
-    sudo apt install php-pgsql
+```bash
+sudo apt install php-pgsql
+```
 
-## Configuration {#php-configuration}
-
+### Configuration 
 If you have installed the libapache2-mod-php or php-cgi packages, you can run
 PHP scripts from your web browser. If you have installed the php-cli package,
 you can run PHP scripts at a terminal prompt.
@@ -488,23 +535,25 @@ Once you have installed the PHP related packages and enabled the Apache PHP
 module, you should restart the Apache2 Web server to run PHP scripts. You can
 run the following command at a terminal prompt to restart your web server:
 
-    sudo systemctl restart apache2.service 
+```bash
+sudo systemctl restart apache2.service 
+```
 
-## Testing {#php-testing}
-
+### Testing 
 To verify your installation, you can run the following PHP phpinfo script:
 
-    <?php
-      phpinfo();
-    ?>
+```bash
+<?php
+  phpinfo();
+?>
+```
 
 You can save the content in a file `phpinfo.php` and place it under the
 `DocumentRoot` directory of the Apache2 Web server. Pointing your browser to
 `http://hostname/phpinfo.php` will display the values of various PHP
 configuration parameters.
 
-## References {#php-references}
-
+### References 
 -   For more in depth information see the [php.net] documentation.
 
 -   There are a plethora of books on PHP. A good book from O'Reilly is
@@ -513,8 +562,7 @@ configuration parameters.
 
 -   Also, see the [Apache MySQL PHP Ubuntu Wiki] page for more information.
 
-# Squid - Proxy Server {#squid}
-
+## Squid - Proxy Server 
 Squid is a full-featured web proxy cache server application which provides
 proxy and cache services for Hyper Text Transport Protocol (HTTP), File
 Transfer Protocol (FTP), and other popular network protocols. Squid can
@@ -533,55 +581,64 @@ caching proxy server for many users ensure it is configured with a large
 amount of physical memory as Squid maintains an in-memory cache for increased
 performance.
 
-## Installation {#squid-installation}
-
+### Installation 
 At a terminal prompt, enter the following command to install the Squid server:
 
-    sudo apt install squid
+```bash
+sudo apt install squid
+```
 
-## Configuration {#squid-configuration}
-
+### Configuration 
 Squid is configured by editing the directives contained within the
 `/etc/squid/squid.conf` configuration file. The following examples illustrate
 some of the directives which may be modified to affect the behavior of the
 Squid server. For more in-depth configuration of Squid, see the References
 section.
 
-> **Tip**
->
-> Prior to editing the configuration file, you should make a copy of the
-> original file and protect it from writing so you will have the original
-> settings as a reference, and to re-use as necessary. Make this copy and
-> protect it from writing using the following commands:
->
->     sudo cp /etc/squid/squid.conf /etc/squid/squid.conf.original
->     sudo chmod a-w /etc/squid/squid.conf.original
+!!! Tip: Prior to editing the configuration file, you should make a copy of the
+original file and protect it from writing so you will have the original
+settings as a reference, and to re-use as necessary. Make this copy and
+protect it from writing using the following commands:
+    sudo cp /etc/squid/squid.conf /etc/squid/squid.conf.original
+    sudo chmod a-w /etc/squid/squid.conf.original
 
 -   To set your Squid server to listen on TCP port 8888 instead of the default
     TCP port 3128, change the http\_port directive as such:
 
-        http_port 8888
+```bash
+    http_port 8888
+```
 
 -   Change the visible\_hostname directive in order to give the Squid server a
     specific hostname. This hostname does not necessarily need to be the
     computer's hostname. In this example it is set to *weezie*
 
-        visible_hostname weezie
+```bash
+    visible_hostname weezie
+```
 
 -   Using Squid's access control, you may configure use of Internet services
     proxied by Squid to be available only users with certain Internet
     Protocol (IP) addresses. For example, we will illustrate access by users
     of the 192.168.42.0/24 subnetwork only:
 
-    Add the following to the **bottom** of the ACL section of your
-    `/etc/squid/squid.conf` file:
+```bash
+Add the following to the **bottom** of the ACL section of your
+`/etc/squid/squid.conf` file:
+```
 
-        acl fortytwo_network src 192.168.42.0/24
+```bash
+    acl fortytwo_network src 192.168.42.0/24
+```
 
-    Then, add the following to the **top** of the http\_access section of your
-    `/etc/squid/squid.conf` file:
+```bash
+Then, add the following to the **top** of the http\_access section of your
+`/etc/squid/squid.conf` file:
+```
 
-        http_access allow fortytwo_network
+```bash
+    http_access allow fortytwo_network
+```
 
 -   Using the excellent access control features of Squid, you may configure
     use of Internet services proxied by Squid to be available only during
@@ -589,53 +646,52 @@ section.
     of a business which is operating between 9:00AM and 5:00PM, Monday through
     Friday, and which uses the 10.1.42.0/24 subnetwork:
 
-    Add the following to the **bottom** of the ACL section of your
-    `/etc/squid/squid.conf` file:
+```bash
+Add the following to the **bottom** of the ACL section of your
+`/etc/squid/squid.conf` file:
+```
 
-        acl biz_network src 10.1.42.0/24
-        acl biz_hours time M T W T F 9:00-17:00
+```bash
+    acl biz_network src 10.1.42.0/24
+    acl biz_hours time M T W T F 9:00-17:00
+```
 
-    Then, add the following to the **top** of the http\_access section of your
-    `/etc/squid/squid.conf` file:
+```bash
+Then, add the following to the **top** of the http\_access section of your
+`/etc/squid/squid.conf` file:
+```
 
-        http_access allow biz_network biz_hours
+```bash
+    http_access allow biz_network biz_hours
+```
 
-> **Note**
->
-> After making changes to the `/etc/squid/squid.conf` file, save the file and
-> restart the squid server application to effect the changes using the
-> following command entered at a terminal prompt:
->
->     sudo systemctl restart squid.service
+!!! Note: After making changes to the `/etc/squid/squid.conf` file, save the file and
+restart the squid server application to effect the changes using the
+following command entered at a terminal prompt:
+    sudo systemctl restart squid.service
 
-> **Note**
->
-> If formerly a customized squid3 was used that set up the spool at
-> `/var/log/squid3` to be a mountpoint, but otherwise kept the default
-> configuration the upgrade will fail. The upgrade tries to rename/move files
-> as needed, but it can't do so for an active mountpoint. In that case please
-> either adapt the mountpoint or the config in `/etc/squid/squid.conf` so that
-> they match.
->
-> The same applies if the **include** config statement was used to pull in
-> more files from the old path at `/etc/squid3/`. In those cases you should
-> move and adapt your configuration accordingly.
+!!! Note: If formerly a customized squid3 was used that set up the spool at
+`/var/log/squid3` to be a mountpoint, but otherwise kept the default
+configuration the upgrade will fail. The upgrade tries to rename/move files
+as needed, but it can't do so for an active mountpoint. In that case please
+either adapt the mountpoint or the config in `/etc/squid/squid.conf` so that
+they match.
+The same applies if the **include** config statement was used to pull in
+more files from the old path at `/etc/squid3/`. In those cases you should
+move and adapt your configuration accordingly.
 
-## References {#squid-references}
-
+### References 
 [Squid Website]
 
 [Ubuntu Wiki Squid] page.
 
-# Ruby on Rails
-
+## Ruby on Rails
 Ruby on Rails is an open source web framework for developing database backed
 web applications. It is optimized for sustainable productivity of the
 programmer since it lets the programmer to write code by favouring convention
 over configuration.
 
-## Installation {#ruby-on-rails-installation}
-
+### Installation 
 Before installing Rails you should install Apache and MySQL. To install the
 Apache package, please refer to [HTTPD - Apache2 Web Server]. For instructions
 on installing MySQL refer to [???][1].
@@ -646,44 +702,52 @@ Ruby on Rails package.
 To install the Ruby base packages and Ruby on Rails, you can enter the
 following command in the terminal prompt:
 
-    sudo apt install rails
+```bash
+sudo apt install rails
+```
 
-## Configuration {#ruby-on-rails-configuration}
-
+### Configuration 
 Modify the `/etc/apache2/sites-available/000-default.conf` configuration file
 to setup your domains.
 
 The first thing to change is the *DocumentRoot* directive:
 
-    DocumentRoot /path/to/rails/application/public
+```bash
+DocumentRoot /path/to/rails/application/public
+```
 
 Next, change the &lt;Directory "/path/to/rails/application/public"&gt;
 directive:
 
-    <Directory "/path/to/rails/application/public">
-            Options Indexes FollowSymLinks MultiViews ExecCGI
-            AllowOverride All
-            Order allow,deny
-            allow from all
-            AddHandler cgi-script .cgi
-    </Directory>
+```bash
+<Directory "/path/to/rails/application/public">
+        Options Indexes FollowSymLinks MultiViews ExecCGI
+        AllowOverride All
+        Order allow,deny
+        allow from all
+        AddHandler cgi-script .cgi
+</Directory>
+```
 
 You should also enable the mod\_rewrite module for Apache. To enable
 mod\_rewrite module, please enter the following command in a terminal prompt:
 
-    sudo a2enmod rewrite
+```bash
+sudo a2enmod rewrite
+```
 
 Finally you will need to change the ownership of the
 `/path/to/rails/application/public` and `/path/to/rails/application/tmp`
 directories to the user used to run the Apache process:
 
-    sudo chown -R www-data:www-data /path/to/rails/application/public
-    sudo chown -R www-data:www-data /path/to/rails/application/tmp
+```bash
+sudo chown -R www-data:www-data /path/to/rails/application/public
+sudo chown -R www-data:www-data /path/to/rails/application/tmp
+```
 
 That's it! Now you have your Server ready for your Ruby on Rails applications.
 
-## References {#ruby-on-rails-references}
-
+### References 
 -   See the [Ruby on Rails] website for more information.
 
 -   Also [Agile Development with Rails] is a great resource.
@@ -691,8 +755,7 @@ That's it! Now you have your Server ready for your Ruby on Rails applications.
 -   Another place for more information is the [Ruby on Rails Ubuntu
     Wiki] page.
 
-# Apache Tomcat {#tomcat}
-
+## Apache Tomcat 
 Apache Tomcat is a web container that allows you to serve Java Servlets and
 JSP (Java Server Pages) web applications.
 
@@ -709,91 +772,91 @@ rights, and that you should start and stop by yourself. This second way is
 particularly useful in a development server context where multiple users need
 to test on their own private Tomcat instances.
 
-## System-wide installation {#tomcat-installation}
-
+### System-wide installation 
 To install the Tomcat server, you can enter the following command in the
 terminal prompt:
 
-    sudo apt install tomcat7
+```bash
+sudo apt install tomcat7
+```
 
 This will install a Tomcat server with just a default ROOT webapp that
 displays a minimal "It works" page by default.
 
-## Configuration {#tomcat-configuration}
-
+### Configuration 
 Tomcat configuration files can be found in `/etc/tomcat7`. Only a few common
 configuration tweaks will be described here, please see [Tomcat 7.0
 documentation] for more.
 
-### Changing default ports {#tomcat-configuration-ports}
-
+#### Changing default ports 
 By default Tomcat runs a HTTP connector on port 8080 and an AJP connector on
 port 8009. You might want to change those default ports to avoid conflict with
 another application on the system. This is done by changing the following
 lines in `/etc/tomcat7/server.xml`:
 
-    <Connector port="8080" protocol="HTTP/1.1" 
-                   connectionTimeout="20000" 
-                   redirectPort="8443" />
-    ...
-    <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
+```bash
+<Connector port="8080" protocol="HTTP/1.1" 
+               connectionTimeout="20000" 
+               redirectPort="8443" />
+...
+<Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
+```
 
-### Changing JVM used {#tomcat-configuration-jvm}
-
+#### Changing JVM used 
 By default Tomcat will run preferably with OpenJDK JVMs, then try the Sun
 JVMs, then try some other JVMs. You can force Tomcat to use a specific JVM by
 setting JAVA\_HOME in `/etc/default/tomcat7`:
 
-    JAVA_HOME=/usr/lib/jvm/java-6-sun
+```bash
+JAVA_HOME=/usr/lib/jvm/java-6-sun
+```
 
-### Declaring users and roles {#tomcat-configuration-users}
-
+#### Declaring users and roles 
 Usernames, passwords and roles (groups) can be defined centrally in a Servlet
 container. This is done in the `/etc/tomcat7/tomcat-users.xml` file:
 
-    <role rolename="admin"/>
-    <user username="tomcat" password="s3cret" roles="admin"/>
+```bash
+<role rolename="admin"/>
+<user username="tomcat" password="s3cret" roles="admin"/>
+```
 
-## Using Tomcat standard webapps {#tomcat-webapps}
-
+### Using Tomcat standard webapps 
 Tomcat is shipped with webapps that you can install for documentation,
 administration or demo purposes.
 
-### Tomcat documentation {#tomcat-installation-docs}
-
+#### Tomcat documentation 
 The tomcat7-docs package contains Tomcat documentation, packaged as a webapp
 that you can access by default at http://yourserver:8080/docs. You can install
 it by entering the following command in the terminal prompt:
 
-    sudo apt install tomcat7-docs
+```bash
+sudo apt install tomcat7-docs
+```
 
-### Tomcat administration webapps {#tomcat-installation-admin}
-
+#### Tomcat administration webapps 
 The tomcat7-admin package contains two webapps that can be used to administer
 the Tomcat server using a web interface. You can install them by entering the
 following command in the terminal prompt:
 
-    sudo apt install tomcat7-admin
+```bash
+sudo apt install tomcat7-admin
+```
 
 The first one is the *manager* webapp, which you can access by default at
 http://yourserver:8080/manager/html. It is primarily used to get server status
 and restart webapps.
 
-> **Note**
->
-> Access to the *manager* application is protected by default: you need to
-> define a user with the role "manager-gui" in `/etc/tomcat7/tomcat-users.xml`
-> before you can access it.
+!!! Note: Access to the *manager* application is protected by default: you need to
+define a user with the role "manager-gui" in `/etc/tomcat7/tomcat-users.xml`
+before you can access it.
 
 The second one is the *host-manager* webapp, which you can access by default
 at http://yourserver:8080/host-manager/html. It can be used to create virtual
 hosts dynamically.
 
-> **Note**
->
-> Access to the *host-manager* application is also protected by default: you
-> need to define a user with the role "admin-gui" in
-> `/etc/tomcat7/tomcat-users.xml` before you can access it.
+!!! Note: Access to the *host-manager* application is also protected by default: you
+need to define a user with the role "admin-gui" in
+`/etc/tomcat7/tomcat-users.xml` before you can access it.
 
 For security reasons, the tomcat7 user cannot write to the `/etc/tomcat7`
 directory by default. Some features in these admin webapps (application
@@ -801,20 +864,22 @@ deployment, virtual host creation) need write access to that directory. If you
 want to use these features execute the following, to give users in the tomcat7
 group the necessary rights:
 
-    sudo chgrp -R tomcat7 /etc/tomcat7
-    sudo chmod -R g+w /etc/tomcat7 
+```bash
+sudo chgrp -R tomcat7 /etc/tomcat7
+sudo chmod -R g+w /etc/tomcat7 
+```
 
-### Tomcat examples webapps {#tomcat-installation-examples}
-
+#### Tomcat examples webapps 
 The tomcat7-examples package contains two webapps that can be used to test or
 demonstrate Servlets and JSP features, which you can access them by default at
 http://yourserver:8080/examples. You can install them by entering the
 following command in the terminal prompt:
 
-    sudo apt install tomcat7-examples
+```bash
+sudo apt install tomcat7-examples
+```
 
-## Using private instances {#tomcat-user}
-
+### Using private instances 
 Tomcat is heavily used in development and testing scenarios where using a
 single system-wide instance doesn't meet the requirements of multiple users on
 a single system. The Tomcat packages in Ubuntu come with tools to help deploy
@@ -822,59 +887,58 @@ your own user-oriented instances, allowing every user on a system to run
 (without root rights) separate private instances while still using the
 system-installed libraries.
 
-> **Note**
->
-> It is possible to run the system-wide instance and the private instances in
-> parallel, as long as they do not use the same TCP ports.
+!!! Note: It is possible to run the system-wide instance and the private instances in
+parallel, as long as they do not use the same TCP ports.
 
-### Installing private instance support {#tomcat-user-install}
-
+#### Installing private instance support 
 You can install everything necessary to run private instances by entering the
 following command in the terminal prompt:
 
-    sudo apt install tomcat7-user
+```bash
+sudo apt install tomcat7-user
+```
 
-### Creating a private instance {#tomcat-user-create}
-
+#### Creating a private instance 
 You can create a private instance directory by entering the following command
 in the terminal prompt:
 
-    tomcat7-instance-create my-instance
+```bash
+tomcat7-instance-create my-instance
+```
 
 This will create a new `my-instance` directory with all the necessary
 subdirectories and scripts. You can for example install your common libraries
 in the `lib/` subdirectory and deploy your webapps in the `webapps/`
 subdirectory. No webapps are deployed by default.
 
-### Configuring your private instance {#tomcat-user-config}
-
+#### Configuring your private instance 
 You will find the classic Tomcat configuration files for your private instance
 in the `conf/` subdirectory. You should for example certainly edit the
 `conf/server.xml` file to change the default ports used by your private Tomcat
 instance to avoid conflict with other instances that might be running.
 
-### Starting/stopping your private instance {#tomcat-user-start}
-
+#### Starting/stopping your private instance 
 You can start your private instance by entering the following command in the
 terminal prompt (supposing your instance is located in the `my-instance`
 directory):
 
-    my-instance/bin/startup.sh
+```bash
+my-instance/bin/startup.sh
+```
 
-> **Note**
->
-> You should check the `logs/` subdirectory for any error. If you have a
-> *java.net.BindException: Address already in use&lt;null&gt;:8080* error, it
-> means that the port you're using is already taken and that you should change
-> it.
+!!! Note: You should check the `logs/` subdirectory for any error. If you have a
+*java.net.BindException: Address already in use&lt;null&gt;:8080* error, it
+means that the port you're using is already taken and that you should change
+it.
 
 You can stop your instance by entering the following command in the terminal
 prompt (supposing your instance is located in the `my-instance` directory):
 
-    my-instance/bin/shutdown.sh
+```bash
+my-instance/bin/shutdown.sh
+```
 
-## References {#tomcat-references}
-
+### References 
 -   See the [Apache Tomcat] website for more information.
 
 -   [Tomcat: The Definitive Guide] is a good resource for building web

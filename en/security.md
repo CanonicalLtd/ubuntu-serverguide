@@ -11,15 +11,13 @@ to Ubuntu DISTRO-REV Server Edition, and outlines simple measures you may use
 to protect your server and network from any number of potential security
 threats.
 
-# User Management
-
+## User Management
 User management is a critical part of maintaining a secure system. Ineffective
 user and privilege management often lead many systems into being compromised.
 Therefore, it is important that you understand how you can protect your server
 through simple and effective user account management techniques.
 
-## Where is root?
-
+### Where is root?
 Ubuntu developers made a conscientious decision to disable the administrative
 root account by default in all Ubuntu installations. This does not mean that
 the root account has been deleted or that it may not be accessed. It merely
@@ -37,39 +35,54 @@ said privileges.
 -   If for some reason you wish to enable the root account, simply give it a
     password:
 
-    > **Note**
-    >
-    > Configurations with root passwords are not supported.
+```bash
+> **Note**
+>
+> Configurations with root passwords are not supported.
+```
 
-        sudo passwd
+```bash
+    sudo passwd
+```
 
-    Sudo will prompt you for your password, and then ask you to supply a new
-    password for root as shown below:
+```bash
+Sudo will prompt you for your password, and then ask you to supply a new
+password for root as shown below:
+```
 
-        [sudo] password for username: (enter your own password)
-        Enter new UNIX password: (enter a new password for root)
-        Retype new UNIX password: (repeat new password for root)
-        passwd: password updated successfully
+```bash
+    [sudo] password for username: (enter your own password)
+    Enter new UNIX password: (enter a new password for root)
+    Retype new UNIX password: (repeat new password for root)
+    passwd: password updated successfully
+```
 
 -   To disable the root account password, use the following passwd syntax:
 
-        sudo passwd -l root
+```bash
+    sudo passwd -l root
+```
 
-    However, to disable the root account itself, use the following command:
+```bash
+However, to disable the root account itself, use the following command:
+```
 
-        usermod --expiredate 1
+```bash
+    usermod --expiredate 1
+```
 
 -   You should read more on Sudo by reading the man page:
 
-        man sudo
+```bash
+    man sudo
+```
 
 By default, the initial user created by the Ubuntu installer is a member of
 the group "*sudo*" which is added to the file `/etc/sudoers` as an authorized
 sudo user. If you wish to give any other account full root access through
 sudo, simply add them to the *sudo* group.
 
-## Adding and Deleting Users {#adding-deleting-users}
-
+### Adding and Deleting Users 
 The process for managing local users and groups is straightforward and differs
 very little from most other GNU/Linux operating systems. Ubuntu and other
 Debian based distributions encourage the use of the "adduser" package for
@@ -79,46 +92,63 @@ account management.
     give the account a password and identifiable characteristics, such as a
     full name, phone number, etc.
 
-        sudo adduser username
+```bash
+    sudo adduser username
+```
 
 -   To delete a user account and its primary group, use the following syntax:
 
-        sudo deluser username
+```bash
+    sudo deluser username
+```
 
-    Deleting an account does not remove their respective home folder. It is up
-    to you whether or not you wish to delete the folder manually or keep it
-    according to your desired retention policies.
+```bash
+Deleting an account does not remove their respective home folder. It is up
+to you whether or not you wish to delete the folder manually or keep it
+according to your desired retention policies.
+```
 
-    Remember, any user added later on with the same UID/GID as the previous
-    owner will now have access to this folder if you have not taken the
-    necessary precautions.
+```bash
+Remember, any user added later on with the same UID/GID as the previous
+owner will now have access to this folder if you have not taken the
+necessary precautions.
+```
 
-    You may want to change these UID/GID values to something more appropriate,
-    such as the root account, and perhaps even relocate the folder to avoid
-    future conflicts:
+```bash
+You may want to change these UID/GID values to something more appropriate,
+such as the root account, and perhaps even relocate the folder to avoid
+future conflicts:
+```
 
-        sudo chown -R root:root /home/username/
-        sudo mkdir /home/archived_users/
-        sudo mv /home/username /home/archived_users/
+```bash
+    sudo chown -R root:root /home/username/
+    sudo mkdir /home/archived_users/
+    sudo mv /home/username /home/archived_users/
+```
 
 -   To temporarily lock or unlock a user account, use the following syntax,
     respectively:
 
-        sudo passwd -l username
-        sudo passwd -u username
+```bash
+    sudo passwd -l username
+    sudo passwd -u username
+```
 
 -   To add or delete a personalized group, use the following syntax,
     respectively:
 
-        sudo addgroup groupname
-        sudo delgroup groupname
+```bash
+    sudo addgroup groupname
+    sudo delgroup groupname
+```
 
 -   To add a user to a group, use the following syntax:
 
-        sudo adduser username groupname
+```bash
+    sudo adduser username groupname
+```
 
-## User Profile Security
-
+### User Profile Security
 When a new user is created, the adduser utility creates a brand new home
 directory named `/home/username`. The default profile is modeled after the
 contents found in the directory of `/etc/skel`, which includes all profile
@@ -133,44 +163,63 @@ other users home directories. This may not be suitable for your environment.
 -   To verify your current user home directory permissions, use the following
     syntax:
 
-        ls -ld /home/username
+```bash
+    ls -ld /home/username
+```
 
-    The following output shows that the directory `/home/username` has
-    world-readable permissions:
+```bash
+The following output shows that the directory `/home/username` has
+world-readable permissions:
+```
 
-        drwxr-xr-x  2 username username    4096 2007-10-02 20:03 username
+```bash
+    drwxr-xr-x  2 username username    4096 2007-10-02 20:03 username
+```
 
 -   You can remove the world readable-permissions using the following syntax:
 
-        sudo chmod 0750 /home/username
+```bash
+    sudo chmod 0750 /home/username
+```
 
-    > **Note**
-    >
-    > Some people tend to use the recursive option (-R) indiscriminately which
-    > modifies all child folders and files, but this is not necessary, and may
-    > yield other undesirable results. The parent directory alone is
-    > sufficient for preventing unauthorized access to anything below
-    > the parent.
+```bash
+> **Note**
+>
+> Some people tend to use the recursive option (-R) indiscriminately which
+> modifies all child folders and files, but this is not necessary, and may
+> yield other undesirable results. The parent directory alone is
+> sufficient for preventing unauthorized access to anything below
+> the parent.
+```
 
-    A much more efficient approach to the matter would be to modify the
-    adduser global default permissions when creating user home folders. Simply
-    edit the file `/etc/adduser.conf` and modify the `DIR_MODE` variable to
-    something appropriate, so that all new home directories will receive the
-    correct permissions.
+```bash
+A much more efficient approach to the matter would be to modify the
+adduser global default permissions when creating user home folders. Simply
+edit the file `/etc/adduser.conf` and modify the `DIR_MODE` variable to
+something appropriate, so that all new home directories will receive the
+correct permissions.
+```
 
-        DIR_MODE=0750
+```bash
+    DIR_MODE=0750
+```
 
 -   After correcting the directory permissions using any of the previously
     mentioned techniques, verify the results using the following syntax:
 
-        ls -ld /home/username
+```bash
+    ls -ld /home/username
+```
 
-    The results below show that world-readable permissions have been removed:
+```bash
+The results below show that world-readable permissions have been removed:
+```
 
-        drwxr-x---   2 username username    4096 2007-10-02 20:03 username
+```bash
+    drwxr-x---   2 username username    4096 2007-10-02 20:03 username
+```
 
-## Password Policy
-
+### Password Policy
 A strong password policy is one of the most important aspects of your security
 posture. Many successful security breaches involve simple brute force and
 dictionary attacks against weak passwords. If you intend to offer any form of
@@ -178,82 +227,98 @@ remote access involving your local password system, make sure you adequately
 address minimum password complexity requirements, maximum password lifetimes,
 and frequent audits of your authentication systems.
 
-### Minimum Password Length
-
+#### Minimum Password Length
 By default, Ubuntu requires a minimum password length of 6 characters, as well
 as some basic entropy checks. These values are controlled in the file
 `/etc/pam.d/common-password`, which is outlined below.
 
-    password        [success=1 default=ignore]      pam_unix.so obscure sha512
+```bash
+password        [success=1 default=ignore]      pam_unix.so obscure sha512
+```
 
 If you would like to adjust the minimum length to 8 characters, change the
 appropriate variable to min=8. The modification is outlined below.
 
-    password        [success=1 default=ignore]      pam_unix.so obscure sha512 minlen=8
+```bash
+password        [success=1 default=ignore]      pam_unix.so obscure sha512 minlen=8
+```
 
-> **Note**
->
-> Basic password entropy checks and minimum length rules do not apply to the
-> administrator using sudo level commands to setup a new user.
+!!! Note: Basic password entropy checks and minimum length rules do not apply to the
+administrator using sudo level commands to setup a new user.
 
-### Password Expiration
-
+#### Password Expiration
 When creating user accounts, you should make it a policy to have a minimum and
 maximum password age forcing users to change their passwords when they expire.
 
 -   To easily view the current status of a user account, use the following
     syntax:
 
-        sudo chage -l username
+```bash
+    sudo chage -l username
+```
 
-    The output below shows interesting facts about the user account, namely
-    that there are no policies applied:
+```bash
+The output below shows interesting facts about the user account, namely
+that there are no policies applied:
+```
 
-        Last password change                                    : Jan 20, 2015
-        Password expires                                        : never
-        Password inactive                                       : never
-        Account expires                                         : never
-        Minimum number of days between password change          : 0
-        Maximum number of days between password change          : 99999
-        Number of days of warning before password expires       : 7
+```bash
+    Last password change                                    : Jan 20, 2015
+    Password expires                                        : never
+    Password inactive                                       : never
+    Account expires                                         : never
+    Minimum number of days between password change          : 0
+    Maximum number of days between password change          : 99999
+    Number of days of warning before password expires       : 7
+```
 
 -   To set any of these values, simply use the following syntax, and follow
     the interactive prompts:
 
-        sudo chage username
+```bash
+    sudo chage username
+```
 
-    The following is also an example of how you can manually change the
-    explicit expiration date (-E) to 01/31/2015, minimum password age (-m) of
-    5 days, maximum password age (-M) of 90 days, inactivity period (-I) of 5
-    days after password expiration, and a warning time period (-W) of 14 days
-    before password expiration:
+```bash
+The following is also an example of how you can manually change the
+explicit expiration date (-E) to 01/31/2015, minimum password age (-m) of
+5 days, maximum password age (-M) of 90 days, inactivity period (-I) of 5
+days after password expiration, and a warning time period (-W) of 14 days
+before password expiration:
+```
 
-        sudo chage -E 01/31/2015 -m 5 -M 90 -I 30 -W 14 username
+```bash
+    sudo chage -E 01/31/2015 -m 5 -M 90 -I 30 -W 14 username
+```
 
 -   To verify changes, use the same syntax as mentioned previously:
 
-        sudo chage -l username
+```bash
+    sudo chage -l username
+```
 
-    The output below shows the new policies that have been established for the
-    account:
+```bash
+The output below shows the new policies that have been established for the
+account:
+```
 
-        Last password change                                    : Jan 20, 2015
-        Password expires                                        : Apr 19, 2015
-        Password inactive                                       : May 19, 2015
-        Account expires                                         : Jan 31, 2015
-        Minimum number of days between password change          : 5
-        Maximum number of days between password change          : 90
-        Number of days of warning before password expires       : 14
+```bash
+    Last password change                                    : Jan 20, 2015
+    Password expires                                        : Apr 19, 2015
+    Password inactive                                       : May 19, 2015
+    Account expires                                         : Jan 31, 2015
+    Minimum number of days between password change          : 5
+    Maximum number of days between password change          : 90
+    Number of days of warning before password expires       : 14
+```
 
-## Other Security Considerations
-
+### Other Security Considerations
 Many applications use alternate authentication mechanisms that can be easily
 overlooked by even experienced system administrators. Therefore, it is
 important to understand and control how users authenticate and gain access to
 services and applications on your server.
 
-### SSH Access by Disabled Users
-
+#### SSH Access by Disabled Users
 Simply disabling/locking a user account will not prevent a user from logging
 into your server remotely if they have previously set up RSA public key
 authentication. They will still be able to gain shell access to the server,
@@ -268,32 +333,36 @@ Be sure to check for any established SSH connections by the disabled user, as
 it is possible they may have existing inbound or outbound connections. Kill
 any that are found.
 
-    who | grep username  (to get the pts/# terminal)
-    sudo pkill -f pts/#
+```bash
+who | grep username  (to get the pts/# terminal)
+sudo pkill -f pts/#
+```
 
 Restrict SSH access to only user accounts that should have it. For example,
 you may create a group called "sshlogin" and add the group name as the value
 associated with the `AllowGroups` variable located in the file
 `/etc/ssh/sshd_config`.
 
-    AllowGroups sshlogin
+```bash
+AllowGroups sshlogin
+```
 
 Then add your permitted SSH users to the group "sshlogin", and restart the SSH
 service.
 
-    sudo adduser username sshlogin
-    sudo systemctl restart sshd.service
+```bash
+sudo adduser username sshlogin
+sudo systemctl restart sshd.service
+```
 
-### External User Database Authentication {#external-db-auth}
-
+#### External User Database Authentication 
 Most enterprise networks require centralized authentication and access
 controls for all system resources. If you have configured your server to
 authenticate users against external databases, be sure to disable the user
 accounts both externally and locally. This way you ensure that local fallback
 authentication is not possible.
 
-# Console Security
-
+## Console Security
 As with any other security barrier you put in place to protect your server, it
 is pretty tough to defend against untold damage caused by someone with
 physical access to your environment, for example, theft of hard drives, power
@@ -306,8 +375,7 @@ with regard to console security.
 The following instructions will help defend your server against issues that
 could otherwise yield very serious consequences.
 
-## Disable Ctrl+Alt+Delete {#disable-ctrl-alt-delete}
-
+### Disable Ctrl+Alt+Delete 
 Anyone that has physical access to the keyboard can simply use the <span
 class="keycombo">Ctrl+Alt+Delete</span> key combination to reboot the server
 without having to log on. While someone could simply unplug the power source,
@@ -319,13 +387,13 @@ To disable the reboot action taken by pressing the <span
 class="keycombo">Ctrl+Alt+Delete</span> key combination, run the following two
 commands:
 
-    sudo systemctl mask ctrl-alt-del.target
-    sudo systemctl daemon-reload
+```bash
+sudo systemctl mask ctrl-alt-del.target
+sudo systemctl daemon-reload
+```
 
-# Firewall
-
-## Introduction {#firewall-introduction}
-
+## Firewall
+### Introduction 
 The Linux kernel includes the *Netfilter* subsystem, which is used to
 manipulate or decide the fate of network traffic headed into or through your
 server. All modern Linux firewall solutions use this system for packet
@@ -339,8 +407,7 @@ supplied to it from userspace via iptables. Thus, iptables is all you need to
 manage your firewall, if you're familiar with it, but many frontends are
 available to simplify the task.
 
-## ufw - Uncomplicated Firewall {#firewall-ufw}
-
+### ufw - Uncomplicated Firewall 
 The default firewall configuration tool for Ubuntu is ufw. Developed to ease
 iptables firewall configuration, ufw provides a user-friendly way to create an
 IPv4 or IPv6 host-based firewall.
@@ -355,87 +422,114 @@ The following are some examples of how to use ufw:
 
 -   First, ufw needs to be enabled. From a terminal prompt enter:
 
-        sudo ufw enable
+```bash
+    sudo ufw enable
+```
 
 -   To open a port (SSH in this example):
 
-        sudo ufw allow 22
+```bash
+    sudo ufw allow 22
+```
 
 -   Rules can also be added using a *numbered* format:
 
-        sudo ufw insert 1 allow 80
+```bash
+    sudo ufw insert 1 allow 80
+```
 
 -   Similarly, to close an opened port:
 
-        sudo ufw deny 22
+```bash
+    sudo ufw deny 22
+```
 
 -   To remove a rule, use delete followed by the rule:
 
-        sudo ufw delete deny 22
+```bash
+    sudo ufw delete deny 22
+```
 
 -   It is also possible to allow access from specific hosts or networks to
     a port. The following example allows SSH access from host 192.168.0.2 to
     any IP address on this host:
 
-        sudo ufw allow proto tcp from 192.168.0.2 to any port 22
+```bash
+    sudo ufw allow proto tcp from 192.168.0.2 to any port 22
+```
 
-    Replace 192.168.0.2 with 192.168.0.0/24 to allow SSH access from the
-    entire subnet.
+```bash
+Replace 192.168.0.2 with 192.168.0.0/24 to allow SSH access from the
+entire subnet.
+```
 
 -   Adding the *--dry-run* option to a *ufw* command will output the resulting
     rules, but not apply them. For example, the following is what would be
     applied if opening the HTTP port:
 
-         sudo ufw --dry-run allow http
+```bash
+     sudo ufw --dry-run allow http
+```
 
-        *filter
-        :ufw-user-input - [0:0]
-        :ufw-user-output - [0:0]
-        :ufw-user-forward - [0:0]
-        :ufw-user-limit - [0:0]
-        :ufw-user-limit-accept - [0:0]
-        ### RULES ###
+```bash
+    *filter
+    :ufw-user-input - [0:0]
+    :ufw-user-output - [0:0]
+    :ufw-user-forward - [0:0]
+    :ufw-user-limit - [0:0]
+    :ufw-user-limit-accept - [0:0]
+    ### RULES ###
+```
 
-        ### tuple ### allow tcp 80 0.0.0.0/0 any 0.0.0.0/0
-        -A ufw-user-input -p tcp --dport 80 -j ACCEPT
+```bash
+    ### tuple ### allow tcp 80 0.0.0.0/0 any 0.0.0.0/0
+    -A ufw-user-input -p tcp --dport 80 -j ACCEPT
+```
 
-        ### END RULES ###
-        -A ufw-user-input -j RETURN
-        -A ufw-user-output -j RETURN
-        -A ufw-user-forward -j RETURN
-        -A ufw-user-limit -m limit --limit 3/minute -j LOG --log-prefix "[UFW LIMIT]: "
-        -A ufw-user-limit -j REJECT
-        -A ufw-user-limit-accept -j ACCEPT
-        COMMIT
-        Rules updated
+```bash
+    ### END RULES ###
+    -A ufw-user-input -j RETURN
+    -A ufw-user-output -j RETURN
+    -A ufw-user-forward -j RETURN
+    -A ufw-user-limit -m limit --limit 3/minute -j LOG --log-prefix "[UFW LIMIT]: "
+    -A ufw-user-limit -j REJECT
+    -A ufw-user-limit-accept -j ACCEPT
+    COMMIT
+    Rules updated
+```
 
 -   ufw can be disabled by:
 
-        sudo ufw disable
+```bash
+    sudo ufw disable
+```
 
 -   To see the firewall status, enter:
 
-        sudo ufw status
+```bash
+    sudo ufw status
+```
 
 -   And for more verbose status information use:
 
-        sudo ufw status verbose
+```bash
+    sudo ufw status verbose
+```
 
 -   To view the *numbered* format:
 
-        sudo ufw status numbered
+```bash
+    sudo ufw status numbered
+```
 
-> **Note**
->
-> If the port you want to open or close is defined in `/etc/services`, you can
-> use the port name instead of the number. In the above examples, replace *22*
-> with *ssh*.
+!!! Note: If the port you want to open or close is defined in `/etc/services`, you can
+use the port name instead of the number. In the above examples, replace *22*
+with *ssh*.
 
 This is a quick introduction to using ufw. Please refer to the ufw man page
 for more information.
 
-### ufw Application Integration
-
+#### ufw Application Integration
 Applications that open ports can include an ufw profile, which details the
 ports needed for the application to function properly. The profiles are kept
 in `/etc/ufw/applications.d`, and can be edited if the default ports have been
@@ -444,39 +538,52 @@ changed.
 -   To view which applications have installed a profile, enter the following
     in a terminal:
 
-        sudo ufw app list
+```bash
+    sudo ufw app list
+```
 
 -   Similar to allowing traffic to a port, using an application profile is
     accomplished by entering:
 
-        sudo ufw allow Samba
+```bash
+    sudo ufw allow Samba
+```
 
 -   An extended syntax is available as well:
 
-        ufw allow from 192.168.0.0/24 to any app Samba
+```bash
+    ufw allow from 192.168.0.0/24 to any app Samba
+```
 
-    Replace *Samba* and *192.168.0.0/24* with the application profile you are
-    using and the IP range for your network.
+```bash
+Replace *Samba* and *192.168.0.0/24* with the application profile you are
+using and the IP range for your network.
+```
 
-    > **Note**
-    >
-    > There is no need to specify the *protocol* for the application, because
-    > that information is detailed in the profile. Also, note that the *app*
-    > name replaces the *port* number.
+```bash
+> **Note**
+>
+> There is no need to specify the *protocol* for the application, because
+> that information is detailed in the profile. Also, note that the *app*
+> name replaces the *port* number.
+```
 
 -   To view details about which ports, protocols, etc., are defined for an
     application, enter:
 
-        sudo ufw app info Samba
+```bash
+    sudo ufw app info Samba
+```
 
 Not all applications that require opening a network port come with ufw
 profiles, but if you have profiled an application and want the file to be
 included with the package, please file a bug against the package in Launchpad.
 
-    ubuntu-bug nameofpackage
+```bash
+ubuntu-bug nameofpackage
+```
 
-## IP Masquerading
-
+### IP Masquerading
 The purpose of IP Masquerading is to allow machines with private, non-routable
 IP addresses on your network to access the Internet through the machine doing
 the masquerading. Traffic from your private network destined for the Internet
@@ -490,8 +597,7 @@ accordingly. Traffic leaving your private network is thus "masqueraded" as
 having originated from your Ubuntu gateway machine. This process is referred
 to in Microsoft documentation as Internet Connection Sharing.
 
-### ufw Masquerading {#ip-masquerade-ufw}
-
+#### ufw Masquerading 
 IP Masquerading can be achieved using custom ufw rules. This is possible
 because the current back-end for ufw is iptables-restore with the rules files
 located in `/etc/ufw/*.rules`. These files are a great place to add legacy
@@ -506,96 +612,143 @@ line rules.
     files will need to be adjusted, in `/etc/default/ufw` change the
     *DEFAULT\_FORWARD\_POLICY* to “ACCEPT”:
 
-        DEFAULT_FORWARD_POLICY="ACCEPT"
+```bash
+    DEFAULT_FORWARD_POLICY="ACCEPT"
+```
 
-    Then edit `/etc/ufw/sysctl.conf` and uncomment:
+```bash
+Then edit `/etc/ufw/sysctl.conf` and uncomment:
+```
 
-        net/ipv4/ip_forward=1
+```bash
+    net/ipv4/ip_forward=1
+```
 
-    Similarly, for IPv6 forwarding uncomment:
+```bash
+Similarly, for IPv6 forwarding uncomment:
+```
 
-        net/ipv6/conf/default/forwarding=1
+```bash
+    net/ipv6/conf/default/forwarding=1
+```
 
 -   Now add rules to the `/etc/ufw/before.rules` file. The default rules only
     configure the *filter* table, and to enable masquerading the *nat* table
     will need to be configured. Add the following to the top of the file just
     after the header comments:
 
-        # nat Table rules
-        *nat
-        :POSTROUTING ACCEPT [0:0]
+```bash
+    # nat Table rules
+    *nat
+    :POSTROUTING ACCEPT [0:0]
+```
 
-        # Forward traffic from eth1 through eth0.
-        -A POSTROUTING -s 192.168.0.0/24 -o eth0 -j MASQUERADE
+```bash
+    # Forward traffic from eth1 through eth0.
+    -A POSTROUTING -s 192.168.0.0/24 -o eth0 -j MASQUERADE
+```
 
-        # don't delete the 'COMMIT' line or these nat table rules won't be processed
-        COMMIT
+```bash
+    # don't delete the 'COMMIT' line or these nat table rules won't be processed
+    COMMIT
+```
 
-    The comments are not strictly necessary, but it is considered good
-    practice to document your configuration. Also, when modifying any of the
-    *rules* files in `/etc/ufw`, make sure these lines are the last line for
-    each table modified:
+```bash
+The comments are not strictly necessary, but it is considered good
+practice to document your configuration. Also, when modifying any of the
+*rules* files in `/etc/ufw`, make sure these lines are the last line for
+each table modified:
+```
 
-        # don't delete the 'COMMIT' line or these rules won't be processed
-        COMMIT
+```bash
+    # don't delete the 'COMMIT' line or these rules won't be processed
+    COMMIT
+```
 
-    For each *Table* a corresponding *COMMIT* statement is required. In these
-    examples only the *nat* and *filter* tables are shown, but you can also
-    add rules for the *raw* and *mangle* tables.
+```bash
+For each *Table* a corresponding *COMMIT* statement is required. In these
+examples only the *nat* and *filter* tables are shown, but you can also
+add rules for the *raw* and *mangle* tables.
+```
 
-    > **Note**
-    >
-    > In the above example replace *eth0*, *eth1*, and *192.168.0.0/24* with
-    > the appropriate interfaces and IP range for your network.
+```bash
+> **Note**
+>
+> In the above example replace *eth0*, *eth1*, and *192.168.0.0/24* with
+> the appropriate interfaces and IP range for your network.
+```
 
 -   Finally, disable and re-enable ufw to apply the changes:
 
-        sudo ufw disable && sudo ufw enable
+```bash
+    sudo ufw disable && sudo ufw enable
+```
 
 IP Masquerading should now be enabled. You can also add any additional FORWARD
 rules to the `/etc/ufw/before.rules`. It is recommended that these additional
 rules be added to the *ufw-before-forward* chain.
 
-### iptables Masquerading {#ip-masquerading-iptables}
-
+#### iptables Masquerading 
 iptables can also be used to enable Masquerading.
 
 -   Similar to ufw, the first step is to enable IPv4 packet forwarding by
     editing `/etc/sysctl.conf` and uncomment the following line:
 
-        net.ipv4.ip_forward=1
+```bash
+    net.ipv4.ip_forward=1
+```
 
-    If you wish to enable IPv6 forwarding also uncomment:
+```bash
+If you wish to enable IPv6 forwarding also uncomment:
+```
 
-        net.ipv6.conf.default.forwarding=1
+```bash
+    net.ipv6.conf.default.forwarding=1
+```
 
 -   Next, execute the sysctl command to enable the new settings in the
     configuration file:
 
-        sudo sysctl -p
+```bash
+    sudo sysctl -p
+```
 
 -   IP Masquerading can now be accomplished with a single iptables rule, which
     may differ slightly based on your network configuration:
 
-        sudo iptables -t nat -A POSTROUTING -s 192.168.0.0/16 -o ppp0 -j MASQUERADE
+```bash
+    sudo iptables -t nat -A POSTROUTING -s 192.168.0.0/16 -o ppp0 -j MASQUERADE
+```
 
-    The above command assumes that your private address space is
-    192.168.0.0/16 and that your Internet-facing device is ppp0. The syntax is
-    broken down as follows:
+```bash
+The above command assumes that your private address space is
+192.168.0.0/16 and that your Internet-facing device is ppp0. The syntax is
+broken down as follows:
+```
 
-    -   -t nat -- the rule is to go into the nat table
+```bash
+-   -t nat -- the rule is to go into the nat table
+```
 
-    -   -A POSTROUTING -- the rule is to be appended (-A) to the POSTROUTING
-        chain
+```bash
+-   -A POSTROUTING -- the rule is to be appended (-A) to the POSTROUTING
+    chain
+```
 
-    -   -s 192.168.0.0/16 -- the rule applies to traffic originating from the
-        specified address space
+```bash
+-   -s 192.168.0.0/16 -- the rule applies to traffic originating from the
+    specified address space
+```
 
-    -   -o ppp0 -- the rule applies to traffic scheduled to be routed through
-        the specified network device
+```bash
+-   -o ppp0 -- the rule applies to traffic scheduled to be routed through
+    the specified network device
+```
 
-    -   -j MASQUERADE -- traffic matching this rule is to "jump" (-j) to the
-        MASQUERADE target to be manipulated as described above
+```bash
+-   -j MASQUERADE -- traffic matching this rule is to "jump" (-j) to the
+    MASQUERADE target to be manipulated as described above
+```
 
 -   Also, each chain in the filter table (the default table, and where most or
     all packet filtering occurs) has a default *policy* of ACCEPT, but if you
@@ -603,22 +756,27 @@ iptables can also be used to enable Masquerading.
     the policies to DROP or REJECT, in which case your masqueraded traffic
     needs to be allowed through the FORWARD chain for the above rule to work:
 
-        sudo iptables -A FORWARD -s 192.168.0.0/16 -o ppp0 -j ACCEPT
-        sudo iptables -A FORWARD -d 192.168.0.0/16 -m state \
-        --state ESTABLISHED,RELATED -i ppp0 -j ACCEPT
+```bash
+    sudo iptables -A FORWARD -s 192.168.0.0/16 -o ppp0 -j ACCEPT
+    sudo iptables -A FORWARD -d 192.168.0.0/16 -m state \
+    --state ESTABLISHED,RELATED -i ppp0 -j ACCEPT
+```
 
-    The above commands will allow all connections from your local network to
-    the Internet and all traffic related to those connections to return to the
-    machine that initiated them.
+```bash
+The above commands will allow all connections from your local network to
+the Internet and all traffic related to those connections to return to the
+machine that initiated them.
+```
 
 -   If you want masquerading to be enabled on reboot, which you probably do,
     edit `/etc/rc.local` and add any commands used above. For example add the
     first command with no filtering:
 
-        iptables -t nat -A POSTROUTING -s 192.168.0.0/16 -o ppp0 -j MASQUERADE
+```bash
+    iptables -t nat -A POSTROUTING -s 192.168.0.0/16 -o ppp0 -j MASQUERADE
+```
 
-## Logs {#firewall-logs}
-
+### Logs 
 Firewall logs are essential for recognizing attacks, troubleshooting your
 firewall rules, and noticing unusual activity on your network. You must
 include logging rules in your firewall for them to be generated, though, and
@@ -628,22 +786,28 @@ target that decides the fate of the packet, such as ACCEPT, DROP, or REJECT).
 If you are using ufw, you can turn on logging by entering the following in a
 terminal:
 
-    sudo ufw logging on
+```bash
+sudo ufw logging on
+```
 
 To turn logging off in ufw, simply replace *on* with *off* in the above
 command.
 
 If using iptables instead of ufw, enter:
 
-    sudo iptables -A INPUT -m state --state NEW -p tcp --dport 80 \
-    -j LOG --log-prefix "NEW_HTTP_CONN: "
+```bash
+sudo iptables -A INPUT -m state --state NEW -p tcp --dport 80 \
+-j LOG --log-prefix "NEW_HTTP_CONN: "
+```
 
 A request on port 80 from the local machine, then, would generate a log in
 dmesg that looks like this (single line split into 3 to fit this document):
 
-    [4304885.870000] NEW_HTTP_CONN: IN=lo OUT= MAC=00:00:00:00:00:00:00:00:00:00:00:00:08:00
-    SRC=127.0.0.1 DST=127.0.0.1 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=58288 DF PROTO=TCP
-    SPT=53981 DPT=80 WINDOW=32767 RES=0x00 SYN URGP=0
+```bash
+[4304885.870000] NEW_HTTP_CONN: IN=lo OUT= MAC=00:00:00:00:00:00:00:00:00:00:00:00:08:00
+SRC=127.0.0.1 DST=127.0.0.1 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=58288 DF PROTO=TCP
+SPT=53981 DPT=80 WINDOW=32767 RES=0x00 SYN URGP=0
+```
 
 The above log will also appear in `/var/log/messages`, `/var/log/syslog`, and
 `/var/log/kern.log`. This behavior can be modified by editing
@@ -654,8 +818,7 @@ firewalls, and can log to any file you like, or even to a PostgreSQL or MySQL
 database. Making sense of your firewall logs can be simplified by using a log
 analyzing tool such as logwatch, fwanalog, fwlogwatch, or lire.
 
-## Other Tools {#other-firewall-tools}
-
+### Other Tools 
 There are many tools available to help you construct a complete firewall
 without intimate knowledge of iptables. For the GUI-inclined:
 
@@ -667,8 +830,7 @@ If you prefer a command-line tool with plain-text configuration files:
 -   [Shorewall] is a very powerful solution to help you configure an advanced
     firewall for any network.
 
-## References {#firewall-references}
-
+### References 
 -   The [Ubuntu Firewall] wiki page contains information on the development
     of ufw.
 
@@ -681,8 +843,7 @@ If you prefer a command-line tool with plain-text configuration files:
 
 -   The [IPTables HowTo] in the Ubuntu wiki is a great resource.
 
-# AppArmor
-
+## AppArmor
 AppArmor is a Linux Security Module implementation of name-based mandatory
 access controls. AppArmor confines individual programs to a set of listed
 files and posix 1003.1e draft capabilities.
@@ -694,7 +855,9 @@ found in the apparmor-profiles package.
 
 To install the apparmor-profiles package from a terminal prompt:
 
-    sudo apt install apparmor-profiles
+```bash
+sudo apt install apparmor-profiles
+```
 
 AppArmor profiles have two modes of execution:
 
@@ -704,12 +867,9 @@ AppArmor profiles have two modes of execution:
 -   Enforced/Confined: enforces profile policy as well as logging
     the violation.
 
-## Using AppArmor {#apparmor-usage}
-
-> **Caution**
->
-> This section is plagued by a bug ([LP \#1304134]) and instructions will not
-> work as advertised.
+### Using AppArmor 
+!!! Caution: This section is plagued by a bug ([LP \#1304134]) and instructions will not
+work as advertised.
 
 The apparmor-utils package contains command line utilities that you can use to
 change the AppArmor execution mode, find the status of a profile, create new
@@ -717,73 +877,102 @@ profiles, etc.
 
 -   apparmor\_status is used to view the current status of AppArmor profiles.
 
-        sudo apparmor_status
+```bash
+    sudo apparmor_status
+```
 
 -   aa-complain places a profile into *complain* mode.
 
-        sudo aa-complain /path/to/bin
+```bash
+    sudo aa-complain /path/to/bin
+```
 
 -   aa-enforce places a profile into *enforce* mode.
 
-        sudo aa-enforce /path/to/bin
+```bash
+    sudo aa-enforce /path/to/bin
+```
 
 -   The `/etc/apparmor.d` directory is where the AppArmor profiles
     are located. It can be used to manipulate the *mode* of all profiles.
 
-    Enter the following to place all profiles into complain mode:
+```bash
+Enter the following to place all profiles into complain mode:
+```
 
-        sudo aa-complain /etc/apparmor.d/*
+```bash
+    sudo aa-complain /etc/apparmor.d/*
+```
 
-    To place all profiles in enforce mode:
+```bash
+To place all profiles in enforce mode:
+```
 
-        sudo aa-enforce /etc/apparmor.d/*
+```bash
+    sudo aa-enforce /etc/apparmor.d/*
+```
 
 -   apparmor\_parser is used to load a profile into the kernel. It can also be
     used to reload a currently loaded profile using the *-r* option. To load a
     profile:
 
-        cat /etc/apparmor.d/profile.name | sudo apparmor_parser -a
+```bash
+    cat /etc/apparmor.d/profile.name | sudo apparmor_parser -a
+```
 
-    To reload a profile:
+```bash
+To reload a profile:
+```
 
-        cat /etc/apparmor.d/profile.name | sudo apparmor_parser -r
+```bash
+    cat /etc/apparmor.d/profile.name | sudo apparmor_parser -r
+```
 
 -   `systemctl` can be used to *reload* all profiles:
 
-        sudo systemctl reload apparmor.service
+```bash
+    sudo systemctl reload apparmor.service
+```
 
 -   The `/etc/apparmor.d/disable` directory can be used along with the
     apparmor\_parser -R option to *disable* a profile.
 
-        sudo ln -s /etc/apparmor.d/profile.name /etc/apparmor.d/disable/
-        sudo apparmor_parser -R /etc/apparmor.d/profile.name
+```bash
+    sudo ln -s /etc/apparmor.d/profile.name /etc/apparmor.d/disable/
+    sudo apparmor_parser -R /etc/apparmor.d/profile.name
+```
 
-    To *re-enable* a disabled profile remove the symbolic link to the profile
-    in `/etc/apparmor.d/disable/`. Then load the profile using the
-    *-a* option.
+```bash
+To *re-enable* a disabled profile remove the symbolic link to the profile
+in `/etc/apparmor.d/disable/`. Then load the profile using the
+*-a* option.
+```
 
-        sudo rm /etc/apparmor.d/disable/profile.name
-        cat /etc/apparmor.d/profile.name | sudo apparmor_parser -a
+```bash
+    sudo rm /etc/apparmor.d/disable/profile.name
+    cat /etc/apparmor.d/profile.name | sudo apparmor_parser -a
+```
 
 -   AppArmor can be disabled, and the kernel module unloaded by entering the
     following:
 
-        sudo systemctl stop apparmor.service
-        sudo update-rc.d -f apparmor remove
+```bash
+    sudo systemctl stop apparmor.service
+    sudo update-rc.d -f apparmor remove
+```
 
 -   To re-enable AppArmor enter:
 
-        sudo systemctl start apparmor.service
-        sudo update-rc.d apparmor defaults
+```bash
+    sudo systemctl start apparmor.service
+    sudo update-rc.d apparmor defaults
+```
 
-> **Note**
->
-> Replace *profile.name* with the name of the profile you want to manipulate.
-> Also, replace `/path/to/bin/` with the actual executable file path. For
-> example for the ping command use `/bin/ping`
+!!! Note: Replace *profile.name* with the name of the profile you want to manipulate.
+Also, replace `/path/to/bin/` with the actual executable file path. For
+example for the ping command use `/bin/ping`
 
-## Profiles {#apparmor-profiles}
-
+### Profiles 
 AppArmor profiles are simple text files located in `/etc/apparmor.d/`. The
 files are named after the full path to the executable they profile replacing
 the "/" with ".". For example `/etc/apparmor.d/bin.ping` is the AppArmor
@@ -799,19 +988,27 @@ There are two main type of rules used in profiles:
 
 As an example, take a look at `/etc/apparmor.d/bin.ping`:
 
-    #include <tunables/global>
-    /bin/ping flags=(complain) {
-      #include <abstractions/base>
-      #include <abstractions/consoles>
-      #include <abstractions/nameservice>
+```bash
+#include <tunables/global>
+/bin/ping flags=(complain) {
+  #include <abstractions/base>
+  #include <abstractions/consoles>
+  #include <abstractions/nameservice>
+```
 
-      capability net_raw,
-      capability setuid,
-      network inet raw,
-      
-      /bin/ping mixr,
-      /etc/modules.conf r,
-    }
+```bash
+  capability net_raw,
+  capability setuid,
+  network inet raw,
+```
+```bash
+  
+```
+```bash
+  /bin/ping mixr,
+  /etc/modules.conf r,
+}
+```
 
 -   *\#include &lt;tunables/global&gt;:* include statements from other files.
     This allows statements pertaining to multiple applications to be placed in
@@ -826,53 +1023,70 @@ As an example, take a look at `/etc/apparmor.d/bin.ping`:
 -   */bin/ping mixr,:* allows the application read and execute access to
     the file.
 
-> **Note**
->
-> After editing a profile file the profile must be reloaded. See
-> [Using AppArmor] for details.
+!!! Note: After editing a profile file the profile must be reloaded. See
+[Using AppArmor] for details.
 
-### Creating a Profile {#apparmor-profiles-new}
-
+#### Creating a Profile 
 -   *Design a test plan:* Try to think about how the application should
     be exercised. The test plan should be divided into small test cases. Each
     test case should have a small description and list the steps to follow.
 
-    Some standard test cases are:
+```bash
+Some standard test cases are:
+```
 
-    -   Starting the program.
+```bash
+-   Starting the program.
+```
 
-    -   Stopping the program.
+```bash
+-   Stopping the program.
+```
 
-    -   Reloading the program.
+```bash
+-   Reloading the program.
+```
 
-    -   Testing all the commands supported by the init script.
+```bash
+-   Testing all the commands supported by the init script.
+```
 
 -   *Generate the new profile:* Use aa-genprof to generate a new profile. From
     a terminal:
 
-        sudo aa-genprof executable
+```bash
+    sudo aa-genprof executable
+```
 
-    For example:
+```bash
+For example:
+```
 
-        sudo aa-genprof slapd
+```bash
+    sudo aa-genprof slapd
+```
 
 -   To get your new profile included in the apparmor-profiles package, file a
     bug in *Launchpad* against the [AppArmor] package:
 
-    -   Include your test plan and test cases.
+```bash
+-   Include your test plan and test cases.
+```
 
-    -   Attach your new profile to the bug.
+```bash
+-   Attach your new profile to the bug.
+```
 
-### Updating Profiles {#apparmor-profiles-update}
-
+#### Updating Profiles 
 When the program is misbehaving, audit messages are sent to the log files. The
 program aa-logprof can be used to scan log files for AppArmor audit messages,
 review them and update the profiles. From a terminal:
 
-    sudo aa-logprof
+```bash
+sudo aa-logprof
+```
 
-## References {#apparmor-references}
-
+### References 
 -   See the [AppArmor Administration Guide] for advanced
     configuration options.
 
@@ -891,8 +1105,7 @@ review them and update the profiles. From a terminal:
     Ubuntu Server community, is the *\#ubuntu-server* IRC channel on
     [freenode].
 
-# Certificates {#certificates-and-security}
-
+## Certificates 
 One of the most common forms of cryptography today is *public-key*
 cryptography. Public-key cryptography utilizes a *public key* and a *private
 key*. The system works by *encrypting* information using the public key. The
@@ -910,18 +1123,15 @@ Certificates can be digitally signed by a *Certification Authority*, or CA. A
 CA is a trusted third party that has confirmed that the information contained
 in the certificate is accurate.
 
-## Types of Certificates
-
+### Types of Certificates
 To set up a secure server using public-key cryptography, in most cases, you
 send your certificate request (including your public key), proof of your
 company's identity, and payment to a CA. The CA verifies the certificate
 request and your identity, and then sends back a certificate for your secure
 server. Alternatively, you can create your own *self-signed* certificate.
 
-> **Note**
->
-> Note that self-signed certificates should not be used in most production
-> environments.
+!!! Note: Note that self-signed certificates should not be used in most production
+environments.
 
 Continuing the HTTPS example, a CA-signed certificate provides two important
 capabilities that a self-signed certificate does not:
@@ -951,8 +1161,10 @@ overview is as follows:
     decision may be based on your past experiences, or on the experiences of
     your friends or colleagues, or purely on monetary factors.
 
-    Once you have decided upon a CA, you need to follow the instructions they
-    provide on how to obtain a certificate from them.
+```bash
+Once you have decided upon a CA, you need to follow the instructions they
+provide on how to obtain a certificate from them.
+```
 
 4.  When the CA is satisfied that you are indeed who you claim to be, they
     send you a digital certificate.
@@ -960,8 +1172,7 @@ overview is as follows:
 5.  Install this certificate on your secure server, and configure the
     appropriate applications to use the certificate.
 
-## Generating a Certificate Signing Request (CSR) {#generating-a-csr}
-
+### Generating a Certificate Signing Request (CSR) 
 Whether you are getting a certificate from a CA or generating your own
 self-signed certificate, the first step is to generate a key.
 
@@ -974,23 +1185,25 @@ This section will cover generating a key with a passphrase, and one without.
 The non-passphrase key will then be used to generate a certificate that can be
 used with various service daemons.
 
-> **Warning**
->
-> Running your secure service without a passphrase is convenient because you
-> will not need to enter the passphrase every time you start your secure
-> service. But it is insecure and a compromise of the key means a compromise
-> of the server as well.
+!!! Warning: Running your secure service without a passphrase is convenient because you
+will not need to enter the passphrase every time you start your secure
+service. But it is insecure and a compromise of the key means a compromise
+of the server as well.
 
 To generate the *keys* for the Certificate Signing Request (CSR) run the
 following command from a terminal prompt:
 
-    openssl genrsa -des3 -out server.key 2048
+```bash
+openssl genrsa -des3 -out server.key 2048
+```
 
-    Generating RSA private key, 2048 bit long modulus
-    ..........................++++++
-    .......++++++
-    e is 65537 (0x10001)
-    Enter pass phrase for server.key:
+```bash
+Generating RSA private key, 2048 bit long modulus
+..........................++++++
+.......++++++
+e is 65537 (0x10001)
+Enter pass phrase for server.key:
+```
 
 You can now enter your passphrase. For best security, it should at least
 contain eight characters. The minimum length when specifying -des3 is four
@@ -1003,16 +1216,20 @@ server key is generated and stored in the `server.key` file.
 Now create the insecure key, the one without a passphrase, and shuffle the key
 names:
 
-    openssl rsa -in server.key -out server.key.insecure
-    mv server.key server.key.secure
-    mv server.key.insecure server.key
+```bash
+openssl rsa -in server.key -out server.key.insecure
+mv server.key server.key.secure
+mv server.key.insecure server.key
+```
 
 The insecure key is now named `server.key`, and you can use this file to
 generate the CSR without passphrase.
 
 To create the CSR, run the following command at a terminal prompt:
 
-    openssl req -new -key server.key -out server.csr
+```bash
+openssl req -new -key server.key -out server.csr
+```
 
 It will prompt you enter the passphrase. If you enter the correct passphrase,
 it will prompt you to enter Company Name, Site Name, Email Id, etc. Once you
@@ -1023,38 +1240,37 @@ You can now submit this CSR file to a CA for processing. The CA will use this
 CSR file and issue the certificate. On the other hand, you can create
 self-signed certificate using this CSR.
 
-## Creating a Self-Signed Certificate
-
+### Creating a Self-Signed Certificate
 To create the self-signed certificate, run the following command at a terminal
 prompt:
 
-    openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+```bash
+openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+```
 
 The above command will prompt you to enter the passphrase. Once you enter the
 correct passphrase, your certificate will be created and it will be stored in
 the `server.crt` file.
 
-> **Warning**
->
-> If your secure server is to be used in a production environment, you
-> probably need a CA-signed certificate. It is not recommended to use
-> self-signed certificate.
+!!! Warning: If your secure server is to be used in a production environment, you
+probably need a CA-signed certificate. It is not recommended to use
+self-signed certificate.
 
-## Installing the Certificate
-
+### Installing the Certificate
 You can install the key file `server.key` and certificate file `server.crt`,
 or the certificate file issued by your CA, by running following commands at a
 terminal prompt:
 
-    sudo cp server.crt /etc/ssl/certs
-    sudo cp server.key /etc/ssl/private
+```bash
+sudo cp server.crt /etc/ssl/certs
+sudo cp server.key /etc/ssl/private
+```
 
 Now simply configure any applications, with the ability to use public-key
 cryptography, to use the *certificate* and *key* files. For example, Apache
 can provide HTTPS, Dovecot can provide IMAPS and POP3S, etc.
 
-## Certification Authority {#certificate-authority}
-
+### Certification Authority 
 If the services on your network require more than a few self-signed
 certificates it may be worth the additional effort to setup your own internal
 *Certification Authority (CA)*. Using certificates signed by your own CA,
@@ -1063,43 +1279,55 @@ services using certificates issued from the same CA.
 
 First, create the directories to hold the CA certificate and related files:
 
-    sudo mkdir /etc/ssl/CA
-    sudo mkdir /etc/ssl/newcerts
+```bash
+sudo mkdir /etc/ssl/CA
+sudo mkdir /etc/ssl/newcerts
+```
 
 The CA needs a few additional files to operate, one to keep track of the last
 serial number used by the CA, each certificate must have a unique serial
 number, and another file to record which certificates have been issued:
 
-    sudo sh -c "echo '01' > /etc/ssl/CA/serial"
-    sudo touch /etc/ssl/CA/index.txt
+```bash
+sudo sh -c "echo '01' > /etc/ssl/CA/serial"
+sudo touch /etc/ssl/CA/index.txt
+```
 
 The third file is a CA configuration file. Though not strictly necessary, it
 is very convenient when issuing multiple certificates. Edit
 `/etc/ssl/openssl.cnf`, and in the *\[ CA\_default \]* change:
 
-    dir             = /etc/ssl              # Where everything is kept
-    database        = $dir/CA/index.txt     # database index file.
-    certificate     = $dir/certs/cacert.pem # The CA certificate
-    serial          = $dir/CA/serial        # The current serial number
-    private_key     = $dir/private/cakey.pem# The private key
+```bash
+dir             = /etc/ssl              # Where everything is kept
+database        = $dir/CA/index.txt     # database index file.
+certificate     = $dir/certs/cacert.pem # The CA certificate
+serial          = $dir/CA/serial        # The current serial number
+private_key     = $dir/private/cakey.pem# The private key
+```
 
 Next, create the self-signed root certificate:
 
-    openssl req -new -x509 -extensions v3_ca -keyout cakey.pem -out cacert.pem -days 3650
+```bash
+openssl req -new -x509 -extensions v3_ca -keyout cakey.pem -out cacert.pem -days 3650
+```
 
 You will then be asked to enter the details about the certificate.
 
 Now install the root certificate and key:
 
-    sudo mv cakey.pem /etc/ssl/private/
-    sudo mv cacert.pem /etc/ssl/certs/
+```bash
+sudo mv cakey.pem /etc/ssl/private/
+sudo mv cacert.pem /etc/ssl/certs/
+```
 
 You are now ready to start signing certificates. The first item needed is a
 Certificate Signing Request (CSR), see
 [Generating a Certificate Signing Request (CSR)] for details. Once you have a
 CSR, enter the following to generate a certificate signed by the CA:
 
-    sudo openssl ca -in server.csr -config /etc/ssl/openssl.cnf
+```bash
+sudo openssl ca -in server.csr -config /etc/ssl/openssl.cnf
+```
 
 After entering the password for the CA key, you will be prompted to sign the
 certificate, and again to commit the new certificate. You should then see a
@@ -1114,9 +1342,7 @@ name.
 
 Subsequent certificates will be named `02.pem`, `03.pem`, etc.
 
-> **Note**
->
-> Replace *mail.example.com.crt* with your own descriptive name.
+!!! Note: Replace *mail.example.com.crt* with your own descriptive name.
 
 Finally, copy the new certificate to the host that needs it, and configure the
 appropriate applications to use it. The default location to install
@@ -1127,8 +1353,7 @@ For applications that can be configured to use a CA certificate, you should
 also copy the `/etc/ssl/certs/cacert.pem` file to the `/etc/ssl/certs/`
 directory on each server.
 
-## References {#certificate-references}
-
+### References 
 -   For more detailed instructions on using cryptography see the [SSL
     Certificates HOWTO] by tldp.org:
 
@@ -1139,8 +1364,7 @@ directory on each server.
 -   Also, O'Reilly's [Network Security with OpenSSL] is a good
     in-depth reference.
 
-# eCryptfs
-
+## eCryptfs
 *eCryptfs* is a POSIX-compliant enterprise-class stacked cryptographic
 filesystem for Linux. Layering on top of the filesystem layer *eCryptfs*
 protects files no matter the underlying filesystem, partition type, etc.
@@ -1152,15 +1376,18 @@ partition.
 As an example, this section will cover configuring `/srv` to be encrypted
 using *eCryptfs*.
 
-## Using eCryptfs {#ecryptfs-usage}
-
+### Using eCryptfs 
 First, install the necessary packages. From a terminal prompt enter:
 
-    sudo apt install ecryptfs-utils
+```bash
+sudo apt install ecryptfs-utils
+```
 
 Now mount the partition to be encrypted:
 
-    sudo mount -t ecryptfs /srv /srv
+```bash
+sudo mount -t ecryptfs /srv /srv
+```
 
 You will then be prompted for some details on how ecryptfs should encrypt the
 data.
@@ -1168,50 +1395,56 @@ data.
 To test that files placed in `/srv` are indeed encrypted copy the
 `/etc/default` folder to `/srv`:
 
-    sudo cp -r /etc/default /srv
+```bash
+sudo cp -r /etc/default /srv
+```
 
 Now unmount `/srv`, and try to view a file:
 
-    sudo umount /srv
-    cat /srv/default/cron
+```bash
+sudo umount /srv
+cat /srv/default/cron
+```
 
 Remounting `/srv` using ecryptfs will make the data viewable once again.
 
-## Automatically Mounting Encrypted Partitions {#ecryptfs-automount}
-
+### Automatically Mounting Encrypted Partitions 
 There are a couple of ways to automatically mount an ecryptfs encrypted
 filesystem at boot. This example will use a `/root/.ecryptfsrc` file
 containing mount options, along with a passphrase file residing on a USB key.
 
 First, create `/root/.ecryptfsrc` containing:
 
-    key=passphrase:passphrase_passwd_file=/mnt/usb/passwd_file.txt
-    ecryptfs_sig=5826dd62cf81c615
-    ecryptfs_cipher=aes
-    ecryptfs_key_bytes=16
-    ecryptfs_passthrough=n
-    ecryptfs_enable_filename_crypto=n
+```bash
+key=passphrase:passphrase_passwd_file=/mnt/usb/passwd_file.txt
+ecryptfs_sig=5826dd62cf81c615
+ecryptfs_cipher=aes
+ecryptfs_key_bytes=16
+ecryptfs_passthrough=n
+ecryptfs_enable_filename_crypto=n
+```
 
-> **Note**
->
-> Adjust the *ecryptfs\_sig* to the signature in
-> `/root/.ecryptfs/sig-cache.txt`.
+!!! Note: Adjust the *ecryptfs\_sig* to the signature in
+`/root/.ecryptfs/sig-cache.txt`.
 
 Next, create the `/mnt/usb/passwd_file.txt` passphrase file:
 
-    passphrase_passwd=[secrets]
+```bash
+passphrase_passwd=[secrets]
+```
 
 Now add the necessary lines to `/etc/fstab`:
 
-    /dev/sdb1       /mnt/usb        ext3    ro      0 0
-    /srv /srv ecryptfs defaults 0 0
+```bash
+/dev/sdb1       /mnt/usb        ext3    ro      0 0
+/srv /srv ecryptfs defaults 0 0
+```
 
 Make sure the USB drive is mounted before the encrypted partition.
 
 Finally, reboot and the `/srv` should be mounted using *eCryptfs*.
 
-## Other Utilities {#ecryptfs-other-utils}
-
+### Other Utilities 
 The ecryptfs-utils package includes several other useful utilities:
 
 -   *ecryptfs-setup-private:* creates a `~/Private` directory to contain
@@ -1228,8 +1461,7 @@ The ecryptfs-utils package includes several other useful utilities:
 -   *ecryptfs-stat:* allows you to view the ecryptfs meta information for
     a file.
 
-## References {#eCryptfs-references}
-
+### References 
 -   For more information on *eCryptfs* see the [Launchpad project page].
 
 -   There is also a [Linux Journal] article covering *eCryptfs*.
