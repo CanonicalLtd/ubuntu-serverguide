@@ -4,13 +4,11 @@ This chapter provides a quick overview of installing Ubuntu DISTRO-REV Server
 Edition. For more detailed instructions, please refer to the [Ubuntu
 Installation Guide].
 
-# Preparing to Install
-
+## Preparing to Install
 This section explains various aspects to consider before starting the
 installation.
 
-## System Requirements
-
+### System Requirements
 Ubuntu DISTRO-REV Server Edition supports three (3) major architectures: Intel
 x86, AMD64 and ARM. The table below lists recommended hardware specifications.
 Depending on your needs, you might manage with less than this. However, most
@@ -33,8 +31,7 @@ The Server Edition provides a common base for all sorts of server
 applications. It is a minimalist design providing a platform for the desired
 services, such as file/print services, web hosting, email hosting, etc.
 
-## Server and Desktop Differences {#intro-server-differences}
-
+### Server and Desktop Differences 
 There are a few differences between the *Ubuntu Server Edition* and the
 *Ubuntu Desktop Edition*. It should be noted that both editions use the same
 apt repositories, making it just as easy to install a *server* application on
@@ -43,38 +40,37 @@ the Desktop Edition as it is on the Server Edition.
 The differences between the two editions are the lack of an X window
 environment in the Server Edition and the installation process.
 
-### Kernel Differences: {#intro-kernel-diffs}
-
+#### Kernel Differences: 
 Ubuntu version 10.10 and prior, actually had different kernels for the server
 and desktop editions. Ubuntu no longer has separate -server and -generic
 kernel flavors. These have been merged into a single -generic kernel flavor to
 help reduce the maintenance burden over the life of the release.
 
-> **Note**
->
-> When running a 64-bit version of Ubuntu on 64-bit processors you are not
-> limited by memory addressing space.
+!!! Note: When running a 64-bit version of Ubuntu on 64-bit processors you are not
+limited by memory addressing space.
 
 To see all kernel configuration options you can look through
 `/boot/config-LINUX-KERNEL-VERSION-server`. Also, [Linux Kernel in a Nutshell]
 is a great resource on the options available.
 
-## Backing Up
-
+### Backing Up
 -   Before installing Ubuntu Server Edition you should make sure all data on
     the system is backed up. See [???] for backup options.
 
-    If this is not the first time an operating system has been installed on
-    your computer, it is likely you will need to re-partition your disk to
-    make room for Ubuntu.
+```bash
+If this is not the first time an operating system has been installed on
+your computer, it is likely you will need to re-partition your disk to
+make room for Ubuntu.
+```
 
-    Any time you partition your disk, you should be prepared to lose
-    everything on the disk should you make a mistake or something goes wrong
-    during partitioning. The programs used in installation are quite reliable,
-    most have seen years of use, but they also perform destructive actions.
+```bash
+Any time you partition your disk, you should be prepared to lose
+everything on the disk should you make a mistake or something goes wrong
+during partitioning. The programs used in installation are quite reliable,
+most have seen years of use, but they also perform destructive actions.
+```
 
-# Installing from CD
-
+## Installing from CD
 The basic steps to install Ubuntu Server Edition from CD are the same as those
 for installing any operating system from CD. Unlike the *Desktop Edition*, the
 *Server Edition* does not include a graphical installation program. The Server
@@ -126,17 +122,23 @@ Edition uses a console menu based process instead.
 -   The next step in the installation process is to decide how you want to
     update the system. There are three options:
 
-    -   *No automatic updates*: this requires an administrator to log into the
-        machine and manually install updates.
+```bash
+-   *No automatic updates*: this requires an administrator to log into the
+    machine and manually install updates.
+```
 
-    -   *Install security updates automatically*: this will install the
-        unattended-upgrades package, which will install security updates
-        without the intervention of an administrator. For more details see
-        [???][1].
+```bash
+-   *Install security updates automatically*: this will install the
+    unattended-upgrades package, which will install security updates
+    without the intervention of an administrator. For more details see
+    [???][1].
+```
 
-    -   *Manage the system with Landscape*: Landscape is a paid service
-        provided by Canonical to help manage your Ubuntu machines. See the
-        [Landscape] site for details.
+```bash
+-   *Manage the system with Landscape*: Landscape is a paid service
+    provided by Canonical to help manage your Ubuntu machines. See the
+    [Landscape] site for details.
+```
 
 -   You now have the option to install, or not install, several package tasks.
     See [Package Tasks] for details. Also, there is an option to launch
@@ -145,20 +147,17 @@ Edition uses a console menu based process instead.
 
 -   Finally, the last step before rebooting is to set the clock to UTC.
 
-> **Note**
->
-> If at any point during installation you are not satisfied by the default
-> setting, use the "Go Back" function at any prompt to be brought to a
-> detailed installation menu that will allow you to modify the default
-> settings.
+!!! Note: If at any point during installation you are not satisfied by the default
+setting, use the "Go Back" function at any prompt to be brought to a
+detailed installation menu that will allow you to modify the default
+settings.
 
 At some point during the installation process you may want to read the help
 screen provided by the installation system. To do this, press F1.
 
 Once again, for detailed instructions see the [Ubuntu Installation Guide].
 
-## Package Tasks {#install-tasks}
-
+### Package Tasks 
 During the Server Edition installation you have the option of installing
 additional packages from the CD. The packages are grouped by the type of
 service they provide.
@@ -199,39 +198,43 @@ installed, but also configured to provided a fully integrated service.
 Once the installation process has finished you can view a list of available
 tasks by entering the following from a terminal prompt:
 
-    tasksel --list-tasks
+```bash
+tasksel --list-tasks
+```
 
-> **Note**
->
-> The output will list tasks from other Ubuntu based distributions such as
-> Kubuntu and Edubuntu. Note that you can also invoke the `tasksel` command by
-> itself, which will bring up a menu of the different tasks available.
+!!! Note: The output will list tasks from other Ubuntu based distributions such as
+Kubuntu and Edubuntu. Note that you can also invoke the `tasksel` command by
+itself, which will bring up a menu of the different tasks available.
 
 You can view a list of which packages are installed with each task using the
 *--task-packages* option. For example, to list the packages installed with the
 *DNS Server* task enter the following:
 
-    tasksel --task-packages dns-server
+```bash
+tasksel --task-packages dns-server
+```
 
 The output of the command should list:
 
-    bind9-doc 
-    bind9utils 
-    bind9
+```bash
+bind9-doc 
+bind9utils 
+bind9
+```
 
 If you did not install one of the tasks during the installation process, but
 for example you decide to make your new LAMP server a DNS server as well,
 simply insert the installation CD and from a terminal:
 
-    sudo tasksel install dns-server
+```bash
+sudo tasksel install dns-server
+```
 
-# Upgrading {#installing-upgrading}
-
+## Upgrading 
 There are several ways to upgrade from one Ubuntu release to another. This
 section gives an overview of the recommended upgrade method.
 
-## do-release-upgrade
-
+### do-release-upgrade
 The recommended way to upgrade a Server Edition installation is to use the
 do-release-upgrade utility. Part of the *update-manager-core* package, it does
 not have any graphical dependencies and is installed by default.
@@ -242,17 +245,19 @@ handle system configuration changes sometimes needed between releases.
 
 To upgrade to a newer release, from a terminal prompt enter:
 
-    do-release-upgrade
+```bash
+do-release-upgrade
+```
 
 It is also possible to use do-release-upgrade to upgrade to a development
 version of Ubuntu. To accomplish this use the *-d* switch:
 
-    do-release-upgrade -d
+```bash
+do-release-upgrade -d
+```
 
-> **Warning**
->
-> Upgrading to a development release is *not* recommended for production
-> environments.
+!!! Warning: Upgrading to a development release is *not* recommended for production
+environments.
 
 For further stability of a LTS release there is a slight change in behaviour
 if you are currently running a LTS version. LTS systems are only automatically
@@ -262,10 +267,8 @@ released. If you want to update before, e.g. on a subset of machines to
 evaluate the LTS upgrade for your setup the same argument as an upgrade to a
 dev release has to be used via the *-d* switch.
 
-# Advanced Installation
-
-## Software RAID
-
+## Advanced Installation
+### Software RAID
 Redundant Array of Independent Disks "RAID" is a method of using multiple
 disks to provide different balances of increasing data reliability and/or
 increasing input/output performance, depending on the RAID level being used.
@@ -280,8 +283,7 @@ so-called 'hardware' RAID controllers. This section will guide you through
 installing Ubuntu Server Edition using two RAID1 partitions on two physical
 hard drives, one for */* and another for *swap*.
 
-### Partitioning {#raid-partitioning}
-
+#### Partitioning 
 Follow the installation steps until you get to the *Partition disks* step,
 then:
 
@@ -299,12 +301,10 @@ Next, select the *Size* of the partition. This partition will be the *swap*
 partition, and a general rule for swap size is twice that of RAM. Enter the
 partition size, then choose *Primary*, then *Beginning*.
 
-> **Note**
->
-> A swap partition size of twice the available RAM capacity may not always be
-> desirable, especially on systems with large amounts of RAM. Calculating the
-> swap partition size for servers is highly dependent on how the system is
-> going to be used.
+!!! Note: A swap partition size of twice the available RAM capacity may not always be
+desirable, especially on systems with large amounts of RAM. Calculating the
+swap partition size for servers is highly dependent on how the system is
+going to be used.
 
 Select the *"Use as:"* line at the top. By default this is *"Ext4 journaling
 file system"*, change that to *"physical volume for RAID"* then *"Done setting
@@ -322,8 +322,7 @@ change the value to *"on"*. Then choose *"Done setting up partition"*.
 
 Repeat steps three through eight for the other disk and partitions.
 
-### RAID Configuration
-
+#### RAID Configuration
 With the partitions setup the arrays are ready to be configured:
 
 Back in the main "Partition Disks" page, select *"Configure Software RAID"* at
@@ -336,10 +335,8 @@ Choose *"Create MD device"*.
 For this example, select *"RAID1"*, but if you are using a different setup
 choose the appropriate type (RAID0 RAID1 RAID5).
 
-> **Note**
->
-> In order to use *RAID5* you need at least *three* drives. Using RAID0 or
-> RAID1 only *two* drives are required.
+!!! Note: In order to use *RAID5* you need at least *three* drives. Using RAID0 or
+RAID1 only *two* drives are required.
 
 Enter the number of active devices *"2"*, or the amount of hard drives you
 have, for the array. Then select *"Continue"*.
@@ -359,8 +356,7 @@ Repeat steps *three* through *seven* for the */* partition choosing *sda2* and
 
 Once done select *"Finish"*.
 
-### Formatting {#raid-formatting}
-
+#### Formatting 
 There should now be a list of hard drives and RAID devices. The next step is
 to format and set the mount point for the RAID devices. Treat the RAID device
 as a local hard drive, format and mount accordingly.
@@ -386,8 +382,7 @@ for further details.
 
 The installation process will then continue normally.
 
-### Degraded RAID {#raid-degraded}
-
+#### Degraded RAID 
 At some point in the life of the computer a disk failure event may occur. When
 this happens, using Software RAID, the operating system will place the array
 into what is known as a *degraded* state.
@@ -405,64 +400,93 @@ several ways:
     settings related to the array. Such as monitoring, email alerts, etc. To
     reconfigure mdadm enter the following:
 
-        sudo dpkg-reconfigure mdadm
+```bash
+    sudo dpkg-reconfigure mdadm
+```
 
 -   The `dpkg-reconfigure mdadm` process will change the
     `/etc/initramfs-tools/conf.d/mdadm` configuration file. The file has the
     advantage of being able to pre-configure the system's behavior, and can
     also be manually edited:
 
-        BOOT_DEGRADED=true
+```bash
+    BOOT_DEGRADED=true
+```
 
-    > **Note**
-    >
-    > The configuration file can be overridden by using a Kernel argument.
+```bash
+> **Note**
+>
+> The configuration file can be overridden by using a Kernel argument.
+```
 
 -   Using a Kernel argument will allow the system to boot to a degraded array
     as well:
 
-    -   When the server is booting press Shift to open the Grub menu.
+```bash
+-   When the server is booting press Shift to open the Grub menu.
+```
 
-    -   Press e to edit your kernel command options.
+```bash
+-   Press e to edit your kernel command options.
+```
 
-    -   Press the down arrow to highlight the kernel line.
+```bash
+-   Press the down arrow to highlight the kernel line.
+```
 
-    -   Add *"bootdegraded=true"* (without the quotes) to the end of the line.
+```bash
+-   Add *"bootdegraded=true"* (without the quotes) to the end of the line.
+```
 
-    -   Press <span class="keycombo">Ctrl+x</span> to boot the system.
+```bash
+-   Press <span class="keycombo">Ctrl+x</span> to boot the system.
+```
 
 Once the system has booted you can either repair the array see
 [RAID Maintenance] for details, or copy important data to another machine due
 to major hardware failure.
 
-### RAID Maintenance
-
+#### RAID Maintenance
 The mdadm utility can be used to view the status of an array, add disks to an
 array, remove disks, etc:
 
 -   To view the status of an array, from a terminal prompt enter:
 
-        sudo mdadm -D /dev/md0
+```bash
+    sudo mdadm -D /dev/md0
+```
 
-    The *-D* tells mdadm to display *detailed* information about the
-    `/dev/md0` device. Replace `/dev/md0` with the appropriate RAID device.
+```bash
+The *-D* tells mdadm to display *detailed* information about the
+`/dev/md0` device. Replace `/dev/md0` with the appropriate RAID device.
+```
 
 -   To view the status of a disk in an array:
 
-        sudo mdadm -E /dev/sda1
+```bash
+    sudo mdadm -E /dev/sda1
+```
 
-    The output if very similar to the `mdadm -D` command, adjust `/dev/sda1`
-    for each disk.
+```bash
+The output if very similar to the `mdadm -D` command, adjust `/dev/sda1`
+for each disk.
+```
 
 -   If a disk fails and needs to be removed from an array enter:
 
-        sudo mdadm --remove /dev/md0 /dev/sda1
+```bash
+    sudo mdadm --remove /dev/md0 /dev/sda1
+```
 
-    Change `/dev/md0` and `/dev/sda1` to the appropriate RAID device and disk.
+```bash
+Change `/dev/md0` and `/dev/sda1` to the appropriate RAID device and disk.
+```
 
 -   Similarly, to add a new disk:
 
-        sudo mdadm --add /dev/md0 /dev/sda1
+```bash
+    sudo mdadm --add /dev/md0 /dev/sda1
+```
 
 Sometimes a disk can change to a *faulty* state even though there is nothing
 physically wrong with the drive. It is usually worthwhile to remove the drive
@@ -473,16 +497,24 @@ hardware failure.
 The `/proc/mdstat` file also contains useful information about the system's
 RAID devices:
 
-    cat /proc/mdstat
-    Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
-    md0 : active raid1 sda1[0] sdb1[1]
-          10016384 blocks [2/2] [UU]
-          
-    unused devices: <none>
+```bash
+cat /proc/mdstat
+Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid1 sda1[0] sdb1[1]
+      10016384 blocks [2/2] [UU]
+```
+```bash
+      
+```
+```bash
+unused devices: <none>
+```
 
 The following command is great for watching the status of a syncing drive:
 
-    watch -n1 cat /proc/mdstat
+```bash
+watch -n1 cat /proc/mdstat
+```
 
 Press *Ctrl+c* to stop the watch command.
 
@@ -490,12 +522,13 @@ If you do need to replace a faulty drive, after the drive has been replaced
 and synced, grub will need to be installed. To install grub on the new drive,
 enter the following:
 
-    sudo grub-install /dev/md0
+```bash
+sudo grub-install /dev/md0
+```
 
 Replace `/dev/md0` with the appropriate array device name.
 
-### Resources {#raid-resources}
-
+#### Resources 
 The topic of RAID arrays is a complex one due to the plethora of ways RAID can
 be configured. Please see the following links for more information:
 
@@ -505,16 +538,14 @@ be configured. Please see the following links for more information:
 
 -   [Managing RAID on Linux]
 
-## Logical Volume Manager (LVM) {#lvm}
-
+### Logical Volume Manager (LVM) 
 Logical Volume Manger, or *LVM*, allows administrators to create *logical*
 volumes out of one or multiple physical hard disks. LVM volumes can be created
 on both software RAID partitions and standard partitions residing on a single
 disk. Volumes can also be extended, giving greater flexibility to systems as
 requirements change.
 
-### Overview {#lvm-overview}
-
+#### Overview 
 A side effect of LVM's power and flexibility is a greater degree of
 complication. Before diving into the LVM installation process, it is best to
 get familiar with some terms.
@@ -530,8 +561,7 @@ get familiar with some terms.
     is formatted with the desired file system (EXT3, XFS, JFS, etc), it is
     then available for mounting and data storage.
 
-### Installation {#lvm-installation}
-
+#### Installation 
 As an example this section covers installing Ubuntu Server Edition with `/srv`
 mounted on a LVM volume. During the initial install only one Physical Volume
 (PV) will be part of the Volume Group (VG). Another PV will be added after
@@ -589,8 +619,7 @@ There are some useful utilities to view information about LVM:
 
 -   *lvdisplay:* shows information about Logical Volumes.
 
-### Extending Volume Groups {#lvm-extending}
-
+#### Extending Volume Groups 
 Continuing with *srv* as an LVM volume example, this section covers adding a
 second hard disk, creating a Physical Volume (PV), adding it to the volume
 group (VG), extending the logical volume `srv` and finally extending the
@@ -599,20 +628,24 @@ system. In this example, this hard disk will be named `/dev/sdb` and we will
 use the entire disk as a physical volume (you could choose to create
 partitions and use them as different physical volumes)
 
-> **Warning**
->
-> Make sure you don't already have an existing `/dev/sdb` before issuing the
-> commands below. You could lose some data if you issue those commands on a
-> non-empty disk.
+!!! Warning: Make sure you don't already have an existing `/dev/sdb` before issuing the
+commands below. You could lose some data if you issue those commands on a
+non-empty disk.
 
 First, create the physical volume, in a terminal execute:
 
-    sudo pvcreate /dev/sdb
-                    
+```bash
+sudo pvcreate /dev/sdb
+```
+```bash
+                
+```
 
 Now extend the Volume Group (VG):
 
-    sudo vgextend vg01 /dev/sdb
+```bash
+sudo vgextend vg01 /dev/sdb
+```
 
 Use vgdisplay to find out the free physical extents - Free PE / size (the size
 you can allocate). We will assume a free size of 511 PE (equivalent to 2GB
@@ -622,7 +655,9 @@ your own PE and/or free space.
 The Logical Volume (LV) can now be extended by different methods, we will only
 see how to use the PE to extend the LV:
 
-    sudo lvextend /dev/vg01/srv -l +511
+```bash
+sudo lvextend /dev/vg01/srv -l +511
+```
 
 The *-l* option allows the LV to be extended using PE. The *-L* option allows
 the LV to be extended using Meg, Gig, Tera, etc bytes.
@@ -635,21 +670,26 @@ a logical volume (in that case unmounting first is compulsory).
 The following commands are for an *EXT3* or *EXT4* filesystem. If you are
 using another filesystem there may be other utilities available.
 
-    sudo umount /srv
-    sudo e2fsck -f /dev/vg01/srv
+```bash
+sudo umount /srv
+sudo e2fsck -f /dev/vg01/srv
+```
 
 The *-f* option of e2fsck forces checking even if the system seems clean.
 
 Finally, resize the filesystem:
 
-    sudo resize2fs /dev/vg01/srv
+```bash
+sudo resize2fs /dev/vg01/srv
+```
 
 Now mount the partition and check its size.
 
-    mount /dev/vg01/srv /srv && df -h /srv
+```bash
+mount /dev/vg01/srv /srv && df -h /srv
+```
 
-### Resources {#lvm-resources}
-
+#### Resources 
 -   See the [Ubuntu Wiki LVM Articles].
 
 -   See the [LVM HOWTO] for more information.
@@ -659,19 +699,19 @@ Now mount the partition and check its size.
 
 -   For more information on fdisk see the [fdisk man page].
 
-## iSCSI
-
+### iSCSI
 The iSCSI protocol can be used to install Ubuntu on systems with or without
 hard disks attached.
 
-### Installation on a diskless system
-
+#### Installation on a diskless system
 The first steps of a diskless iSCSI installation are identical to the
 [Installing from CD] section up to "Hard drive layout".
 
 The installer will display a warning with the following message:
 
-    No disk drive was detected. If you know the name of the driver needed by your disk drive, you can select it from the list.
+```bash
+No disk drive was detected. If you know the name of the driver needed by your disk drive, you can select it from the list.
+```
 
 Select the item in the list titled *login to iSCSI targets.*
 
@@ -687,13 +727,21 @@ If your system is able to connect to the iSCSI provider, you should see a list
 of available iSCSI targets where the operating system can be installed. The
 list should be similar to the following :
 
-    Select the iSCSI targets you wish to use.
+```bash
+Select the iSCSI targets you wish to use.
+```
 
-    iSCSI targets on 192.168.1.29:3260:
+```bash
+iSCSI targets on 192.168.1.29:3260:
+```
 
-    [ ] iqn.2016-03.TrustyS-iscsitarget:storage.sys0
+```bash
+[ ] iqn.2016-03.TrustyS-iscsitarget:storage.sys0
+```
 
-    <Go Back>                          <Continue>
+```bash
+<Go Back>                          <Continue>
+```
 
 Select the iSCSI target that you want to use with the space bar. Use the arrow
 keys to navigate to the target that you want to select.
@@ -705,8 +753,7 @@ the *\[!!\] Partition disks* installation menu. The rest of the procedure is
 identical to any normal installation on attached disks. Once the installation
 is completed, you will be asked to reboot.
 
-### Installation on a system with disk attached
-
+#### Installation on a system with disk attached
 Again, the iSCSI installation on a normal server with one or many disks
 attached is identical to the [Installing from CD] section until we reach the
 disk partitioning menu. Instead of using any of the Guided selection, we need
@@ -729,13 +776,21 @@ If your system is able to connect to the iSCSI provider, you should see a list
 of available iSCSI targets where the operating system can be installed. The
 list should be similar to the following :
 
-    Select the iSCSI targets you wish to use.
+```bash
+Select the iSCSI targets you wish to use.
+```
 
-    iSCSI targets on 192.168.1.29:3260:
+```bash
+iSCSI targets on 192.168.1.29:3260:
+```
 
-    [ ] iqn.2016-03.TrustyS-iscsitarget:storage.sys0
+```bash
+[ ] iqn.2016-03.TrustyS-iscsitarget:storage.sys0
+```
 
-    <Go Back>                          <Continue>
+```bash
+<Go Back>                          <Continue>
+```
 
 Select the iSCSI target that you want to use with the space bar. Use the arrow
 keys to navigate to the target that you want to select
@@ -750,31 +805,32 @@ prefixed with SCSI. This is the disk that you should select as your
 installation disk. Once identified, you can choose any of the partitioning
 methods.
 
-> **Warning**
->
-> Depending on your system configuration, there may be other SCSI disks
-> attached to the system. Be very careful to identify the proper device before
-> proceeding with the installation. Otherwise, irreversible data loss may
-> result from performing an installation on the wrong disk.
+!!! Warning: Depending on your system configuration, there may be other SCSI disks
+attached to the system. Be very careful to identify the proper device before
+proceeding with the installation. Otherwise, irreversible data loss may
+result from performing an installation on the wrong disk.
 
-### Rebooting to an iSCSI target
-
+#### Rebooting to an iSCSI target
 The procedure is specific to your hardware platform. As an example, here is
 how to reboot to your iSCSI target using iPXE
 
-    iPXE> dhcp
+```bash
+iPXE> dhcp
+```
 
-    Configuring (net0 52:54:00:a4:f2:a9)....... ok
+```bash
+Configuring (net0 52:54:00:a4:f2:a9)....... ok
+```
 
-    iPXE> sanboot iscsi:192.168.1.29::::iqn.2016-03.TrustyS-iscsitarget:storage.sys0
+```bash
+iPXE> sanboot iscsi:192.168.1.29::::iqn.2016-03.TrustyS-iscsitarget:storage.sys0
+```
 
 If the procedure is successful, you should see the Grub menu appear on the
 screen.
 
-# Kernel Crash Dump
-
-## Introduction {#kernel-dump-introduction}
-
+## Kernel Crash Dump
+### Introduction 
 A Kernel Crash Dump refers to a portion of the contents of volatile memory
 (RAM) that is copied to disk whenever the execution of the kernel is
 disrupted. The following events can cause a kernel disruption :
@@ -796,45 +852,49 @@ above events occurs, it is important to find out the root cause in order to
 prevent it from happening again. The cause can be determined by inspecting the
 copied memory contents.
 
-## Kernel Crash Dump Mechanism {#kernel-crash-dump-mechanisms}
-
+### Kernel Crash Dump Mechanism 
 When a kernel panic occurs, the kernel relies on the *kexec* mechanism to
 quickly reboot a new instance of the kernel in a pre-reserved section of
 memory that had been allocated when the system booted (see below). This
 permits the existing memory area to remain untouched in order to safely copy
 its contents to storage.
 
-## Installation {#Installation}
-
+### Installation 
 The kernel crash dump utility is installed with the following command:
 
-    sudo apt install linux-crashdump
+```bash
+sudo apt install linux-crashdump
+```
 
-> **Note**
->
-> Starting with 16.04, the kernel crash dump mechanism is enabled by default.
-> During the installation, you will be prompted with the following dialog.
-> Unless chosen otherwise, the kdump mechanism will be enabled.
+!!! Note: Starting with 16.04, the kernel crash dump mechanism is enabled by default.
+During the installation, you will be prompted with the following dialog.
+Unless chosen otherwise, the kdump mechanism will be enabled.
 
-     |------------------------| Configuring kdump-tools |------------------------|
-     |                                                                           |
-     |                                                                           |
-     | If you choose this option, the kdump-tools mechanism will be enabled. A   |
-     | reboot is still required in order to enable the crashkernel kernel        |
-     | parameter.                                                                |
-     |                                                                           |
-     | Should kdump-tools be enabled by default?                                 |
-     |                                                                           |
-     |                    <Yes>                       <No>                       |
-     |                                                                           |
-     |---------------------------------------------------------------------------|
-            
+```bash
+ |------------------------| Configuring kdump-tools |------------------------|
+ |                                                                           |
+ |                                                                           |
+ | If you choose this option, the kdump-tools mechanism will be enabled. A   |
+ | reboot is still required in order to enable the crashkernel kernel        |
+ | parameter.                                                                |
+ |                                                                           |
+ | Should kdump-tools be enabled by default?                                 |
+ |                                                                           |
+ |                    <Yes>                       <No>                       |
+ |                                                                           |
+ |---------------------------------------------------------------------------|
+```
+```bash
+        
+```
 
 If you ever need to manually enable the functionality, you can use the
 `dpkg-reconfigure kdump-tools` command and answer Yes to the question. You can
 also edit `/etc/default/kdump-tools` by including the following line:
 
-    USE_KDUMP=1
+```bash
+USE_KDUMP=1
+```
 
 If a reboot has not been done since installation of the linux-crashdump
 package, a reboot will be required in order to activate the crashkernel= boot
@@ -843,35 +903,36 @@ parameter. Upon reboot, kdump-tools will be enabled and active.
 If you enable kdump-tools after a reboot, you will only need to issue the
 `kdump-config load` command to activate the kdump mechanism.
 
-## Configuration {#kernel-dump-configuration}
-
+### Configuration 
 In addition to local dump, it is now possible to use the remote dump
 functionality to send the kernel crash dump to a remote server, using either
 the *SSH* or *NFS* protocols.
 
-### Local Kernel Crash Dumps {#local-dump}
-
+#### Local Kernel Crash Dumps 
 Local dumps are configured automatically and will remain in use unless a
 remote protocol is chosen. Many configuration options exist and are thoroughly
 documented in the `/etc/default/kdump-tools` file.
 
-### Remote Kernel Crash Dumps using the SSH protocol {#ssh-dump}
-
+#### Remote Kernel Crash Dumps using the SSH protocol 
 To enable remote dumps using the *SSH* protocol, the
 `/etc/default/kdump-tools` must be modified in the following manner :
 
-    # ---------------------------------------------------------------------------
-    # Remote dump facilities:
-    # SSH - username and hostname of the remote server that will receive the dump
-    #       and dmesg files.
-    # SSH_KEY - Full path of the ssh private key to be used to login to the remote
-    #           server. use kdump-config propagate to send the public key to the
-    #           remote server
-    # HOSTTAG - Select if hostname of IP address will be used as a prefix to the
-    #           timestamped directory when sending files to the remote server.
-    #           'ip' is the default.
-    SSH="ubuntu@kdump-netcrash"
-            
+```bash
+# ---------------------------------------------------------------------------
+# Remote dump facilities:
+# SSH - username and hostname of the remote server that will receive the dump
+#       and dmesg files.
+# SSH_KEY - Full path of the ssh private key to be used to login to the remote
+#           server. use kdump-config propagate to send the public key to the
+#           remote server
+# HOSTTAG - Select if hostname of IP address will be used as a prefix to the
+#           timestamped directory when sending files to the remote server.
+#           'ip' is the default.
+SSH="ubuntu@kdump-netcrash"
+```
+```bash
+        
+```
 
 The only mandatory variable to define is SSH. It must contain the username and
 hostname of the remote server using the format {username}@{remote server}.
@@ -884,14 +945,18 @@ remote directory to be created instead of the IP address.
 The following example shows how `kdump-config propagate` is used to create and
 propagate a new keypair to the remote server :
 
-    sudo kdump-config propagate
-    Need to generate a new ssh key...
-    The authenticity of host 'kdump-netcrash (192.168.1.74)' can't be established.
-    ECDSA key fingerprint is SHA256:iMp+5Y28qhbd+tevFCWrEXykDd4dI3yN4OVlu3CBBQ4.
-    Are you sure you want to continue connecting (yes/no)? yes
-    ubuntu@kdump-netcrash's password: 
-    propagated ssh key /root/.ssh/kdump_id_rsa to server ubuntu@kdump-netcrash
-            
+```bash
+sudo kdump-config propagate
+Need to generate a new ssh key...
+The authenticity of host 'kdump-netcrash (192.168.1.74)' can't be established.
+ECDSA key fingerprint is SHA256:iMp+5Y28qhbd+tevFCWrEXykDd4dI3yN4OVlu3CBBQ4.
+Are you sure you want to continue connecting (yes/no)? yes
+ubuntu@kdump-netcrash's password: 
+propagated ssh key /root/.ssh/kdump_id_rsa to server ubuntu@kdump-netcrash
+```
+```bash
+        
+```
 
 The password of the account used on the remote server will be required in
 order to successfully send the public key to the server
@@ -899,32 +964,39 @@ order to successfully send the public key to the server
 The `kdump-config show` command can be used to confirm that kdump is correctly
 configured to use the SSH protocol :
 
-    kdump-config show
-    DUMP_MODE:        kdump
-    USE_KDUMP:        1
-    KDUMP_SYSCTL:     kernel.panic_on_oops=1
-    KDUMP_COREDIR:    /var/crash
-    crashkernel addr: 0x2c000000
-       /var/lib/kdump/vmlinuz: symbolic link to /boot/vmlinuz-4.4.0-10-generic
-    kdump initrd: 
-       /var/lib/kdump/initrd.img: symbolic link to /var/lib/kdump/initrd.img-4.4.0-10-generic
-    SSH:              ubuntu@kdump-netcrash
-    SSH_KEY:          /root/.ssh/kdump_id_rsa
-    HOSTTAG:          ip
-    current state:    ready to kdump
-            
+```bash
+kdump-config show
+DUMP_MODE:        kdump
+USE_KDUMP:        1
+KDUMP_SYSCTL:     kernel.panic_on_oops=1
+KDUMP_COREDIR:    /var/crash
+crashkernel addr: 0x2c000000
+   /var/lib/kdump/vmlinuz: symbolic link to /boot/vmlinuz-4.4.0-10-generic
+kdump initrd: 
+   /var/lib/kdump/initrd.img: symbolic link to /var/lib/kdump/initrd.img-4.4.0-10-generic
+SSH:              ubuntu@kdump-netcrash
+SSH_KEY:          /root/.ssh/kdump_id_rsa
+HOSTTAG:          ip
+current state:    ready to kdump
+```
+```bash
+        
+```
 
-### Remote Kernel Crash Dumps using the NFS protocol {#nfs-dump}
-
+#### Remote Kernel Crash Dumps using the NFS protocol 
 To enable remote dumps using the *NFS* protocol, the
 `/etc/default/kdump-tools` must be modified in the following manner :
 
-    # NFS -     Hostname and mount point of the NFS server configured to receive
-    #           the crash dump. The syntax must be {HOSTNAME}:{MOUNTPOINT} 
-    #           (e.g. remote:/var/crash)
-    #
-    NFS="kdump-netcrash:/var/crash"
-              
+```bash
+# NFS -     Hostname and mount point of the NFS server configured to receive
+#           the crash dump. The syntax must be {HOSTNAME}:{MOUNTPOINT} 
+#           (e.g. remote:/var/crash)
+#
+NFS="kdump-netcrash:/var/crash"
+```
+```bash
+          
+```
 
 As with the SSH protocol, the HOSTTAG variable can be used to replace the IP
 address by the hostname as the prefix of the remote directory.
@@ -932,41 +1004,54 @@ address by the hostname as the prefix of the remote directory.
 The `kdump-config show` command can be used to confirm that kdump is correctly
 configured to use the NFS protocol :
 
-    kdump-config show
-    DUMP_MODE:        kdump
-    USE_KDUMP:        1
-    KDUMP_SYSCTL:     kernel.panic_on_oops=1
-    KDUMP_COREDIR:    /var/crash
-    crashkernel addr: 0x2c000000
-       /var/lib/kdump/vmlinuz: symbolic link to /boot/vmlinuz-4.4.0-10-generic
-    kdump initrd: 
-       /var/lib/kdump/initrd.img: symbolic link to /var/lib/kdump/initrd.img-4.4.0-10-generic
-    NFS:              kdump-netcrash:/var/crash
-    HOSTTAG:          hostname
-    current state:    ready to kdump
-          
+```bash
+kdump-config show
+DUMP_MODE:        kdump
+USE_KDUMP:        1
+KDUMP_SYSCTL:     kernel.panic_on_oops=1
+KDUMP_COREDIR:    /var/crash
+crashkernel addr: 0x2c000000
+   /var/lib/kdump/vmlinuz: symbolic link to /boot/vmlinuz-4.4.0-10-generic
+kdump initrd: 
+   /var/lib/kdump/initrd.img: symbolic link to /var/lib/kdump/initrd.img-4.4.0-10-generic
+NFS:              kdump-netcrash:/var/crash
+HOSTTAG:          hostname
+current state:    ready to kdump
+```
+```bash
+      
+```
 
-## Verification
-
+### Verification
 To confirm that the kernel dump mechanism is enabled, there are a few things
 to verify. First, confirm that the *crashkernel* boot parameter is present
 (note: The following line has been split into two to fit the format of this
 document:
 
-    cat /proc/cmdline
+```bash
+cat /proc/cmdline
+```
 
-    BOOT_IMAGE=/vmlinuz-3.2.0-17-server root=/dev/mapper/PreciseS-root ro
-     crashkernel=384M-2G:64M,2G-:128M
+```bash
+BOOT_IMAGE=/vmlinuz-3.2.0-17-server root=/dev/mapper/PreciseS-root ro
+ crashkernel=384M-2G:64M,2G-:128M
+```
 
 The *crashkernel* parameter has the following syntax:
 
-    crashkernel=<range1>:<size1>[,<range2>:<size2>,...][@offset]
-        range=start-[end] 'start' is inclusive and 'end' is exclusive.
-            
+```bash
+crashkernel=<range1>:<size1>[,<range2>:<size2>,...][@offset]
+    range=start-[end] 'start' is inclusive and 'end' is exclusive.
+```
+```bash
+        
+```
 
 So for the crashkernel parameter found in `/proc/cmdline` we would have :
 
-    crashkernel=384M-2G:64M,2G-:128M
+```bash
+crashkernel=384M-2G:64M,2G-:128M
+```
 
 The above value means:
 
@@ -980,47 +1065,58 @@ The above value means:
 Second, verify that the kernel has reserved the requested memory area for the
 kdump kernel by doing:
 
-    dmesg | grep -i crash
+```bash
+dmesg | grep -i crash
+```
 
-    ...
-    [    0.000000] Reserving 64MB of memory at 800MB for crashkernel (System RAM: 1023MB)
+```bash
+...
+[    0.000000] Reserving 64MB of memory at 800MB for crashkernel (System RAM: 1023MB)
+```
 
 Finally, as seen previously, the `kdump-config show` command displays the
 current status of the kdump-tools configuration :
 
-            kdump-config show
-    DUMP_MODE:        kdump
-    USE_KDUMP:        1
-    KDUMP_SYSCTL:     kernel.panic_on_oops=1
-    KDUMP_COREDIR:    /var/crash
-    crashkernel addr: 0x2c000000
-       /var/lib/kdump/vmlinuz: symbolic link to /boot/vmlinuz-4.4.0-10-generic
-    kdump initrd: 
-          /var/lib/kdump/initrd.img: symbolic link to /var/lib/kdump/initrd.img-4.4.0-10-generic
-    current state:    ready to kdump
+```bash
+        kdump-config show
+DUMP_MODE:        kdump
+USE_KDUMP:        1
+KDUMP_SYSCTL:     kernel.panic_on_oops=1
+KDUMP_COREDIR:    /var/crash
+crashkernel addr: 0x2c000000
+   /var/lib/kdump/vmlinuz: symbolic link to /boot/vmlinuz-4.4.0-10-generic
+kdump initrd: 
+      /var/lib/kdump/initrd.img: symbolic link to /var/lib/kdump/initrd.img-4.4.0-10-generic
+current state:    ready to kdump
+```
 
-    kexec command:
-          /sbin/kexec -p --command-line="BOOT_IMAGE=/vmlinuz-4.4.0-10-generic root=/dev/mapper/VividS--vg-root ro debug break=init console=ttyS0,115200 irqpoll maxcpus=1 nousb systemd.unit=kdump-tools.service" --initrd=/var/lib/kdump/initrd.img /var/lib/kdump/vmlinuz
-          
+```bash
+kexec command:
+      /sbin/kexec -p --command-line="BOOT_IMAGE=/vmlinuz-4.4.0-10-generic root=/dev/mapper/VividS--vg-root ro debug break=init console=ttyS0,115200 irqpoll maxcpus=1 nousb systemd.unit=kdump-tools.service" --initrd=/var/lib/kdump/initrd.img /var/lib/kdump/vmlinuz
+```
+```bash
+      
+```
 
-## Testing the Crash Dump Mechanism {#kdump-testing}
-
-> **Warning**
->
-> Testing the Crash Dump Mechanism will cause *a system reboot.* In certain
-> situations, this can cause data loss if the system is under heavy load. If
-> you want to test the mechanism, make sure that the system is idle or under
-> very light load.
+### Testing the Crash Dump Mechanism 
+!!! Warning: Testing the Crash Dump Mechanism will cause *a system reboot.* In certain
+situations, this can cause data loss if the system is under heavy load. If
+you want to test the mechanism, make sure that the system is idle or under
+very light load.
 
 Verify that the *SysRQ* mechanism is enabled by looking at the value of the
 `/proc/sys/kernel/sysrq` kernel parameter :
 
-    cat /proc/sys/kernel/sysrq
+```bash
+cat /proc/sys/kernel/sysrq
+```
 
 If a value of *0* is returned the feature is disabled. Enable it with the
 following command :
 
-    sudo sysctl -w kernel.sysrq=1
+```bash
+sudo sysctl -w kernel.sysrq=1
+```
 
 Once this is done, you must become root, as just using `sudo` will not be
 sufficient. As the *root* user, you will have to issue the command
@@ -1031,30 +1127,35 @@ the kernel dump process visible.
 
 A typical test output should look like the following :
 
-    sudo -s
-    [sudo] password for ubuntu: 
-    # echo c > /proc/sysrq-trigger
-    [   31.659002] SysRq : Trigger a crash
-    [   31.659749] BUG: unable to handle kernel NULL pointer dereference at           (null)
-    [   31.662668] IP: [<ffffffff8139f166>] sysrq_handle_crash+0x16/0x20
-    [   31.662668] PGD 3bfb9067 PUD 368a7067 PMD 0 
-    [   31.662668] Oops: 0002 [#1] SMP 
-    [   31.662668] CPU 1 
-    ....
+```bash
+sudo -s
+[sudo] password for ubuntu: 
+# echo c > /proc/sysrq-trigger
+[   31.659002] SysRq : Trigger a crash
+[   31.659749] BUG: unable to handle kernel NULL pointer dereference at           (null)
+[   31.662668] IP: [<ffffffff8139f166>] sysrq_handle_crash+0x16/0x20
+[   31.662668] PGD 3bfb9067 PUD 368a7067 PMD 0 
+[   31.662668] Oops: 0002 [#1] SMP 
+[   31.662668] CPU 1 
+....
+```
 
 The rest of the output is truncated, but you should see the system rebooting
 and somewhere in the log, you will see the following line :
 
-    Begin: Saving vmcore from kernel crash ...
+```bash
+Begin: Saving vmcore from kernel crash ...
+```
 
 Once completed, the system will reboot to its normal operational mode. You
 will then find Kernel Crash Dump file in the `/var/crash` directory :
 
-    ls /var/crash
-    linux-image-3.0.0-12-server.0.crash
+```bash
+ls /var/crash
+linux-image-3.0.0-12-server.0.crash
+```
 
-## Resources {#kdump-resources}
-
+### Resources 
 Kernel Crash Dump is a vast topic that requires good knowledge of the linux
 kernel. You can find more information on the topic here :
 

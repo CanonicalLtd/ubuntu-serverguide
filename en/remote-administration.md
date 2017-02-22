@@ -3,10 +3,8 @@
 There are many ways to remotely administer a Linux server. This chapter will
 cover three of the most popular applications OpenSSH, Puppet, and Zentyal.
 
-# OpenSSH Server
-
-## Introduction {#openssh-introduction}
-
+## OpenSSH Server
+### Introduction 
 This section of the Ubuntu SG-TITLE introduces a powerful collection of tools
 for the remote control of, and transfer of data between, networked computers
 called *OpenSSH*. You will also learn about some of the configuration settings
@@ -31,94 +29,105 @@ OpenSSH server daemon initiates a secure copy of files between the server and
 client after authentication. OpenSSH can use many authentication methods,
 including plain password, public key, and Kerberos tickets.
 
-## Installation {#openssh-installation}
-
+### Installation 
 Installation of the OpenSSH client and server applications is simple. To
 install the OpenSSH client applications on your Ubuntu system, use this
 command at a terminal prompt:
 
-    sudo apt install openssh-client
+```bash
+sudo apt install openssh-client
+```
 
 To install the OpenSSH server application, and related support files, use this
 command at a terminal prompt:
 
-    sudo apt install openssh-server
+```bash
+sudo apt install openssh-server
+```
 
 The openssh-server package can also be selected to install during the Server
 Edition installation process.
 
-## Configuration {#openssh-configuration}
-
+### Configuration 
 You may configure the default behavior of the OpenSSH server application,
 sshd, by editing the file `/etc/ssh/sshd_config`. For information about the
 configuration directives used in this file, you may view the appropriate
 manual page with the following command, issued at a terminal prompt:
 
-    man sshd_config
+```bash
+man sshd_config
+```
 
 There are many directives in the sshd configuration file controlling such
 things as communication settings, and authentication modes. The following are
 examples of configuration directives that can be changed by editing the
 `/etc/ssh/sshd_config` file.
 
-> **Tip**
->
-> Prior to editing the configuration file, you should make a copy of the
-> original file and protect it from writing so you will have the original
-> settings as a reference and to reuse as necessary.
->
-> Copy the `/etc/ssh/sshd_config` file and protect it from writing with the
-> following commands, issued at a terminal prompt:
->
->     sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.original
->     sudo chmod a-w /etc/ssh/sshd_config.original
+!!! Tip: Prior to editing the configuration file, you should make a copy of the
+original file and protect it from writing so you will have the original
+settings as a reference and to reuse as necessary.
+Copy the `/etc/ssh/sshd_config` file and protect it from writing with the
+following commands, issued at a terminal prompt:
+    sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.original
+    sudo chmod a-w /etc/ssh/sshd_config.original
 
 The following are examples of configuration directives you may change:
 
 -   To set your OpenSSH to listen on TCP port 2222 instead of the default TCP
     port 22, change the Port directive as such:
 
-    Port 2222
+```bash
+Port 2222
+```
 
 -   To have sshd allow public key-based login credentials, simply add or
     modify the line:
 
-    PubkeyAuthentication yes
+```bash
+PubkeyAuthentication yes
+```
 
-    If the line is already present, then ensure it is not commented out.
+```bash
+If the line is already present, then ensure it is not commented out.
+```
 
 -   To make your OpenSSH server display the contents of the `/etc/issue.net`
     file as a pre-login banner, simply add or modify the line:
 
-    Banner /etc/issue.net
+```bash
+Banner /etc/issue.net
+```
 
-    In the `/etc/ssh/sshd_config` file.
+```bash
+In the `/etc/ssh/sshd_config` file.
+```
 
 After making changes to the `/etc/ssh/sshd_config` file, save the file, and
 restart the sshd server application to effect the changes using the following
 command at a terminal prompt:
 
-    sudo systemctl restart sshd.service
+```bash
+sudo systemctl restart sshd.service
+```
 
-> **Warning**
->
-> Many other configuration directives for sshd are available to change the
-> server application's behavior to fit your needs. Be advised, however, if
-> your only method of access to a server is ssh, and you make a mistake in
-> configuring sshd via the `/etc/ssh/sshd_config` file, you may find you are
-> locked out of the server upon restarting it. Additionally, if an incorrect
-> configuration directive is supplied, the sshd server may refuse to start, so
-> be extra careful when editing this file on a remote server.
+!!! Warning: Many other configuration directives for sshd are available to change the
+server application's behavior to fit your needs. Be advised, however, if
+your only method of access to a server is ssh, and you make a mistake in
+configuring sshd via the `/etc/ssh/sshd_config` file, you may find you are
+locked out of the server upon restarting it. Additionally, if an incorrect
+configuration directive is supplied, the sshd server may refuse to start, so
+be extra careful when editing this file on a remote server.
 
-## SSH Keys {#openssh-keys}
-
+### SSH Keys 
 SSH *keys* allow authentication between two hosts without the need of a
 password. SSH key authentication uses two keys, a *private* key and a *public*
 key.
 
 To generate the keys, from a terminal prompt enter:
 
-    ssh-keygen -t rsa
+```bash
+ssh-keygen -t rsa
+```
 
 This will generate the keys using the *RSA Algorithm*. During the process you
 will be prompted for a password. Simply hit *Enter* when prompted to create
@@ -128,27 +137,29 @@ By default the *public* key is saved in the file `~/.ssh/id_rsa.pub`, while
 `~/.ssh/id_rsa` is the *private* key. Now copy the `id_rsa.pub` file to the
 remote host and append it to `~/.ssh/authorized_keys` by entering:
 
-    ssh-copy-id username@remotehost
+```bash
+ssh-copy-id username@remotehost
+```
 
 Finally, double check the permissions on the `authorized_keys` file, only the
 authenticated user should have read and write permissions. If the permissions
 are not correct change them by:
 
-    chmod 600 .ssh/authorized_keys
+```bash
+chmod 600 .ssh/authorized_keys
+```
 
 You should now be able to SSH to the host without being prompted for a
 password.
 
-## References {#openssh-references}
-
+### References 
 -   [Ubuntu Wiki SSH] page.
 
 -   [OpenSSH Website]
 
 -   [Advanced OpenSSH Wiki Page]
 
-# Puppet
-
+## Puppet
 Puppet is a cross platform framework enabling system administrators to perform
 common tasks using code. The code can do a variety of tasks from installing
 new software, to checking file permissions, or updating user accounts. Puppet
@@ -160,8 +171,7 @@ This section will cover installing and configuring Puppet in a client/server
 configuration. This simple example will demonstrate how to install Apache
 using Puppet.
 
-## Preconfiguration {#puppet-preconfiguration}
-
+### Preconfiguration 
 Prior to configuring puppet you may want to add a DNS *CNAME* record for
 *puppet.example.com*, where *example.com* is your domain. By default Puppet
 clients check DNS for puppet.example.com as the puppet server name, or *Puppet
@@ -170,63 +180,75 @@ Master*. See [???] for more DNS details.
 If you do not wish to use DNS, you can add entries to the server and client
 `/etc/hosts` file. For example, in the Puppet server's `/etc/hosts` file add:
 
-    127.0.0.1 localhost.localdomain localhost puppet
-    192.168.1.17 puppetclient.example.com puppetclient
+```bash
+127.0.0.1 localhost.localdomain localhost puppet
+192.168.1.17 puppetclient.example.com puppetclient
+```
 
 On each Puppet client, add an entry for the server:
 
-    192.168.1.16 puppetmaster.example.com puppetmaster puppet
+```bash
+192.168.1.16 puppetmaster.example.com puppetmaster puppet
+```
 
-> **Note**
->
-> Replace the example IP addresses and domain names above with your actual
-> server and client addresses and domain names.
+!!! Note: Replace the example IP addresses and domain names above with your actual
+server and client addresses and domain names.
 
-## Installation {#puppet-installation}
-
+### Installation 
 To install Puppet, in a terminal on the *server* enter:
 
-    sudo apt install puppetmaster
+```bash
+sudo apt install puppetmaster
+```
 
 On the *client* machine, or machines, enter:
 
-    sudo apt install puppet
+```bash
+sudo apt install puppet
+```
 
-## Configuration {#puppet-configuration}
-
+### Configuration 
 Create a folder path for the apache2 class:
 
-      sudo mkdir -p /etc/puppet/modules/apache2/manifests
+```bash
+  sudo mkdir -p /etc/puppet/modules/apache2/manifests
+```
 
 Now setup some resources for apache2. Create a file
 `/etc/puppet/modules/apache2/manifests/init.pp` containing the following:
 
-    class apache2 {
-      package { 'apache2':
-        ensure => installed,
-      }
+```bash
+class apache2 {
+  package { 'apache2':
+    ensure => installed,
+  }
+```
 
-      service { 'apache2':
-        ensure  => true,
-        enable  => true,
-        require => Package['apache2'],
-      }
-    }
+```bash
+  service { 'apache2':
+    ensure  => true,
+    enable  => true,
+    require => Package['apache2'],
+  }
+}
+```
 
 Next, create a node file `/etc/puppet/manifests/site.pp` with:
 
-    node 'puppetclient.example.com' {
-       include apache2
-    }
+```bash
+node 'puppetclient.example.com' {
+   include apache2
+}
+```
 
-> **Note**
->
-> Replace *puppetclient.example.com* with your actual Puppet client's host
-> name.
+!!! Note: Replace *puppetclient.example.com* with your actual Puppet client's host
+name.
 
 The final step for this simple Puppet server is to restart the daemon:
 
-    sudo systemctl restart puppetmaster.service
+```bash
+sudo systemctl restart puppetmaster.service
+```
 
 Now everything is configured on the Puppet server, it is time to configure the
 client.
@@ -234,50 +256,58 @@ client.
 First, configure the Puppet agent daemon to start. Edit `/etc/default/puppet`,
 changing *START* to yes:
 
-    START=yes
+```bash
+START=yes
+```
 
 Then start the service:
 
-    sudo systemctl start puppet.service
+```bash
+sudo systemctl start puppet.service
+```
 
 View the client cert fingerprint
 
-    sudo puppet agent --fingerprint
+```bash
+sudo puppet agent --fingerprint
+```
 
 Back on the Puppet server, view pending certificate signing requests:
 
-    sudo puppet cert list
+```bash
+sudo puppet cert list
+```
 
 On the Puppet server, verify the fingerprint of the client and sign
 puppetclient's cert:
 
-    sudo puppet cert sign puppetclient.example.com
+```bash
+sudo puppet cert sign puppetclient.example.com
+```
 
 On the Puppet client, run the puppet agent manually in the foreground. This
 step isn't strictly speaking necessary, but it is the best way to test and
 debug the puppet service.
 
-    sudo puppet agent --test
+```bash
+sudo puppet agent --test
+```
 
 Check `/var/log/syslog` on both hosts for any errors with the configuration.
 If all goes well the apache2 package and it's dependencies will be installed
 on the Puppet client.
 
-> **Note**
->
-> This example is *very* simple, and does not highlight many of Puppet's
-> features and benefits. For more information see [Resources].
+!!! Note: This example is *very* simple, and does not highlight many of Puppet's
+features and benefits. For more information see [Resources].
 
-## Resources {#puppet-resources}
-
+### Resources 
 -   See the [Official Puppet Documentation] web site.
 
 -   See the [Puppet forge], online repository of puppet modules.
 
 -   Also see [Pro Puppet].
 
-# Zentyal
-
+## Zentyal
 Zentyal is a Linux small business server that can be configured as a gateway,
 infrastructure manager, unified threat manager, office server, unified
 communication server or a combination of them. All network services managed by
@@ -299,32 +329,38 @@ them.
 Zentyal publishes one major stable release once a year based on the latest
 Ubuntu LTS release.
 
-## Installation {#zentyal-installation}
-
+### Installation 
 If you would like to create a new user to access the Zentyal web interface,
 run:
 
-    sudo adduser username sudo
+```bash
+sudo adduser username sudo
+```
 
 Add the Zentyal repository to your repository list:
 
-    sudo add-apt-repository "deb http://archive.zentyal.org/zentyal 3.5 main extra"
+```bash
+sudo add-apt-repository "deb http://archive.zentyal.org/zentyal 3.5 main extra"
+```
 
 Import the public keys from Zentyal:
 
-    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 10E239FF
-    wget -q http://keys.zentyal.org/zentyal-4.2-archive.asc -O- | sudo apt-key add -
+```bash
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 10E239FF
+wget -q http://keys.zentyal.org/zentyal-4.2-archive.asc -O- | sudo apt-key add -
+```
 
 Update your packages and install Zentyal:
 
-    sudo apt update
-    sudo apt install zentyal
+```bash
+sudo apt update
+sudo apt install zentyal
+```
 
 During installation you will be asked to set a root MySQL password and confirm
 port 443.
 
-## First steps {#zentyal-firststeps}
-
+### First steps 
 Any system account belonging to the sudo group is allowed to log into the
 Zentyal web interface. The user created while installing Ubuntu Server will
 belong to the sudo group by default.
@@ -342,7 +378,9 @@ can be used to install multiple modules at once.
 
 Modules can also be installed via the command line:
 
-    sudo apt install <zentyal-module>
+```bash
+sudo apt install <zentyal-module>
+```
 
 See the list of available modules below.
 
@@ -359,8 +397,7 @@ the custom configuration file templates on /etc/zentyal/stubs/&lt;module&gt;/
 and the hooks on /etc/zentyal/hooks/&lt;module&gt;.&lt;action&gt;. Read more
 about stubs and hooks [here].
 
-## Modules {#zentyal-modules}
-
+### Modules 
 Zentyal 2.3 is available on Ubuntu DISTRO-REV-SHORT Universe repository. The
 modules available are:
 
@@ -479,8 +516,7 @@ will find these other modules:
 -   zentyal-zarafa: integrates Zarafa groupware suite with Zentyal mail stack
     and LDAP.
 
-## References {#zentyal-references}
-
+### References 
 [Zentyal Official Documentation] page.
 
 [Zentyal Community Wiki].

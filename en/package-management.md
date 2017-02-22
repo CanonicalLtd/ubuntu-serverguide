@@ -11,8 +11,7 @@ system, from simple command-line utilities which may be easily automated by
 system administrators, to a simple graphical interface which is easy to use by
 those new to Ubuntu.
 
-# Introduction {#package-management-introduction}
-
+## Introduction 
 Ubuntu's package management system is derived from the same system used by the
 Debian GNU/Linux distribution. The package files contain all of the necessary
 files, meta-data, and instructions to implement a particular functionality or
@@ -30,8 +29,7 @@ which is a package supplying the ALSA sound library needed for audio playback.
 In order for festival to function, it and all of its dependencies must be
 installed. The software management tools in Ubuntu will do this automatically.
 
-# dpkg
-
+## dpkg
 dpkg is a package manager for *Debian*-based systems. It can install, remove,
 and build packages, but unlike other package management systems, it cannot
 automatically download and install packages or their dependencies. This
@@ -39,60 +37,81 @@ section covers using dpkg to manage locally installed packages:
 
 -   To list all packages installed on the system, from a terminal prompt type:
 
-        dpkg -l
+```bash
+    dpkg -l
+```
 
 -   Depending on the amount of packages on your system, this can generate a
     large amount of output. Pipe the output through grep to see if a specific
     package is installed:
 
-        dpkg -l | grep apache2
+```bash
+    dpkg -l | grep apache2
+```
 
-    Replace *apache2* with any package name, part of a package name, or other
-    regular expression.
+```bash
+Replace *apache2* with any package name, part of a package name, or other
+regular expression.
+```
 
 -   To list the files installed by a package, in this case the ufw package,
     enter:
 
-        dpkg -L ufw
+```bash
+    dpkg -L ufw
+```
 
 -   If you are not sure which package installed a file, dpkg -S may be able to
     tell you. For example:
 
-        dpkg -S /etc/host.conf 
-        base-files: /etc/host.conf
+```bash
+    dpkg -S /etc/host.conf 
+    base-files: /etc/host.conf
+```
 
-    The output shows that the `/etc/host.conf` belongs to the
-    base-files package.
+```bash
+The output shows that the `/etc/host.conf` belongs to the
+base-files package.
+```
 
-    > **Note**
-    >
-    > Many files are automatically generated during the package install
-    > process, and even though they are on the filesystem, `dpkg -S` may not
-    > know which package they belong to.
+```bash
+> **Note**
+>
+> Many files are automatically generated during the package install
+> process, and even though they are on the filesystem, `dpkg -S` may not
+> know which package they belong to.
+```
 
 -   You can install a local *.deb* file by entering:
 
-        sudo dpkg -i zip_3.0-4_i386.deb
+```bash
+    sudo dpkg -i zip_3.0-4_i386.deb
+```
 
-    Change `zip_3.0-4_i386.deb` to the actual file name of the local .deb file
-    you wish to install.
+```bash
+Change `zip_3.0-4_i386.deb` to the actual file name of the local .deb file
+you wish to install.
+```
 
 -   Uninstalling a package can be accomplished by:
 
-        sudo dpkg -r zip
+```bash
+    sudo dpkg -r zip
+```
 
-    > **Caution**
-    >
-    > Uninstalling packages using dpkg, in most cases, is *NOT* recommended.
-    > It is better to use a package manager that handles dependencies to
-    > ensure that the system is in a consistent state. For example using
-    > `dpkg -r zip` will remove the zip package, but any packages that depend
-    > on it will still be installed and may no longer function correctly.
+```bash
+> **Caution**
+>
+> Uninstalling packages using dpkg, in most cases, is *NOT* recommended.
+> It is better to use a package manager that handles dependencies to
+> ensure that the system is in a consistent state. For example using
+> `dpkg -r zip` will remove the zip package, but any packages that depend
+> on it will still be installed and may no longer function correctly.
+```
 
 For more dpkg options see the man page: `man dpkg`.
 
-# Apt
-
+## Apt
 The apt command is a powerful command-line tool, which works with Ubuntu's
 *Advanced Packaging Tool* (APT) performing such functions as installation of
 new software packages, upgrade of existing software packages, updating of the
@@ -110,22 +129,30 @@ Some examples of popular uses for the apt utility:
     quite simple. For example, to install the network scanner nmap, type the
     following:
 
-        sudo apt install nmap
+```bash
+    sudo apt install nmap
+```
 
 -   **Remove a Package**: Removal of a package (or packages) is
     also straightforward. To remove the package installed in the previous
     example, type the following:
 
-        sudo apt remove nmap
+```bash
+    sudo apt remove nmap
+```
 
-    > **Tip**
-    >
-    > **Multiple Packages**: You may specify multiple packages to be installed
-    > or removed, separated by spaces.
+```bash
+> **Tip**
+>
+> **Multiple Packages**: You may specify multiple packages to be installed
+> or removed, separated by spaces.
+```
 
-    Also, adding the *--purge* option to `apt remove` will remove the package
-    configuration files as well. This may or may not be the desired effect, so
-    use with caution.
+```bash
+Also, adding the *--purge* option to `apt remove` will remove the package
+configuration files as well. This may or may not be the desired effect, so
+use with caution.
+```
 
 -   **Update the Package Index**: The APT package index is essentially a
     database of available packages from the repositories defined in the
@@ -133,16 +160,22 @@ Some examples of popular uses for the apt utility:
     `/etc/apt/sources.list.d` directory. To update the local package index
     with the latest changes made in the repositories, type the following:
 
-        sudo apt update
+```bash
+    sudo apt update
+```
 
 -   **Upgrade Packages**: Over time, updated versions of packages currently
     installed on your computer may become available from the package
     repositories (for example security updates). To upgrade your system, first
     update your package index as outlined above, and then type:
 
-        sudo apt upgrade
+```bash
+    sudo apt upgrade
+```
 
-    For information on upgrading to a new Ubuntu release see [???].
+```bash
+For information on upgrading to a new Ubuntu release see [???].
+```
 
 Actions of the apt command, such as installation and removal of packages, are
 logged in the /var/log/dpkg.log log file.
@@ -150,10 +183,11 @@ logged in the /var/log/dpkg.log log file.
 For further information about the use of APT, read the comprehensive [Debian
 APT User Manual] or type:
 
-    apt help
+```bash
+apt help
+```
 
-# Aptitude
-
+## Aptitude
 Launching Aptitude with no command-line options, will give you a menu-driven,
 text-based front-end to the *Advanced Packaging Tool* (APT) system. Many of
 the common package management functions, such as installation, removal, and
@@ -165,7 +199,9 @@ ensure proper functioning of the command keys. You may start the menu-driven
 interface of Aptitude as a normal user by typing the following command at a
 terminal prompt:
 
-    sudo aptitude
+```bash
+sudo aptitude
+```
 
 When Aptitude starts, you will see a menu bar at the top of the screen and two
 panes below the menu bar. The top pane contains package categories, such as
@@ -225,75 +261,80 @@ uses the following key to describe the state of the package:
 To exit Aptitude, simply press the q key and confirm you wish to exit. Many
 other functions are available from the Aptitude menu by pressing the F10 key.
 
-## Command Line Aptitude {#aptitude-commandline}
-
+### Command Line Aptitude 
 You can also use Aptitude as a command-line tool, similar to apt. To install
 the nmap package with all necessary dependencies, as in the apt example, you
 would use the following command:
 
-    sudo aptitude install nmap
+```bash
+sudo aptitude install nmap
+```
 
 To remove the same package, you would use the command:
 
-    sudo aptitude remove nmap
+```bash
+sudo aptitude remove nmap
+```
 
 Consult the man pages for more details of command line options for Aptitude.
 
-# Automatic Updates
-
+## Automatic Updates
 The unattended-upgrades package can be used to automatically install updated
 packages, and can be configured to update all packages or just install
 security updates. First, install the package by entering the following in a
 terminal:
 
-    sudo apt install unattended-upgrades
+```bash
+sudo apt install unattended-upgrades
+```
 
 To configure unattended-upgrades, edit
 `/etc/apt/apt.conf.d/50unattended-upgrades` and adjust the following to fit
 your needs:
 
-    Unattended-Upgrade::Allowed-Origins {
-            "Ubuntu DISTRO-SHORT-CODENAME-security";
-    //      "Ubuntu DISTRO-SHORT-CODENAME-updates";
-    };
+```bash
+Unattended-Upgrade::Allowed-Origins {
+        "Ubuntu DISTRO-SHORT-CODENAME-security";
+//      "Ubuntu DISTRO-SHORT-CODENAME-updates";
+};
+```
 
 Certain packages can also be *blacklisted* and therefore will not be
 automatically updated. To blacklist a package, add it to the list:
 
-    Unattended-Upgrade::Package-Blacklist {
-    //      "vim";
-    //      "libc6";
-    //      "libc6-dev";
-    //      "libc6-i686";
-    };
+```bash
+Unattended-Upgrade::Package-Blacklist {
+//      "vim";
+//      "libc6";
+//      "libc6-dev";
+//      "libc6-i686";
+};
+```
 
-> **Note**
->
-> The double *“//”* serve as comments, so whatever follows "//" will not be
-> evaluated.
+!!! Note: The double *“//”* serve as comments, so whatever follows "//" will not be
+evaluated.
 
 To enable automatic updates, edit `/etc/apt/apt.conf.d/10periodic` and set the
 appropriate apt configuration options:
 
-    APT::Periodic::Update-Package-Lists "1";
-    APT::Periodic::Download-Upgradeable-Packages "1";
-    APT::Periodic::AutocleanInterval "7";
-    APT::Periodic::Unattended-Upgrade "1";
+```bash
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "7";
+APT::Periodic::Unattended-Upgrade "1";
+```
 
 The above configuration updates the package list, downloads, and installs
 available upgrades every day. The local download archive is cleaned every
 week.
 
-> **Note**
->
-> You can read more about apt Periodic configuration options in the
-> `/etc/cron.daily/apt` script header.
+!!! Note: You can read more about apt Periodic configuration options in the
+`/etc/cron.daily/apt` script header.
 
 The results of unattended-upgrades will be logged to
 `/var/log/unattended-upgrades`.
 
-## Notifications {#update-notifications}
-
+### Notifications 
 Configuring *Unattended-Upgrade::Mail* in
 `/etc/apt/apt.conf.d/50unattended-upgrades` will enable unattended-upgrades to
 email an administrator detailing any packages that need upgrading or have
@@ -305,15 +346,18 @@ updates available, as well as a summary of changes in each package.
 
 To install the apticron package, in a terminal enter:
 
-    sudo apt install apticron
+```bash
+sudo apt install apticron
+```
 
 Once the package is installed edit `/etc/apticron/apticron.conf`, to set the
 email address and other options:
 
-    EMAIL="root@example.com"
+```bash
+EMAIL="root@example.com"
+```
 
-# Configuration
-
+## Configuration
 Configuration of the *Advanced Packaging Tool* (APT) system repositories is
 stored in the `/etc/apt/sources.list` file and the `/etc/apt/sources.list.d`
 directory. An example of this file is referenced here, along with information
@@ -324,11 +368,12 @@ disable the requirement of inserting the Ubuntu CD-ROM whenever package
 operations occur, simply comment out the appropriate line for the CD-ROM,
 which appears at the top of the file:
 
-    # no more prompting for CD-ROM please
-    # deb cdrom:[DISTRO-APT-CD-NAME - Release i386 (20111013.1)]/ DISTRO-SHORT-CODENAME main restricted
+```bash
+# no more prompting for CD-ROM please
+# deb cdrom:[DISTRO-APT-CD-NAME - Release i386 (20111013.1)]/ DISTRO-SHORT-CODENAME main restricted
+```
 
-## Extra Repositories
-
+### Extra Repositories
 In addition to the officially supported package repositories available for
 Ubuntu, there exist additional community-maintained repositories which add
 thousands more packages for potential installation. Two of the most popular
@@ -337,17 +382,13 @@ officially supported by Ubuntu, but because they are maintained by the
 community they generally provide packages which are safe for use with your
 Ubuntu computer.
 
-> **Note**
->
-> Packages in the *Multiverse* repository often have licensing issues that
-> prevent them from being distributed with a free operating system, and they
-> may be illegal in your locality.
+!!! Note: Packages in the *Multiverse* repository often have licensing issues that
+prevent them from being distributed with a free operating system, and they
+may be illegal in your locality.
 
-> **Warning**
->
-> Be advised that neither the *Universe* or *Multiverse* repositories contain
-> officially supported packages. In particular, there may not be security
-> updates for these packages.
+!!! Warning: Be advised that neither the *Universe* or *Multiverse* repositories contain
+officially supported packages. In particular, there may not be security
+updates for these packages.
 
 Many other package sources are available, sometimes even offering only one
 package, as in the case of package sources provided by the developer of a
@@ -361,26 +402,33 @@ By default, the *Universe* and *Multiverse* repositories are enabled but if
 you would like to disable them edit `/etc/apt/sources.list` and comment the
 following lines:
 
-    deb http://archive.ubuntu.com/ubuntu DISTRO-SHORT-CODENAME universe multiverse
-    deb-src http://archive.ubuntu.com/ubuntu DISTRO-SHORT-CODENAME universe multiverse
+```bash
+deb http://archive.ubuntu.com/ubuntu DISTRO-SHORT-CODENAME universe multiverse
+deb-src http://archive.ubuntu.com/ubuntu DISTRO-SHORT-CODENAME universe multiverse
+```
 
-    deb http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME universe
-    deb-src http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME universe
-    deb http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME-updates universe
-    deb-src http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME-updates universe
+```bash
+deb http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME universe
+deb-src http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME universe
+deb http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME-updates universe
+deb-src http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME-updates universe
+```
 
-    deb http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME multiverse
-    deb-src http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME multiverse
-    deb http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME-updates multiverse
-    deb-src http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME-updates multiverse
+```bash
+deb http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME multiverse
+deb-src http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME multiverse
+deb http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME-updates multiverse
+deb-src http://us.archive.ubuntu.com/ubuntu/ DISTRO-SHORT-CODENAME-updates multiverse
+```
 
-    deb http://security.ubuntu.com/ubuntu DISTRO-SHORT-CODENAME-security universe
-    deb-src http://security.ubuntu.com/ubuntu DISTRO-SHORT-CODENAME-security universe
-    deb http://security.ubuntu.com/ubuntu DISTRO-SHORT-CODENAME-security multiverse
-    deb-src http://security.ubuntu.com/ubuntu DISTRO-SHORT-CODENAME-security multiverse
+```bash
+deb http://security.ubuntu.com/ubuntu DISTRO-SHORT-CODENAME-security universe
+deb-src http://security.ubuntu.com/ubuntu DISTRO-SHORT-CODENAME-security universe
+deb http://security.ubuntu.com/ubuntu DISTRO-SHORT-CODENAME-security multiverse
+deb-src http://security.ubuntu.com/ubuntu DISTRO-SHORT-CODENAME-security multiverse
+```
 
-# References {#package-management-references}
-
+## References 
 Most of the material covered in this chapter is available in man pages, many
 of which are available online.
 

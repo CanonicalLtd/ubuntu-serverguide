@@ -1,7 +1,6 @@
 # Monitoring
 
-# Overview {#monitoring-overview}
-
+## Overview 
 The monitoring of essential servers and services is an important part of
 system administration. Most network services are monitored for performance,
 availability, or both. This section will cover installation and configuration
@@ -16,13 +15,13 @@ to gather information from the network. Using the munin-node package,
 Hopefully these simple examples will allow you to monitor additional servers
 and services on your network.
 
-# Nagios
-
-## Installation {#nagios-installation}
-
+## Nagios
+### Installation 
 First, on *server01* install the nagios package. In a terminal enter:
 
-    sudo apt install nagios3 nagios-nrpe-plugin
+```bash
+sudo apt install nagios3 nagios-nrpe-plugin
+```
 
 You will be asked to enter a password for the *nagiosadmin* user. The user's
 credentials are stored in `/etc/nagios3/htpasswd.users`. To change the
@@ -31,25 +30,28 @@ the htpasswd that is part of the apache2-utils package.
 
 For example, to change the password for the *nagiosadmin* user enter:
 
-    sudo htpasswd /etc/nagios3/htpasswd.users nagiosadmin
+```bash
+sudo htpasswd /etc/nagios3/htpasswd.users nagiosadmin
+```
 
 To add a user:
 
-    sudo htpasswd /etc/nagios3/htpasswd.users steve
+```bash
+sudo htpasswd /etc/nagios3/htpasswd.users steve
+```
 
 Next, on *server02* install the nagios-nrpe-server package. From a terminal on
 server02 enter:
 
-    sudo apt install nagios-nrpe-server
+```bash
+sudo apt install nagios-nrpe-server
+```
 
-> **Note**
->
-> NRPE allows you to execute local checks on remote hosts. There are other
-> ways of accomplishing this through other Nagios plugins as well as other
-> checks.
+!!! Note: NRPE allows you to execute local checks on remote hosts. There are other
+ways of accomplishing this through other Nagios plugins as well as other
+checks.
 
-## Configuration Overview {#nagios-configuration-overview}
-
+### Configuration Overview 
 There are a couple of directories containing Nagios configuration and check
 files.
 
@@ -64,17 +66,17 @@ files.
 -   `/usr/lib/nagios/plugins/`: where the check binaries are stored. To see
     the options of a check use the *-h* option.
 
-    For example: `/usr/lib/nagios/plugins/check_dhcp -h`
+```bash
+For example: `/usr/lib/nagios/plugins/check_dhcp -h`
+```
 
 There are a plethora of checks Nagios can be configured to execute for any
 given host. For this example Nagios will be configured to check disk space,
 DNS, and a MySQL hostgroup. The DNS check will be on *server02*, and the MySQL
 hostgroup will include both *server01* and *server02*.
 
-> **Note**
->
-> See [???] for details on setting up Apache, [???][1] for DNS, and [???][2]
-> for MySQL.
+!!! Note: See [???] for details on setting up Apache, [???][1] for DNS, and [???][2]
+for MySQL.
 
 Additionally, there are some terms that once explained will hopefully make
 understanding Nagios configuration easier:
@@ -102,111 +104,159 @@ Large Nagios installations can be quite complex to configure. It is usually
 best to start small, one or two hosts, get things configured the way you like
 then expand.
 
-## Configuration {#nagios-configuration}
-
+### Configuration 
 -   First, create a *host* configuration file for *server02*. Unless otherwise
     specified, run all these commands on *server01*. In a terminal enter:
 
-        sudo cp /etc/nagios3/conf.d/localhost_nagios2.cfg \
-        /etc/nagios3/conf.d/server02.cfg
+```bash
+    sudo cp /etc/nagios3/conf.d/localhost_nagios2.cfg \
+    /etc/nagios3/conf.d/server02.cfg
+```
 
-    > **Note**
-    >
-    > In the above and following command examples, replace *"server01"*,
-    > *"server02"* *172.18.100.100*, and *172.18.100.101* with the host names
-    > and IP addresses of your servers.
+```bash
+> **Note**
+>
+> In the above and following command examples, replace *"server01"*,
+> *"server02"* *172.18.100.100*, and *172.18.100.101* with the host names
+> and IP addresses of your servers.
+```
 
-    Next, edit `/etc/nagios3/conf.d/server02.cfg`:
+```bash
+Next, edit `/etc/nagios3/conf.d/server02.cfg`:
+```
 
-        define host{
-                use                     generic-host  ; Name of host template to use
-                host_name               server02
-                alias                   Server 02
-                address                 172.18.100.101
-        }
+```bash
+    define host{
+            use                     generic-host  ; Name of host template to use
+            host_name               server02
+            alias                   Server 02
+            address                 172.18.100.101
+    }
+```
 
-        # check DNS service.
-        define service {
-                use                             generic-service
-                host_name                       server02
-                service_description             DNS
-                check_command                   check_dns!172.18.100.101
-        }
+```bash
+    # check DNS service.
+    define service {
+            use                             generic-service
+            host_name                       server02
+            service_description             DNS
+            check_command                   check_dns!172.18.100.101
+    }
+```
 
-    Restart the nagios daemon to enable the new configuration:
+```bash
+Restart the nagios daemon to enable the new configuration:
+```
 
-        sudo systemctl restart nagio3.service
+```bash
+    sudo systemctl restart nagio3.service
+```
 
 -   Now add a service definition for the MySQL check by adding the following
     to `/etc/nagios3/conf.d/services_nagios2.cfg`:
 
-        # check MySQL servers.
-        define service {
-                hostgroup_name        mysql-servers
-                service_description   MySQL
-                check_command         check_mysql_cmdlinecred!nagios!secret!$HOSTADDRESS
-                use                   generic-service
-                notification_interval 0 ; set > 0 if you want to be renotified
-        }
+```bash
+    # check MySQL servers.
+    define service {
+            hostgroup_name        mysql-servers
+            service_description   MySQL
+            check_command         check_mysql_cmdlinecred!nagios!secret!$HOSTADDRESS
+            use                   generic-service
+            notification_interval 0 ; set > 0 if you want to be renotified
+    }
+```
 
-    A *mysql-servers* hostgroup now needs to be defined. Edit
-    `/etc/nagios3/conf.d/hostgroups_nagios2.cfg` adding:
+```bash
+A *mysql-servers* hostgroup now needs to be defined. Edit
+`/etc/nagios3/conf.d/hostgroups_nagios2.cfg` adding:
+```
 
-        # MySQL hostgroup.
-        define hostgroup {
-                hostgroup_name  mysql-servers
-                        alias           MySQL servers
-                        members         localhost, server02
-                }
+```bash
+    # MySQL hostgroup.
+    define hostgroup {
+            hostgroup_name  mysql-servers
+                    alias           MySQL servers
+                    members         localhost, server02
+            }
+```
 
-    The Nagios check needs to authenticate to MySQL. To add a *nagios* user to
-    MySQL enter:
+```bash
+The Nagios check needs to authenticate to MySQL. To add a *nagios* user to
+MySQL enter:
+```
 
-        mysql -u root -p -e "create user nagios identified by 'secret';"
+```bash
+    mysql -u root -p -e "create user nagios identified by 'secret';"
+```
 
-    > **Note**
-    >
-    > The *nagios* user will need to be added all hosts in the
-    > *mysql-servers* hostgroup.
+```bash
+> **Note**
+>
+> The *nagios* user will need to be added all hosts in the
+> *mysql-servers* hostgroup.
+```
 
-    Restart nagios to start checking the MySQL servers.
+```bash
+Restart nagios to start checking the MySQL servers.
+```
 
-        sudo systemctl restart nagios3.service
+```bash
+    sudo systemctl restart nagios3.service
+```
 
 -   Lastly configure NRPE to check the disk space on *server02*.
 
-    On *server01* add the service check to `/etc/nagios3/conf.d/server02.cfg`:
+```bash
+On *server01* add the service check to `/etc/nagios3/conf.d/server02.cfg`:
+```
 
-        # NRPE disk check.
-        define service {
-                use                     generic-service
-                host_name               server02
-                service_description     nrpe-disk
-                check_command           check_nrpe_1arg!check_all_disks!172.18.100.101
-        }
+```bash
+    # NRPE disk check.
+    define service {
+            use                     generic-service
+            host_name               server02
+            service_description     nrpe-disk
+            check_command           check_nrpe_1arg!check_all_disks!172.18.100.101
+    }
+```
 
-    Now on *server02* edit `/etc/nagios/nrpe.cfg` changing:
+```bash
+Now on *server02* edit `/etc/nagios/nrpe.cfg` changing:
+```
 
-        allowed_hosts=172.18.100.100
+```bash
+    allowed_hosts=172.18.100.100
+```
 
-    And below in the command definition area add:
+```bash
+And below in the command definition area add:
+```
 
-        command[check_all_disks]=/usr/lib/nagios/plugins/check_disk -w 20% -c 10% -e
+```bash
+    command[check_all_disks]=/usr/lib/nagios/plugins/check_disk -w 20% -c 10% -e
+```
 
-    Finally, restart nagios-nrpe-server:
+```bash
+Finally, restart nagios-nrpe-server:
+```
 
-        sudo systemctl restart nagios-nrpe-server.service
+```bash
+    sudo systemctl restart nagios-nrpe-server.service
+```
 
-    Also, on *server01* restart nagios:
+```bash
+Also, on *server01* restart nagios:
+```
 
-        sudo systemctl restart nagios3.service
+```bash
+    sudo systemctl restart nagios3.service
+```
 
 You should now be able to see the host and service checks in the Nagios CGI
 files. To access them point a browser to http://server01/nagios3. You will
 then be prompted for the *nagiosadmin* username and password.
 
-## References {#nagios-references}
-
+### References 
 This section has just scratched the surface of Nagios' features. The
 nagios-plugins-extra and nagios-snmp-plugins contain many more service checks.
 
@@ -218,70 +268,71 @@ nagios-plugins-extra and nagios-snmp-plugins contain many more service checks.
 
 -   The [Nagios Ubuntu Wiki] page also has more details.
 
-# Munin
-
-## Installation {#munin-installation}
-
+## Munin
+### Installation 
 Before installing Munin on *server01* apache2 will need to be installed. The
 default configuration is fine for running a munin server. For more information
 see [???].
 
 First, on *server01* install munin. In a terminal enter:
 
-    sudo apt install munin
+```bash
+sudo apt install munin
+```
 
 Now on *server02* install the munin-node package:
 
-    sudo apt install munin-node
+```bash
+sudo apt install munin-node
+```
 
-## Configuration {#munin-configuration}
-
+### Configuration 
 On *server01* edit the `/etc/munin/munin.conf` adding the IP address for
 *server02*:
 
-    ## First our "normal" host.
-    [server02]
-           address 172.18.100.101
+```bash
+## First our "normal" host.
+[server02]
+       address 172.18.100.101
+```
 
-> **Note**
->
-> Replace *server02* and *172.18.100.101* with the actual hostname and IP
-> address for your server.
+!!! Note: Replace *server02* and *172.18.100.101* with the actual hostname and IP
+address for your server.
 
 Next, configure munin-node on *server02*. Edit `/etc/munin/munin-node.conf` to
 allow access by *server01*:
 
-    allow ^172\.18\.100\.100$
+```bash
+allow ^172\.18\.100\.100$
+```
 
-> **Note**
->
-> Replace *\^172\\.18\\.100\\.100\$* with IP address for your munin server.
+!!! Note: Replace *\^172\\.18\\.100\\.100\$* with IP address for your munin server.
 
 Now restart munin-node on *server02* for the changes to take effect:
 
-    sudo systemctl restart munini-node.service
+```bash
+sudo systemctl restart munini-node.service
+```
 
 Finally, in a browser go to *http://server01/munin*, and you should see links
 to nice graphs displaying information from the standard *munin-plugins* for
 disk, network, processes, and system.
 
-> **Note**
->
-> Since this is a new install it may take some time for the graphs to display
-> anything useful.
+!!! Note: Since this is a new install it may take some time for the graphs to display
+anything useful.
 
-## Additional Plugins {#munin-plugins}
-
+### Additional Plugins 
 The munin-plugins-extra package contains performance checks additional
 services such as DNS, DHCP, Samba, etc. To install the package, from a
 terminal enter:
 
-    sudo apt install munin-plugins-extra
+```bash
+sudo apt install munin-plugins-extra
+```
 
 Be sure to install the package on both the server and node machines.
 
-## References {#munin-references}
-
+### References 
 -   See the [Munin] website for more details.
 
 -   Specifically the [Munin Documentation] page includes information on

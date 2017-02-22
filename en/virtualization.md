@@ -14,26 +14,24 @@ available, but can also be used on hardware without virtualization extensions.
 Qemu is another popular solution for hardware without virtualization
 extensions.
 
-# libvirt
-
+## libvirt
 The libvirt library is used to interface with different virtualization
 technologies. Before getting started with libvirt it is best to make sure your
 hardware supports the necessary virtualization extensions for KVM. Enter the
 following from a terminal prompt:
 
-    kvm-ok
+```bash
+kvm-ok
+```
 
 A message will be printed informing you if your CPU *does* or *does not*
 support hardware virtualization.
 
-> **Note**
->
-> On many computers with processors supporting hardware assisted
-> virtualization, it is necessary to activate an option in the BIOS to enable
-> it.
+!!! Note: On many computers with processors supporting hardware assisted
+virtualization, it is necessary to activate an option in the BIOS to enable
+it.
 
-## Virtual Networking
-
+### Virtual Networking
 There are a few different ways to allow a virtual machine access to the
 external network. The default virtual network configuration includes
 *bridging* and *iptables* rules implementing *usermode* networking, which uses
@@ -46,11 +44,12 @@ allows the virtual interfaces to connect to the outside network through the
 physical interface, making them appear as normal hosts to the rest of the
 network.
 
-## Installation {#libvirt-installation}
-
+### Installation 
 To install the necessary packages, from a terminal prompt enter:
 
-    sudo apt install qemu-kvm libvirt-bin
+```bash
+sudo apt install qemu-kvm libvirt-bin
+```
 
 After installing libvirt-bin, the user used to manage virtual machines will
 need to be added to the *libvirtd* group. Doing so will grant the user access
@@ -58,18 +57,16 @@ to the advanced networking options.
 
 In a terminal enter:
 
-    sudo adduser $USER libvirtd
+```bash
+sudo adduser $USER libvirtd
+```
 
-> **Note**
->
-> If the user chosen is the current user, you will need to log out and back in
-> for the new group membership to take effect.
+!!! Note: If the user chosen is the current user, you will need to log out and back in
+for the new group membership to take effect.
 
-> **Note**
->
-> In more recent releases (&gt;= Yakkety) the group was renamed to *libvirt*.
-> Upgraded systems get a new *libvirt* group with the same gid as the
-> *libvirtd* group to match that.
+!!! Note: In more recent releases (&gt;= Yakkety) the group was renamed to *libvirt*.
+Upgraded systems get a new *libvirt* group with the same gid as the
+*libvirtd* group to match that.
 
 You are now ready to install a *Guest* operating system. Installing a virtual
 machine follows the same process as installing the operating system directly
@@ -93,19 +90,22 @@ execute custom post-install scripts, etc. For details see
 Libvirt can also be configured work with Xen. For details, see the Xen Ubuntu
 community page referenced below.
 
-## virt-install {#libvirt-virt-install}
-
+### virt-install 
 virt-install is part of the virtinst package. To install it, from a terminal
 prompt enter:
 
-    sudo apt install virtinst
+```bash
+sudo apt install virtinst
+```
 
 There are several options available when using virt-install. For example:
 
-    sudo virt-install -n web_devel -r 256 \
-    --disk path=/var/lib/libvirt/images/web_devel.img,bus=virtio,size=4 -c \
-    ubuntu-DISTRO-REV-SHORT-server-i386.iso --network network=default,model=virtio \
-    --graphics vnc,listen=0.0.0.0 --noautoconsole -v
+```bash
+sudo virt-install -n web_devel -r 256 \
+--disk path=/var/lib/libvirt/images/web_devel.img,bus=virtio,size=4 -c \
+ubuntu-DISTRO-REV-SHORT-server-i386.iso --network network=default,model=virtio \
+--graphics vnc,listen=0.0.0.0 --noautoconsole -v
+```
 
 -   *-n web\_devel:* the name of the new virtual machine will be *web\_devel*
     in this example.
@@ -141,12 +141,13 @@ After launching virt-install you can connect to the virtual machine's console
 either locally using a GUI (if your server has a GUI), or via a remote VNC
 client from a GUI-based computer.
 
-## virt-clone {#libvirt-virt-clone}
-
+### virt-clone 
 The virt-clone application can be used to copy one virtual machine to another.
 For example:
 
-    sudo virt-clone -o web_devel -n database_devel -f /path/to/database_devel.img 
+```bash
+sudo virt-clone -o web_devel -n database_devel -f /path/to/database_devel.img 
+```
 
 -   *-o:* original virtual machine.
 
@@ -158,65 +159,75 @@ For example:
 Also, use *-d* or *--debug* option to help troubleshoot problems with
 virt-clone.
 
-> **Note**
->
-> Replace *web\_devel* and *database\_devel* with appropriate virtual machine
-> names.
+!!! Note: Replace *web\_devel* and *database\_devel* with appropriate virtual machine
+names.
 
-## Virtual Machine Management {#libvirt-management}
-
-### virsh
-
+### Virtual Machine Management 
+#### virsh
 There are several utilities available to manage virtual machines and libvirt.
 The virsh utility can be used from the command line. Some examples:
 
 -   To list running virtual machines:
 
-        virsh list
+```bash
+    virsh list
+```
 
 -   To start a virtual machine:
 
-        virsh start web_devel
+```bash
+    virsh start web_devel
+```
 
 -   Similarly, to start a virtual machine at boot:
 
-        virsh autostart web_devel
+```bash
+    virsh autostart web_devel
+```
 
 -   Reboot a virtual machine with:
 
-        virsh reboot web_devel
+```bash
+    virsh reboot web_devel
+```
 
 -   The *state* of virtual machines can be saved to a file in order to be
     restored later. The following will save the virtual machine state into a
     file named according to the date:
 
-        virsh save web_devel web_devel-022708.state
+```bash
+    virsh save web_devel web_devel-022708.state
+```
 
-    Once saved the virtual machine will no longer be running.
+```bash
+Once saved the virtual machine will no longer be running.
+```
 
 -   A saved virtual machine can be restored using:
 
-        virsh restore web_devel-022708.state
+```bash
+    virsh restore web_devel-022708.state
+```
 
 -   To shutdown a virtual machine do:
 
-        virsh shutdown web_devel
+```bash
+    virsh shutdown web_devel
+```
 
 -   A CDROM device can be mounted in a virtual machine by entering:
 
-        virsh attach-disk web_devel /dev/cdrom /media/cdrom
+```bash
+    virsh attach-disk web_devel /dev/cdrom /media/cdrom
+```
 
-> **Note**
->
-> In the above examples replace *web\_devel* with the appropriate virtual
-> machine name, and `web_devel-022708.state` with a descriptive file name.
->
-> If virsh (or other vir\* tools) shall connect to something else than the
-> default qemu-kvm/system hipervisor one can find alternatives for the
-> *connect* option in *man virsh* or [libvirt doc]
+!!! Note: In the above examples replace *web\_devel* with the appropriate virtual
+machine name, and `web_devel-022708.state` with a descriptive file name.
+If virsh (or other vir\* tools) shall connect to something else than the
+default qemu-kvm/system hipervisor one can find alternatives for the
+*connect* option in *man virsh* or [libvirt doc]
 
-### migration
-
+#### migration
 There are different types of migration available depending on the versions of
 libvirt and the hipervisor being used. In general those types are:
 
@@ -229,63 +240,72 @@ libvirt and the hipervisor being used. In general those types are:
 There are various options to those methods, but the entry point for all of
 them is *virsh migrate*. Read the integrated help for more detail.
 
-     virsh migrate --help 
+```bash
+ virsh migrate --help 
+```
 
 Some useful documentation on constraints and considerations about live
 migration can be found at the [Ubuntu Wiki]
 
-### Virtual Machine Manager {#virt-manager}
-
+#### Virtual Machine Manager 
 The virt-manager package contains a graphical utility to manage local and
 remote virtual machines. To install virt-manager enter:
 
-    sudo apt install virt-manager
+```bash
+sudo apt install virt-manager
+```
 
 Since virt-manager requires a Graphical User Interface (GUI) environment it is
 recommended to be installed on a workstation or test machine instead of a
 production server. To connect to the local libvirt service enter:
 
-    virt-manager -c qemu:///system
+```bash
+virt-manager -c qemu:///system
+```
 
 You can connect to the libvirt service running on another host by entering the
 following in a terminal prompt:
 
-    virt-manager -c qemu+ssh://virtnode1.mydomain.com/system
+```bash
+virt-manager -c qemu+ssh://virtnode1.mydomain.com/system
+```
 
-> **Note**
->
-> The above example assumes that SSH connectivity between the management
-> system and virtnode1.mydomain.com has already been configured, and uses SSH
-> keys for authentication. SSH *keys* are needed because libvirt sends the
-> password prompt to another process. For details on configuring SSH see [???]
+!!! Note: The above example assumes that SSH connectivity between the management
+system and virtnode1.mydomain.com has already been configured, and uses SSH
+keys for authentication. SSH *keys* are needed because libvirt sends the
+password prompt to another process. For details on configuring SSH see [???]
 
-## Virtual Machine Viewer {#libvirt-virt-viewer}
-
+### Virtual Machine Viewer 
 The virt-viewer application allows you to connect to a virtual machine's
 console. virt-viewer does require a Graphical User Interface (GUI) to
 interface with the virtual machine.
 
 To install virt-viewer from a terminal enter:
 
-    sudo apt install virt-viewer
+```bash
+sudo apt install virt-viewer
+```
 
 Once a virtual machine is installed and running you can connect to the virtual
 machine's console by using:
 
-    virt-viewer web_devel
+```bash
+virt-viewer web_devel
+```
 
 Similar to virt-manager, virt-viewer can connect to a remote host using *SSH*
 with key authentication, as well:
 
-    virt-viewer -c qemu+ssh://virtnode1.mydomain.com/system web_devel
+```bash
+virt-viewer -c qemu+ssh://virtnode1.mydomain.com/system web_devel
+```
 
 Be sure to replace *web\_devel* with the appropriate virtual machine name.
 
 If configured to use a *bridged* network interface you can also setup SSH
 access to the virtual machine.
 
-## Resources {#libvirt-resources}
-
+### Resources 
 -   See the [KVM] home page for more details.
 
 -   For more information on libvirt see the [libvirt home page]
@@ -301,8 +321,7 @@ access to the virtual machine.
 -   For information on Xen, including using Xen with libvirt, please see the
     [Ubuntu Wiki Xen] page.
 
-# Qemu
-
+## Qemu
 [Qemu] is a machine emulator that can run operating systems and programs for
 one machine on a different machine. Mostly it is not used as emulator but as
 virtualizer in collaboration with KVM or XEN kernel components. In that case
@@ -314,12 +333,9 @@ running guests those is rarely used that way for other means than development
 purposes. [Libvirt] provides an abstraction from specific versions and
 hipervisors and encapsulates some workarounds and best practices.
 
-## Upgrading the machine type {#machine-type-upgrade}
-
-> **Note**
->
-> This also is documented along some more constraints and considerations at
-> the [Ubuntu Wiki][1]
+### Upgrading the machine type 
+!!! Note: This also is documented along some more constraints and considerations at
+the [Ubuntu Wiki][1]
 
 You might want to update your machine type of an existing defined guest to:
 
@@ -346,18 +362,26 @@ the same way as most others.
 
 First shutdown your machine and wait until it has reached that state.
 
-    virsh shutdown <yourmachine>
-    # wait
-    virsh list --inactive
-    # should now list your machine as "shut off"
-            
+```bash
+virsh shutdown <yourmachine>
+# wait
+virsh list --inactive
+# should now list your machine as "shut off"
+```
+```bash
+        
+```
 
 Then edit the machine definition and find the type in the type tag at the
 machine attribute.
 
-    virsh edit <yourmachine>
-    <type arch='x86_64' machine='pc-i440fx-xenial'>hvm</type>
-            
+```bash
+virsh edit <yourmachine>
+<type arch='x86_64' machine='pc-i440fx-xenial'>hvm</type>
+```
+```bash
+        
+```
 
 Change this to the value you want. If you need to check what types are
 available via "-M ?" Note that while providing upstream types as convenience
@@ -366,46 +390,50 @@ default would be. In general it is strongly recommended that you change to
 newer types if possible to exploit newer features, but also to benefit of
 bugfixes that only apply to the newer device virtualization.
 
-    kvm -M ?
-    # lists machine types, e.g.
-    pc-i440fx-xenial       Ubuntu 16.04 PC (i440FX + PIIX, 1996) (default)
-    ...
-            
+```bash
+kvm -M ?
+# lists machine types, e.g.
+pc-i440fx-xenial       Ubuntu 16.04 PC (i440FX + PIIX, 1996) (default)
+...
+```
+```bash
+        
+```
 
 After this you can start your guest again. You can check the current machine
 type from guest and host depending on your needs.
 
-    virsh start <yourmachine>
-    # check from host, via dumping the active xml definition
-    virsh dumpxml <yourmachine> | xmllint --xpath "string(//domain/os/type/@machine)" -
-    # or from the guest via dmidecode
-    sudo dmidecode | grep Product -A 1
-            Product Name: Standard PC (i440FX + PIIX, 1996)
-            Version: pc-i440fx-xenial
-            
+```bash
+virsh start <yourmachine>
+# check from host, via dumping the active xml definition
+virsh dumpxml <yourmachine> | xmllint --xpath "string(//domain/os/type/@machine)" -
+# or from the guest via dmidecode
+sudo dmidecode | grep Product -A 1
+        Product Name: Standard PC (i440FX + PIIX, 1996)
+        Version: pc-i440fx-xenial
+```
+```bash
+        
+```
 
 If you keep non-live definitions around like xml files remember to update
 those as well.
 
-# Cloud images and uvtool
-
-## Introduction {#cloud-image-introduction}
-
+## Cloud images and uvtool
+### Introduction 
 With Ubuntu being one of the most used operating systems on many cloud
 platforms, the availability of stable and secure cloud images has become very
 important. As of 12.04 the utilization of cloud images outside of a cloud
 infrastructure has been improved. It is now possible to use those images to
 create a virtual machine without the need of a complete installation.
 
-## Creating virtual machines using uvtool
-
+### Creating virtual machines using uvtool
 Starting with 14.04 LTS, a tool called uvtool greatly facilitates the task of
 generating virtual machines (VM) using the cloud images. uvtool provides a
 simple mechanism to synchronize cloud-images locally and use them to create
 new VMs in minutes.
 
-### Uvtool packages
-
+#### Uvtool packages
 The following packages and their dependencies will be required in order to use
 uvtool:
 
@@ -415,7 +443,9 @@ uvtool:
 
 To install uvtool, run:
 
-    $ apt -y install uvtool
+```bash
+$ apt -y install uvtool
+```
 
 This will install uvtool's main commands:
 
@@ -423,87 +453,100 @@ This will install uvtool's main commands:
 
 -   uvt-kvm
 
-### Get the Ubuntu Cloud Image with uvt-simplestreams-libvirt
-
+#### Get the Ubuntu Cloud Image with uvt-simplestreams-libvirt
 This is one of the major simplifications that uvtool brings. It is aware of
 where to find the cloud images so only one command is required to get a new
 cloud image. For instance, if you want to synchronize all cloud images for the
 amd64 architecture, the uvtool command would be:
 
-    $ uvt-simplestreams-libvirt sync arch=amd64
+```bash
+$ uvt-simplestreams-libvirt sync arch=amd64
+```
 
 After an amount of time required to download all the images from the Internet,
 you will have a complete set of cloud images stored locally. To see what has
 been downloaded use the following command:
 
-    $ uvt-simplestreams-libvirt query
-    release=oneiric arch=amd64 label=release (20130509)
-    release=precise arch=amd64 label=release (20160315)
-    release=quantal arch=amd64 label=release (20140409)
-    release=raring arch=amd64 label=release (20140111)
-    release=saucy arch=amd64 label=release (20140709)
-    release=trusty arch=amd64 label=release (20160314)
-    release=utopic arch=amd64 label=release (20150723)
-    release=vivid arch=amd64 label=release (20160203)
-    release=wily arch=amd64 label=release (20160315)
-    release=xenial arch=amd64 label=beta1 (20160223.1)
+```bash
+$ uvt-simplestreams-libvirt query
+release=oneiric arch=amd64 label=release (20130509)
+release=precise arch=amd64 label=release (20160315)
+release=quantal arch=amd64 label=release (20140409)
+release=raring arch=amd64 label=release (20140111)
+release=saucy arch=amd64 label=release (20140709)
+release=trusty arch=amd64 label=release (20160314)
+release=utopic arch=amd64 label=release (20150723)
+release=vivid arch=amd64 label=release (20160203)
+release=wily arch=amd64 label=release (20160315)
+release=xenial arch=amd64 label=beta1 (20160223.1)
+```
 
 In the case where you want to synchronize only one specific cloud-image, you
 need to use the release= and arch= filters to identify which image needs to be
 synchronized.
 
-    $ uvt-simplestreams-libvirt sync release=DISTRO-SHORT-CODENAME arch=amd64
+```bash
+$ uvt-simplestreams-libvirt sync release=DISTRO-SHORT-CODENAME arch=amd64
+```
 
-### Create the VM using uvt-kvm
-
+#### Create the VM using uvt-kvm
 In order to connect to the virtual machine once it has been created, you must
 have a valid SSH key available for the Ubuntu user. If your environment does
 not have an SSH key, you can easily create one using the following command:
 
-    $ ssh-keygen
-    Generating public/private rsa key pair.
-    Enter file in which to save the key (/home/ubuntu/.ssh/id_rsa): 
-    Enter passphrase (empty for no passphrase): 
-    Enter same passphrase again: 
-    Your identification has been saved in /home/ubuntu/.ssh/id_rsa.
-    Your public key has been saved in /home/ubuntu/.ssh/id_rsa.pub.
-    The key fingerprint is:
-    4d:ba:5d:57:c9:49:ef:b5:ab:71:14:56:6e:2b:ad:9b ubuntu@DISTRO-SHORT-CODENAMES
-    The key's randomart image is:
-    +--[ RSA 2048]----+
-    |               ..|
-    |              o.=|
-    |          .    **|
-    |         +    o+=|
-    |        S . ...=.|
-    |         o . .+ .|
-    |        . .  o o |
-    |              *  |
-    |             E   |
-    +-----------------+
+```bash
+$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/ubuntu/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/ubuntu/.ssh/id_rsa.
+Your public key has been saved in /home/ubuntu/.ssh/id_rsa.pub.
+The key fingerprint is:
+4d:ba:5d:57:c9:49:ef:b5:ab:71:14:56:6e:2b:ad:9b ubuntu@DISTRO-SHORT-CODENAMES
+The key's randomart image is:
++--[ RSA 2048]----+
+|               ..|
+|              o.=|
+|          .    **|
+|         +    o+=|
+|        S . ...=.|
+|         o . .+ .|
+|        . .  o o |
+|              *  |
+|             E   |
++-----------------+
+```
 
 To create of a new virtual machine using uvtool, run the following in a
 terminal:
 
-    $ uvt-kvm create firsttest
+```bash
+$ uvt-kvm create firsttest
+```
 
 This will create a VM named **firsttest** using the current LTS cloud image
 available locally. If you want to specify a release to be used to create the
 VM, you need to use the **release=** filter:
 
-    $ uvt-kvm create secondtest release=DISTRO-SHORT-CODENAME
+```bash
+$ uvt-kvm create secondtest release=DISTRO-SHORT-CODENAME
+```
 
 uvt-kvm wait can be used to wait until the creation of the VM has completed:
 
-    $ uvt-kvm wait secondttest --insecure
-    Warning: secure wait for boot-finished not yet implemented; use --insecure.
+```bash
+$ uvt-kvm wait secondttest --insecure
+Warning: secure wait for boot-finished not yet implemented; use --insecure.
+```
 
-### Connect to the running VM
-
+#### Connect to the running VM
 Once the virtual machine creation is completed, you can connect to it using
 SSH:
 
-    $ uvt-kvm ssh secondtest --insecure
+```bash
+$ uvt-kvm ssh secondtest --insecure
+```
 
 For the time being, the **--insecure** is required, so use this mechanism to
 connect to your VM only if you completely trust your network infrastructure.
@@ -511,52 +554,69 @@ connect to your VM only if you completely trust your network infrastructure.
 You can also connect to your VM using a regular SSH session using the IP
 address of the VM. The address can be queried using the following command:
 
-    $ uvt-kvm ip secondtest
-    192.168.122.199
-    $ ssh -i ~/.ssh/id_rsa ubuntu@192.168.122.199
-    The authenticity of host '192.168.122.199 (192.168.122.199)' can't be established.
-    ECDSA key fingerprint is SHA256:8oxaztRWzTMtv8SC9LYyjuqBu79Z9JP8bUGh6G8R8cw.
-    Are you sure you want to continue connecting (yes/no)? yes
-    Warning: Permanently added '192.168.122.199' (ECDSA) to the list of known hosts.
-    Welcome to Ubuntu DISTRO-VERSION (development branch) (GNU/Linux LINUX-KERNEL-VERSION-X-generic ARCH)
+```bash
+$ uvt-kvm ip secondtest
+192.168.122.199
+$ ssh -i ~/.ssh/id_rsa ubuntu@192.168.122.199
+The authenticity of host '192.168.122.199 (192.168.122.199)' can't be established.
+ECDSA key fingerprint is SHA256:8oxaztRWzTMtv8SC9LYyjuqBu79Z9JP8bUGh6G8R8cw.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '192.168.122.199' (ECDSA) to the list of known hosts.
+Welcome to Ubuntu DISTRO-VERSION (development branch) (GNU/Linux LINUX-KERNEL-VERSION-X-generic ARCH)
+```
 
-     * Documentation:  https://help.ubuntu.com/
+```bash
+ * Documentation:  https://help.ubuntu.com/
+```
 
-      Get cloud support with Ubuntu Advantage Cloud Guest:
-        http://www.ubuntu.com/business/services/cloud
+```bash
+  Get cloud support with Ubuntu Advantage Cloud Guest:
+    http://www.ubuntu.com/business/services/cloud
+```
 
-    0 packages can be updated.
-    0 updates are security updates.
+```bash
+0 packages can be updated.
+0 updates are security updates.
+```
 
 
 
-    The programs included with the Ubuntu system are free software;
-    the exact distribution terms for each program are described in the
-    individual files in /usr/share/doc/*/copyright.
+```bash
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+```
 
-    Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
-    applicable law.
+```bash
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+```
 
-    To run a command as administrator (user "root"), use "sudo <command>".
-    See "man sudo_root" for details.
+```bash
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+```
 
-    ubuntu@secondtest:~$ 
+```bash
+ubuntu@secondtest:~$ 
+```
 
-### Get the list of running VMs
-
+#### Get the list of running VMs
 You can get the list of VMs running on your system with this command:
 
-    $ uvt-kvm list
-    secondtest
+```bash
+$ uvt-kvm list
+secondtest
+```
 
-### Destroy your VM
-
+#### Destroy your VM
 Once you are done with your VM, you can destroy it with:
 
-    $ uvt-kvm destroy secondtest
+```bash
+$ uvt-kvm destroy secondtest
+```
 
-### More uvt-kvm options
-
+#### More uvt-kvm options
 The following options can be used to change some of the characteristics of the
 VM that you are creating:
 
@@ -580,8 +640,7 @@ Some other parameters will have an impact on the cloud-init configuration:
 A complete description of all available modifiers is available in the manpage
 of uvt-kvm.
 
-## Resources {#resources}
-
+### Resources 
 If you are interested in learning more, have questions or suggestions, please
 contact the Ubuntu Server Team at:
 
@@ -589,8 +648,7 @@ contact the Ubuntu Server Team at:
 
 -   Mailing list: [ubuntu-server at lists.ubuntu.com]
 
-# Ubuntu Cloud {#ubuntucloud}
-
+## Ubuntu Cloud 
 Cloud computing is a computing model that allows vast pools of resources to be
 allocated on-demand. These resources such as storage, computing power, network
 and software are abstracted and delivered as a service over the Internet
@@ -599,14 +657,12 @@ ones used by public services such as electricity, water and telephony. Ubuntu
 Cloud Infrastructure uses OpenStack open source software to help build highly
 scalable, cloud computing for both public and private clouds.
 
-## Installation and Configuration {#ubuntu-cloud-installation}
-
+### Installation and Configuration 
 Due to the current high rate of development of this complex technology we
 refer the reader to [upstream documentation] for all matters concerning
 installation and configuration.
 
-## Support and Troubleshooting {#ubuntu-cloud-troubleshooting}
-
+### Support and Troubleshooting 
 Community Support
 
 -   [OpenStack Mailing list]
@@ -617,8 +673,7 @@ Community Support
 
 -   Join the IRC channel \#openstack on freenode.
 
-## Resources {#ubuntu-cloud-resources}
-
+### Resources 
 -   [Cloud Computing - Service models]
 
 -   [OpenStack Compute]
@@ -631,8 +686,7 @@ Community Support
 
 -   <http://cloudglossary.com/>
 
-# LXD
-
+## LXD
 LXD (pronounced lex-dee) is the lightervisor, or lightweight container
 hypervisor. While this claim has been controversial, it has been [quite well
 justified] based on the original academic paper. It also nicely distinguishes
@@ -654,8 +708,7 @@ so that it is best not to use classic LXC commands by hand with LXD
 containers. This document will focus on how to configure and administer LXD on
 Ubuntu systems.
 
-## Online Resources {#lxd-resources}
-
+### Online Resources 
 There is excellent documentation for [getting started with LXD] in the online
 LXD README. There is also an online server allowing you to [try out LXD
 remotely]. Stephane Graber also has an [excellent blog series] on LXD 2.0.
@@ -664,27 +717,26 @@ Finally, there is great documentation on how to [drive lxd using juju].
 This document will offer an Ubuntu Server-specific view of LXD, focusing on
 administration.
 
-## Installation {#lxd-installation}
-
+### Installation 
 LXD is pre-installed on Ubuntu Server cloud images. On other systems, the lxd
 package can be installed using:
 
 
-    sudo apt install lxd
+```bash
+sudo apt install lxd
+```
 
 This will install LXD as well as the recommended dependencies, including the
 LXC library and lxcfs.
 
-## Kernel preparation {#lxd-kernel-prep}
-
+### Kernel preparation 
 In general, Ubuntu 16.04 should have all the desired features enabled by
 default. One exception to this is that in order to enable swap accounting the
 boot argument `swapaccount=1` must be set. This can be done by appending it to
 the `GRUB_CMDLINE_LINUX_DEFAULT=`variable in /etc/default/grub, then running
 'update-grub' as root and rebooting.
 
-## Configuration {#lxd-configuration}
-
+### Configuration 
 By default, LXD is installed listening on a local UNIX socket, which members
 of group LXD can talk to. It has no trust password setup. And it uses the
 filesystem at `/var/lib/lxd` to store containers. To configure LXD with
@@ -703,7 +755,9 @@ You must run 'lxd init' as root. 'lxc' commands can be run as any user who is
 member of group lxd. If user joe is not a member of group 'lxd', you may run:
 
 
-    adduser joe lxd
+```bash
+adduser joe lxd
+```
 
 as root to change it. The new membership will take effect on the next login,
 or after running 'newgrp lxd' from an existing login.
@@ -712,12 +766,10 @@ For more information on server, container, profile, and device configuration,
 please refer to the definitive configuration provided with the source code,
 which can be found [online]
 
-## Creating your first container {#lxd-first-container}
-
+### Creating your first container 
 This section will describe the simplest container tasks.
 
-### Creating a container
-
+#### Creating a container
 Every new container is created based on either an image, an existing
 container, or a container snapshot. At install time, LXD is configured with
 the following image servers:
@@ -736,20 +788,26 @@ the following image servers:
 The command to create and start a container is
 
 
-    lxc launch remote:image containername
+```bash
+lxc launch remote:image containername
+```
 
 Images are identified by their hash, but are also aliased. The 'ubuntu' server
 knows many aliases such as '16.04' and 'xenial'. A list of all images
 available from the Ubuntu Server can be seen using:
 
 
-    lxc image list ubuntu:
+```bash
+lxc image list ubuntu:
+```
 
 To see more information about a particular image, including all the aliases it
 is known by, you can use:
 
 
-    lxc image info ubuntu:xenial
+```bash
+lxc image info ubuntu:xenial
+```
 
 You can generally refer to an Ubuntu image using the release name ('xenial')
 or the release number (16.04). In addition, 'lts' is an alias for the latest
@@ -757,25 +815,33 @@ supported LTS release. To choose a different architecture, you can specify the
 desired architecture:
 
 
-    lxc image info ubuntu:lts/arm64
+```bash
+lxc image info ubuntu:lts/arm64
+```
 
 Now, let's start our first container:
 
 
-    lxc launch ubuntu:xenial x1
+```bash
+lxc launch ubuntu:xenial x1
+```
 
 This will download the official current Xenial cloud image for your current
 architecture, then create a container using that image, and finally start it.
 Once the command returns, you can see it using:
 
 
-    lxc list
-    lxc info x1
+```bash
+lxc list
+lxc info x1
+```
 
 and open a shell in it using:
 
 
-    lxc exec x1 bash
+```bash
+lxc exec x1 bash
+```
 
 The try-it page gives a full synopsis of the commands you can use to
 administer containers.
@@ -784,26 +850,28 @@ Now that the 'xenial' image has been downloaded, it will be kept in sync until
 no new containers have been created based on it for (by default) 10 days.
 After that, it will be deleted.
 
-## LXD Server Configuration {#lxd-server-config}
-
+### LXD Server Configuration 
 By default, LXD is socket activated and configured to listen only on a local
 UNIX socket. While LXD may not be running when you first look at the process
 listing, any LXC command will start it up. For instance:
 
 
-    lxc list
+```bash
+lxc list
+```
 
 This will create your client certificate and contact the LXD server for a list
 of containers. To make the server accessible over the network you can set the
 http port using:
 
 
-    lxc config set core.https_address :8443
+```bash
+lxc config set core.https_address :8443
+```
 
 This will tell LXD to listen to port 8843 on all addresses.
 
-### Authentication
-
+#### Authentication
 By default, LXD will allow all members of group 'lxd' (which by default
 includes all members of group admin) to talk to it over the UNIX socket.
 Communication over the network is authorized using server and client
@@ -812,7 +880,9 @@ certificates.
 Before client c1 wishes to use remote r1, r1 must be registered using:
 
 
-    lxc remote add r1 r1.example.com:8443
+```bash
+lxc remote add r1 r1.example.com:8443
+```
 
 The fingerprint of r1's certificate will be shown, to allow the user at c1 to
 reject a false certificate. The server in turn will verify that c1 may be
@@ -820,7 +890,9 @@ trusted in one of two ways. The first is to register it in advance from any
 already-registered client, using:
 
 
-    lxc config trust add r1 certfile.crt
+```bash
+lxc config trust add r1 certfile.crt
+```
 
 Now when the client adds r1 as a known remote, it will not need to provide a
 password as it is already trusted by the server.
@@ -829,13 +901,14 @@ The other is to configure a 'trust password' with r1, either at initial
 configuration using 'lxd init', or after the fact using
 
 
-    lxc config set core.trust_password PASSWORD
+```bash
+lxc config set core.trust_password PASSWORD
+```
 
 The password can then be provided when the client registers r1 as a known
 remote.
 
-### Backing store
-
+#### Backing store
 LXD supports several backing stores. The recommended backing store is ZFS,
 however this is not available on all platforms. Supported backing stores
 include:
@@ -851,13 +924,17 @@ include:
     configuration key:
 
 
-        lxc config set storage.zfs_pool_name lxd
+```bash
+    lxc config set storage.zfs_pool_name lxd
+```
 
-    With ZFS, launching a new container is fast because the filesystem starts
-    as a copy on write clone of the images' filesystem. Note that unless the
-    container is privileged (see below) LXD will need to change ownership of
-    all files before the container can start, however this is fast and change
-    very little of the actual filesystem data.
+```bash
+With ZFS, launching a new container is fast because the filesystem starts
+as a copy on write clone of the images' filesystem. Note that unless the
+container is privileged (see below) LXD will need to change ownership of
+all files before the container can start, however this is fast and change
+very little of the actual filesystem data.
+```
 
 -   Btrfs: btrfs can be used with many of the same advantages as ZFS. To use
     BTRFS as a LXD backing store, simply mount a Btrfs filesystem under
@@ -868,14 +945,17 @@ include:
     for containers and images using the command
 
 
-            lxc config set storage.lvm_vg_name lxd
+```bash
+        lxc config set storage.lvm_vg_name lxd
+```
 
-    When launching a new container, its rootfs will start as a lv clone. It is
-    immediately mounted so that the file uids can be shifted, then unmounted.
-    Container snapshots also are created as lv snapshots.
+```bash
+When launching a new container, its rootfs will start as a lv clone. It is
+immediately mounted so that the file uids can be shifted, then unmounted.
+Container snapshots also are created as lv snapshots.
+```
 
-## Container configuration {#lxd-container-config}
-
+### Container configuration 
 Containers are configured according to a set of profiles, described in the
 next section, and a set of container-specific configuration. Profiles are
 applied first, so that container specific configuration can override profile
@@ -891,25 +971,30 @@ interface, or 'disk'. In order to insert a host mount into a container, a
 at /opt, you could use:
 
 
-    lxc config device add c1 opt disk source=/opt path=opt
+```bash
+lxc config device add c1 opt disk source=/opt path=opt
+```
 
 See:
 
 
-    lxc help config
+```bash
+lxc help config
+```
 
 for more information about editing container configurations. You may also use:
 
 
-    lxc config edit c1
+```bash
+lxc config edit c1
+```
 
 to edit the whole of c1's configuration in your specified \$EDITOR. Comments
 at the top of the configuration will show examples of correct syntax to help
 administrators hit the ground running. If the edited configuration is not
 valid when the \$EDITOR is exited, then \$EDITOR will be restarted.
 
-## Profiles {#lxd-profiles}
-
+### Profiles 
 Profiles are named collections of configurations which may be applied to more
 than one container. For instance, all containers created with 'lxc launch', by
 default, include the 'default' profile, which provides a network interface
@@ -920,10 +1005,11 @@ be in the final container, define a device by the same name but of type
 'none':
 
 
-    lxc config device add c1 eth1 none
+```bash
+lxc config device add c1 eth1 none
+```
 
-## Nesting {#lxd-nesting}
-
+### Nesting 
 Containers all share the same host kernel. This means that there is always an
 inherent trade-off between features exposed to the container and host security
 from malicious containers. Containers by default are therefore restricted from
@@ -932,7 +1018,9 @@ containers under a lxd container, the 'security.nesting' feature must be set
 to true:
 
 
-    lxc config set container1 security.nesting true
+```bash
+lxc config set container1 security.nesting true
+```
 
 Once this is done, container1 will be able to start sub-containers.
 
@@ -940,14 +1028,15 @@ In order to run unprivileged (the default in LXD) containers nested under an
 unprivileged container, you will need to ensure a wide enough UID mapping.
 Please see the 'UID mapping' section below.
 
-### Docker
-
+#### Docker
 In order to facilitate running docker containers inside a LXD container, a
 'docker' profile is provided. To launch a new container with the docker
 profile, you can run:
 
 
-    lxc launch xenial container1 -p default -p docker
+```bash
+lxc launch xenial container1 -p default -p docker
+```
 
 Note that currently the docker package in Ubuntu 16.04 is patched to
 facilitate running in a container. This support is expected to land upstream
@@ -956,8 +1045,7 @@ soon.
 Note that 'cgroup namespace' support is also required. This is available in
 the 16.04 kernel as well as in the 4.6 upstream source.
 
-## Limits {#lxd-limits}
-
+### Limits 
 LXD supports flexible constraints on the resources which containers can
 consume. The limits come in the following categories:
 
@@ -974,8 +1062,7 @@ consume. The limits come in the following categories:
 For a full list of limits known to LXD, see [the configuration
 documentation][online].
 
-## UID mappings and Privileged containers {#lxd-uid}
-
+### UID mappings and Privileged containers 
 By default, LXD creates unprivileged containers. This means that root in the
 container is a non-root UID on the host. It is privileged against the
 resources owned by the container, but unprivileged with respect to the host,
@@ -993,13 +1080,14 @@ It is possible to request a container to run without a UID mapping by setting
 the security.privileged flag to true:
 
 
-    lxc config set c1 security.privileged true
+```bash
+lxc config set c1 security.privileged true
+```
 
 Note however that in this case the root user in the container is the root user
 on the host.
 
-## Apparmor {#lxd-aa}
-
+### Apparmor 
 LXD confines containers by default with an apparmor profile which protects
 containers from each other and the host from containers. For instance this
 will prevent root in one container from signaling root in another container,
@@ -1011,16 +1099,14 @@ If the apparmor policy for a container needs to be modified for a container
 c1, specific apparmor policy lines can be added in the 'raw.apparmor'
 configuration key.
 
-## Seccomp {#lxd-seccomp}
-
+### Seccomp 
 All containers are confined by a default seccomp policy. This policy prevents
 some dangerous actions such as forced umounts, kernel module loading and
 unloading, kexec, and the open\_by\_handle\_at system call. The seccomp
 configuration cannot be modified, however a completely different seccomp
 policy - or none - can be requested using raw.lxc (see below).
 
-## Raw LXC configuration
-
+### Raw LXC configuration
 LXD configures containers for the best balance of host safety and container
 usability. Whenever possible it is highly recommended to use the defaults, and
 use the LXD configuration keys to request LXD to modify as needed. Sometimes,
@@ -1029,8 +1115,7 @@ can be done by specifying LXC configuration items in the 'raw.lxc' LXD
 configuration key. These must be valid items as documented in [the
 lxc.container.conf(5) manual page].
 
-## Images and containers
-
+### Images and containers
 LXD is image based. When you create your first container, you will generally
 do so using an existing image. LXD comes pre-configured with three default
 image remotes:
@@ -1048,55 +1133,69 @@ image remotes:
 To view the images available on one of these servers, you can use:
 
 
-    lxc image list ubuntu:
+```bash
+lxc image list ubuntu:
+```
 
 Most of the images are known by several aliases for easier reference. To see
 the full list of aliases, you can use
 
 
-    lxc image alias list images:
+```bash
+lxc image alias list images:
+```
 
 Any alias or image fingerprint can be used to specify how to create the new
 container. For instance, to create an amd64 Ubuntu 14.04 container, some
 options are:
 
 
-    lxc launch ubuntu:14.04 trusty1
-    lxc launch ubuntu:trusty trusty1
-    lxc launch ubuntu:trusty/amd64 trusty1
-    lxc launch ubuntu:lts trusty1
+```bash
+lxc launch ubuntu:14.04 trusty1
+lxc launch ubuntu:trusty trusty1
+lxc launch ubuntu:trusty/amd64 trusty1
+lxc launch ubuntu:lts trusty1
+```
 
 The 'lts' alias always refers to the latest released LTS image.
 
-### Snapshots
-
+#### Snapshots
 Containers can be renamed and live-migrated using the 'lxc move' command:
 
 
-    lxc move c1 final-beta
+```bash
+lxc move c1 final-beta
+```
 
 They can also be snapshotted:
 
 
-    lxc snapshot c1 YYYY-MM-DD
+```bash
+lxc snapshot c1 YYYY-MM-DD
+```
 
 Later changes to c1 can then be reverted by restoring the snapshot:
 
 
-    lxc restore u1 YYYY-MM-DD
+```bash
+lxc restore u1 YYYY-MM-DD
+```
 
 New containers can also be created by copying a container or snapshot:
 
 
-    lxc copy u1/YYYY-MM-DD testcontainer
+```bash
+lxc copy u1/YYYY-MM-DD testcontainer
+```
 
-### Publishing images
-
+#### Publishing images
 When a container or container snapshot is ready for consumption by others, it
 can be published as a new image using;
 
 
-    lxc publish u1/YYYY-MM-DD --alias foo-2.0
+```bash
+lxc publish u1/YYYY-MM-DD --alias foo-2.0
+```
 
 The published image will be private by default, meaning that LXD will not
 allow clients without a trusted certificate to see them. If the image is safe
@@ -1104,29 +1203,35 @@ for public viewing (i.e. contains no private information), then the 'public'
 flag can be set, either at publish time using
 
 
-    lxc publish u1/YYYY-MM-DD --alias foo-2.0 public=true
+```bash
+lxc publish u1/YYYY-MM-DD --alias foo-2.0 public=true
+```
 
 or after the fact using
 
 
-    lxc image edit foo-2.0
+```bash
+lxc image edit foo-2.0
+```
 
 and changing the value of the public field.
 
-### Image export and import
-
+#### Image export and import
 Image can be exported as, and imported from, tarballs:
 
 
-    lxc image export foo-2.0 foo-2.0.tar.gz
-    lxc image import foo-2.0.tar.gz --alias foo-2.0 --public
+```bash
+lxc image export foo-2.0 foo-2.0.tar.gz
+lxc image import foo-2.0.tar.gz --alias foo-2.0 --public
+```
 
-## Troubleshooting {#lxd-troubleshooting}
-
+### Troubleshooting 
 To view debug information about LXD itself, on a systemd based host use
 
 
-    journalctl -u LXD
+```bash
+journalctl -u LXD
+```
 
 On an Upstart-based system, you can find the log in
 `/var/log/upstart/lxd.log`. To make LXD provide much more information about
@@ -1137,15 +1242,16 @@ Upstart, append it to the `exec /usr/bin/lxd` line in `/etc/init/lxd.conf`.
 Container logfiles for container c1 may be seen using:
 
 
-    lxc info c1 --show-log
+```bash
+lxc info c1 --show-log
+```
 
 The configuration file which was used may be found under
 ` /var/log/lxd/c1/lxc.conf` while apparmor profiles can be found in
 ` /var/lib/lxd/security/apparmor/profiles/c1` and seccomp profiles in
 ` /var/lib/lxd/security/seccomp/c1`.
 
-# LXC
-
+## LXC
 Containers are a lightweight virtualization technology. They are more akin to
 an enhanced chroot than to full virtualization like Qemu or VMware, both
 because they do not emulate hardware and because containers share the same
@@ -1169,12 +1275,13 @@ libvirt-lxc containers.
 
 In this document, a container name will be shown as CN, C1, or C2.
 
-## Installation {#lxc-installation}
-
+### Installation 
 The lxc package can be installed using
 
 
-    sudo apt install lxc
+```bash
+sudo apt install lxc
+```
 
 This will pull in the required and recommended dependencies, as well as set up
 a network bridge for containers to use. If you wish to use unprivileged
@@ -1182,8 +1289,7 @@ containers, you will need to ensure that users have sufficient allocated
 subuids and subgids, and will likely want to allow users to connect containers
 to a bridge (see [Basic unprivileged usage]).
 
-## Basic usage {#lxc-basic-usage}
-
+### Basic usage 
 LXC can be used in two distinct ways - privileged, by running the lxc commands
 as the root user; or unprivileged, by running the lxc commands as a non-root
 user. (The starting of unprivileged containers by the root user is possible,
@@ -1192,27 +1298,38 @@ instance being unable to create device nodes or mount block-backed
 filesystems. However they are less dangerous to the host, as the root userid
 in the container is mapped to a non-root userid on the host.
 
-### Basic privileged usage
-
+#### Basic privileged usage
 To create a privileged container, you can simply do:
 
 
-    sudo lxc-create --template download --name u1
+```bash
+sudo lxc-create --template download --name u1
+```
 
-    or, abbreviated
+```bash
+or, abbreviated
+```
 
-    sudo lxc-create -t download -n u1
+```bash
+sudo lxc-create -t download -n u1
+```
 
 This will interactively ask for a container root filesystem type to download -
 in particular the distribution, release, and architecture. To create the
 container non-interactively, you can specify these values on the command line:
 
 
-    sudo lxc-create -t download -n u1 -- --dist ubuntu --release DISTRO-SHORT-CODENAME --arch amd64
+```bash
+sudo lxc-create -t download -n u1 -- --dist ubuntu --release DISTRO-SHORT-CODENAME --arch amd64
+```
 
-    or
+```bash
+or
+```
 
-    sudo lxc-create -t download -n u1 -- -d ubuntu -r DISTRO-SHORT-CODENAME -a amd64
+```bash
+sudo lxc-create -t download -n u1 -- -d ubuntu -r DISTRO-SHORT-CODENAME -a amd64
+```
 
 You can now use `lxc-ls` to list containers, `lxc-info` to obtain detailed
 container information, `lxc-start` to start and `lxc-stop` to stop the
@@ -1222,14 +1339,15 @@ rootfs. See the manual pages for more information on each command. An example
 session might look like:
 
 
-    sudo lxc-ls --fancy
-    sudo lxc-start --name u1 --daemon
-    sudo lxc-info --name u1
-    sudo lxc-stop --name u1
-    sudo lxc-destroy --name u1
+```bash
+sudo lxc-ls --fancy
+sudo lxc-start --name u1 --daemon
+sudo lxc-info --name u1
+sudo lxc-stop --name u1
+sudo lxc-destroy --name u1
+```
 
-### User namespaces
-
+#### User namespaces
 Unprivileged containers allow users to create and administer containers
 without having any root privilege. The feature underpinning this is called
 user namespaces. User namespaces are hierarchical, with privileged tasks in a
@@ -1247,7 +1365,9 @@ If a user was created on an earlier release, it can be granted a range of ids
 using `usermod`, as follows:
 
 
-    sudo usermod -v 100000-200000 -w 100000-200000 user1
+```bash
+sudo usermod -v 100000-200000 -w 100000-200000 user1
+```
 
 The programs `newuidmap` and `
     newgidmap` are setuid-root programs in the `uidmap` package, which are
@@ -1255,8 +1375,7 @@ used internally by lxc to map subuids and subgids from the host into the
 unprivileged container. They ensure that the user only maps ids which are
 authorized by the host configuration.
 
-### Basic unprivileged usage {#lxc-unpriv}
-
+#### Basic unprivileged usage 
 To create unprivileged containers, a few first steps are needed. You will need
 to create a default container configuration file, specifying your desired id
 mappings and network setup, as well as configure the host to allow the
@@ -1265,35 +1384,42 @@ that your mapped user and group id ranges are 100000-165536. Check your actual
 user and group id ranges and modify the example accordingly:
 
 
-    grep $USER /etc/subuid
-    grep $USER /etc/subgid
+```bash
+grep $USER /etc/subuid
+grep $USER /etc/subgid
+```
 
 
-    mkdir -p ~/.config/lxc
-    echo "lxc.id_map = u 0 100000 65536" > ~/.config/lxc/default.conf
-    echo "lxc.id_map = g 0 100000 65536" >> ~/.config/lxc/default.conf
-    echo "lxc.network.type = veth" >> ~/.config/lxc/default.conf
-    echo "lxc.network.link = lxcbr0" >> ~/.config/lxc/default.conf
-    echo "$USER veth lxcbr0 2" | sudo tee -a /etc/lxc/lxc-usernet
+```bash
+mkdir -p ~/.config/lxc
+echo "lxc.id_map = u 0 100000 65536" > ~/.config/lxc/default.conf
+echo "lxc.id_map = g 0 100000 65536" >> ~/.config/lxc/default.conf
+echo "lxc.network.type = veth" >> ~/.config/lxc/default.conf
+echo "lxc.network.link = lxcbr0" >> ~/.config/lxc/default.conf
+echo "$USER veth lxcbr0 2" | sudo tee -a /etc/lxc/lxc-usernet
+```
 
 After this, you can create unprivileged containers the same way as privileged
 ones, simply without using sudo.
 
 
-    lxc-create -t download -n u1 -- -d ubuntu -r DISTRO-SHORT-CODENAME -a amd64
-    lxc-start -n u1 -d
-    lxc-attach -n u1
-    lxc-stop -n u1
-    lxc-destroy -n u1
+```bash
+lxc-create -t download -n u1 -- -d ubuntu -r DISTRO-SHORT-CODENAME -a amd64
+lxc-start -n u1 -d
+lxc-attach -n u1
+lxc-stop -n u1
+lxc-destroy -n u1
+```
 
-### Nesting {#lxc-nesting}
-
+#### Nesting 
 In order to run containers inside containers - referred to as nested
 containers - two lines must be present in the parent container configuration
 file:
 
-    lxc.mount.auto = cgroup
-    lxc.aa_profile = lxc-container-default-with-nesting
+```bash
+lxc.mount.auto = cgroup
+lxc.aa_profile = lxc-container-default-with-nesting
+```
 
 The first will cause the cgroup manager socket to be bound into the container,
 so that lxc inside the container is able to administer cgroups for its nested
@@ -1303,8 +1429,7 @@ containers. Note that this policy, when used with a privileged container, is
 much less safe than the regular policy or an unprivileged container. See
 [Apparmor] for more information.
 
-## Global configuration {#lxc-global-conf}
-
+### Global configuration 
 The following configuration files are consulted by LXC. For privileged use,
 they are found under `/etc/lxc`, while for unprivileged use they are under
 `~/.config/lxc`.
@@ -1328,8 +1453,7 @@ By default, containers are located under /var/lib/lxc for the root user, and
 \$HOME/.local/share/lxc otherwise. The location can be specified for all lxc
 commands using the "-P|--lxcpath" argument.
 
-## Networking {#lxc-network}
-
+### Networking 
 By default LXC creates a private network namespace for each container, which
 includes a layer 2 networking stack. Containers usually connect to the outside
 world by either having a physical NIC or a veth tunnel endpoint passed into
@@ -1348,23 +1472,31 @@ the host's upstart, and shut down the host.
 To give containers on lxcbr0 a persistent ip address based on domain name, you
 can write entries to `/etc/lxc/dnsmasq.conf` like:
 
-    dhcp-host=lxcmail,10.0.3.100
-    dhcp-host=ttrss,10.0.3.101
+```bash
+dhcp-host=lxcmail,10.0.3.100
+dhcp-host=ttrss,10.0.3.101
+```
 
 If it is desirable for the container to be publicly accessible, there are a
 few ways to go about it. One is to use `iptables` to forward host ports to the
 container, for instance
 
-     iptables -t nat -A PREROUTING -p tcp -i eth0 --dport 587 -j DNAT \
-        --to-destination 10.0.3.100:587
-     
+```bash
+ iptables -t nat -A PREROUTING -p tcp -i eth0 --dport 587 -j DNAT \
+    --to-destination 10.0.3.100:587
+```
+```bash
+ 
+```
 
 Another is to bridge the host's network interfaces (see the Ubuntu Server
 Guide's Network Configuration chapter, [???][2]). Then, specify the host's
 bridge in the container configuration file in place of lxcbr0, for instance
 
-    lxc.network.type = veth
-    lxc.network.link = br0
+```bash
+lxc.network.type = veth
+lxc.network.link = br0
+```
 
 Finally, you can ask LXC to use macvlan for the container's NIC. Note that
 this has limitations and depending on configuration may not allow the
@@ -1377,18 +1509,21 @@ containers, or `lxc-info -i -H -n C1` which will print C1's ip address. If
 dnsmasq is installed on the host, you can also add an entry to
 `/etc/dnsmasq.conf` as follows
 
-    server=/lxc/10.0.3.1
+```bash
+server=/lxc/10.0.3.1
+```
 
 after which dnsmasq will resolve C1.lxc locally, so that you can do:
 
-    ping C1
-    ssh C1
+```bash
+ping C1
+ssh C1
+```
 
 For more information, see the lxc.conf manpage as well as the example network
 configurations under `/usr/share/doc/lxc/examples/`.
 
-## LXC startup
-
+### LXC startup
 LXC does not have a long-running daemon. However it does have three upstart
 jobs.
 
@@ -1404,8 +1539,7 @@ jobs.
 -   `/etc/init/lxc-instance.conf` is used by `/etc/init/lxc.conf` to autostart
     a container.
 
-## Backing Stores {#lxc-backinstores}
-
+### Backing Stores 
 LXC supports several backing stores for container root filesystems. The
 default is a simple directory backing store, because it requires no prior host
 customization, so long as the underlying filesystem is large enough. It also
@@ -1437,8 +1571,7 @@ specified at lxc-create, and a default can be specified in lxc.system.conf.
 More information on creating containers with the various backing stores can be
 found in the lxc-create manual page.
 
-## Templates {#lxc-templates}
-
+### Templates 
 Creating a container generally involves creating a root filesystem for the
 container. `lxc-create` delegates this work to *templates*, which are
 generally per-distribution. The lxc templates shipped with lxc can be found
@@ -1458,25 +1591,30 @@ template. In the following command, *--name*, *--template* and *--bdev* are
 passed to `lxc-create`, while *--release* is passed to the template:
 
 
-    lxc-create --template ubuntu --name c1 --bdev loop -- --release DISTRO-SHORT-CODENAME
+```bash
+lxc-create --template ubuntu --name c1 --bdev loop -- --release DISTRO-SHORT-CODENAME
+```
 
 You can obtain help for the options supported by any particular container by
 passing *--help* and the template name to `lxc-create`. For instance, for help
 with the download template,
 
 
-    lxc-create --template download --help
+```bash
+lxc-create --template download --help
+```
 
-## Autostart {#lxc-autostart}
-
+### Autostart 
 LXC supports marking containers to be started at system boot. Prior to Ubuntu
 14.04, this was done using symbolic links under the directory `/etc/lxc/auto`.
 Starting with Ubuntu 14.04, it is done through the container configuration
 files. An entry
 
 
-    lxc.start.auto = 1
-    lxc.start.delay = 5
+```bash
+lxc.start.auto = 1
+lxc.start.delay = 5
+```
 
 would mean that the container should be started at boot, and the system should
 wait 5 seconds before starting the next container. LXC also supports ordering
@@ -1484,8 +1622,7 @@ and grouping of containers, as well as reboot and shutdown by autostart
 groups. See the manual pages for lxc-autostart and lxc.container.conf for more
 information.
 
-## Apparmor {#lxc-apparmor}
-
+### Apparmor 
 LXC ships with a default Apparmor profile intended to protect the host from
 accidental misuses of privilege inside the container. For instance, the
 container will not be able to write to `/proc/sysrq-trigger` or to most `/sys`
@@ -1506,20 +1643,23 @@ enter the MySQL profile (to protect the container).
 `lxc-execute` does not enter an Apparmor profile, but the container it spawns
 will be confined.
 
-### Customizing container policies
-
+#### Customizing container policies
 If you find that `lxc-start` is failing due to a legitimate access which is
 being denied by its Apparmor policy, you can disable the lxc-start profile by
 doing:
 
-    sudo apparmor_parser -R /etc/apparmor.d/usr.bin.lxc-start
-    sudo ln -s /etc/apparmor.d/usr.bin.lxc-start /etc/apparmor.d/disabled/
+```bash
+sudo apparmor_parser -R /etc/apparmor.d/usr.bin.lxc-start
+sudo ln -s /etc/apparmor.d/usr.bin.lxc-start /etc/apparmor.d/disabled/
+```
 
 This will make `lxc-start` run unconfined, but continue to confine the
 container itself. If you also wish to disable confinement of the container,
 then in addition to disabling the `usr.bin.lxc-start` profile, you must add:
 
-    lxc.aa_profile = unconfined
+```bash
+lxc.aa_profile = unconfined
+```
 
 to the container's configuration file.
 
@@ -1528,15 +1668,23 @@ containers inside containers (nesting), then you can use the
 lxc-container-default-with-nesting profile by adding the following line to the
 container configuration file
 
-    lxc.aa_profile = lxc-container-default-with-nesting
-        
+```bash
+lxc.aa_profile = lxc-container-default-with-nesting
+```
+```bash
+    
+```
 
 If you wish to use libvirt inside containers, then you will need to edit that
 policy (which is defined in `/etc/apparmor.d/lxc/lxc-default-with-nesting`) by
 uncommenting the following line:
 
-    mount fstype=cgroup -> /sys/fs/cgroup/**,
-        
+```bash
+mount fstype=cgroup -> /sys/fs/cgroup/**,
+```
+```bash
+    
+```
 
 and re-load the policy.
 
@@ -1561,17 +1709,20 @@ of your policy.
 
 After creating the policy, load it using:
 
-    sudo apparmor_parser -r /etc/apparmor.d/lxc-containers
+```bash
+sudo apparmor_parser -r /etc/apparmor.d/lxc-containers
+```
 
 The profile will automatically be loaded after a reboot, because it is sourced
 by the file `/etc/apparmor.d/lxc-containers`. Finally, to make container `CN`
 use this new `lxc-CN-profile`, add the following line to its configuration
 file:
 
-    lxc.aa_profile = lxc-CN-profile
+```bash
+lxc.aa_profile = lxc-CN-profile
+```
 
-## Control Groups {#lxc-cgroups}
-
+### Control Groups 
 Control groups (cgroups) are a kernel feature providing hierarchical task
 grouping and per-cgroup resource accounting and limits. They are used in
 containers to limit block and character device access and to freeze (suspend)
@@ -1595,7 +1746,9 @@ cgroups. The cgroup manager receives D-Bus requests over the Unix socket
 line
 
 
-    lxc.mount.auto = cgroup
+```bash
+lxc.mount.auto = cgroup
+```
 
 can be added to the container configuration causing the
 `/sys/fs/cgroup/cgmanager` directory to be bind-mounted into the container.
@@ -1607,8 +1760,7 @@ on its own socket `/sys/fs/cgroup/cgmanager/sock`. The host cgmanager will
 ensure that nested containers cannot escape their assigned cgroups or make
 requests for which they are not authorized.
 
-## Cloning {#lxc-cloning}
-
+### Cloning 
 For rapid provisioning, you may wish to customize a canonical container
 according to your needs and then make multiple copies of it. This can be done
 with the `lxc-clone` program.
@@ -1636,24 +1788,29 @@ a *canonical* base container, and to only use its snapshots.
 Given an existing container called C1, a copy can be created using:
 
 
-    sudo lxc-clone -o C1 -n C2
+```bash
+sudo lxc-clone -o C1 -n C2
+```
 
 A snapshot can be created using:
 
 
-    sudo lxc-clone -s -o C1 -n C2
+```bash
+sudo lxc-clone -s -o C1 -n C2
+```
 
 See the lxc-clone manpage for more information.
 
-### Snapshots
-
+#### Snapshots
 To more easily support the use of snapshot clones for iterative container
 development, LXC supports *snapshots*. When working on a container C1, before
 making a potentially dangerous or hard-to-revert change, you can create a
 snapshot
 
 
-    sudo lxc-snapshot -n C1
+```bash
+sudo lxc-snapshot -n C1
+```
 
 which is a snapshot-clone called 'snap0' under /var/lib/lxcsnaps or
 \$HOME/.local/share/lxcsnaps. The next snapshot will be called 'snap1', etc.
@@ -1674,29 +1831,31 @@ clone of C1 should be created, C1 should not be touched again, and the
 overlayfs clone can be edited and snapshotted at will, as such
 
 
-    lxc-clone -s -o C1 -n C2
-    lxc-start -n C2 -d # make some changes
-    lxc-stop -n C2
-    lxc-snapshot -n C2
-    lxc-start -n C2 # etc
+```bash
+lxc-clone -s -o C1 -n C2
+lxc-start -n C2 -d # make some changes
+lxc-stop -n C2
+lxc-snapshot -n C2
+lxc-start -n C2 # etc
+```
 
-### Ephemeral Containers
-
+#### Ephemeral Containers
 While snapshots are useful for longer-term incremental development of images,
 ephemeral containers utilize snapshots for quick, single-use throwaway
 containers. Given a base container C1, you can start an ephemeral container
 using
 
 
-    lxc-start-ephemeral -o C1
+```bash
+lxc-start-ephemeral -o C1
+```
 
 The container begins as a snapshot of C1. Instructions for logging into the
 container will be printed to the console. After shutdown, the ephemeral
 container will be destroyed. See the lxc-start-ephemeral manual page for more
 options.
 
-## Lifecycle management hooks {#lxc-hooks}
-
+### Lifecycle management hooks 
 Beginning with Ubuntu 12.10, it is possible to define hooks to be executed at
 specific points in a container's lifetime:
 
@@ -1726,8 +1885,7 @@ Please see the lxc.container.conf manual page for the configuration file
 format with which to specify hooks. Some sample hooks are shipped with the lxc
 package to serve as an example of how to write and use such hooks.
 
-## Consoles {#lxc-consoles}
-
+### Consoles 
 Containers have a configurable number of consoles. One always exists on the
 container's `/dev/console`. This is shown on the terminal from which you ran
 `lxc-start`, unless the *-d* option is specified. The output on `/dev/console`
@@ -1737,7 +1895,9 @@ usually set to 4. Those consoles are shown on `/dev/ttyN` (for 1 &lt;= N &lt;=
 4). To log into console 3 from the host, use:
 
 
-    sudo lxc-console -n container -t 3
+```bash
+sudo lxc-console -n container -t 3
+```
 
 or if the *-t N* option is not specified, an unused console will be
 automatically chosen. To exit the console, use the escape sequence Ctrl-a q.
@@ -1752,22 +1912,21 @@ LXC consoles. (With the default settings, the container will not be able to
 access that character device and getty will therefore fail.) This can easily
 happen when a boot script blindly mounts a new `/dev`.
 
-## Troubleshooting {#lxc-debugging}
-
-### Logging
-
+### Troubleshooting 
+#### Logging
 If something goes wrong when starting a container, the first step should be to
 get full logging from LXC:
 
 
-    sudo lxc-start -n C1 -l trace -o debug.out
+```bash
+sudo lxc-start -n C1 -l trace -o debug.out
+```
 
 This will cause lxc to log at the most verbose level, `trace`, and to output
 log information to a file called 'debug.out'. If the file `debug.out` already
 exists, the new log information will be appended.
 
-### Monitoring container status {#lxc-monitoring}
-
+#### Monitoring container status 
 Two commands are available to monitor container state changes. `lxc-monitor`
 monitors one or more containers for any state changes. It takes a container
 name as usual with the *-n* option, but in this case the container name can be
@@ -1776,50 +1935,57 @@ a posix regular expression to allow monitoring desirable sets of containers.
 waits for a specific state change and then exits. For instance,
 
 
-    sudo lxc-monitor -n cont[0-5]*
+```bash
+sudo lxc-monitor -n cont[0-5]*
+```
 
 would print all state changes to any containers matching the listed regular
 expression, whereas
 
 
-    sudo lxc-wait -n cont1 -s 'STOPPED|FROZEN'
+```bash
+sudo lxc-wait -n cont1 -s 'STOPPED|FROZEN'
+```
 
 will wait until container cont1 enters state STOPPED or state FROZEN and then
 exit.
 
-### Attach
-
+#### Attach
 As of Ubuntu 14.04, it is possible to attach to a container's namespaces. The
 simplest case is to simply do
 
 
-    sudo lxc-attach -n C1
+```bash
+sudo lxc-attach -n C1
+```
 
 which will start a shell attached to C1's namespaces, or, effectively inside
 the container. The attach functionality is very flexible, allowing attaching
 to a subset of the container's namespaces and security context. See the manual
 page for more information.
 
-### Container init verbosity
-
+#### Container init verbosity
 If LXC completes the container startup, but the container init fails to
 complete (for instance, no login prompt is shown), it can be useful to request
 additional verbosity from the init process. For an upstart container, this
 might be:
 
 
-    sudo lxc-start -n C1 /sbin/init loglevel=debug
+```bash
+sudo lxc-start -n C1 /sbin/init loglevel=debug
+```
 
 You can also start an entirely different program in place of init, for
 instance
 
 
-    sudo lxc-start -n C1 /bin/bash
-    sudo lxc-start -n C1 /bin/sleep 100
-    sudo lxc-start -n C1 /bin/cat /proc/1/status
+```bash
+sudo lxc-start -n C1 /bin/bash
+sudo lxc-start -n C1 /bin/sleep 100
+sudo lxc-start -n C1 /bin/cat /proc/1/status
+```
 
-## LXC API {#python-lxc}
-
+### LXC API 
 Most of the LXC functionality can now be accessed through an API exported by
 `liblxc` for which bindings are available in several languages, including
 Python, lua, ruby, and go.
@@ -1828,23 +1994,24 @@ Below is an example using the python bindings (which are available in the
 python3-lxc package) which creates and starts a container, then waits until it
 has been shut down:
 
-    # sudo python3
-    Python 3.2.3 (default, Aug 28 2012, 08:26:03)
-    [GCC 4.7.1 20120814 (prerelease)] on linux2
-    Type "help", "copyright", "credits" or "license" for more information.
-    >>> import lxc
-    __main__:1: Warning: The python-lxc API isn't yet stable and may change at any p
-    oint in the future.
-    >>> c=lxc.Container("C1")
-    >>> c.create("ubuntu")
-    True
-    >>> c.start()
-    True
-    >>> c.wait("STOPPED")
-    True
+```bash
+# sudo python3
+Python 3.2.3 (default, Aug 28 2012, 08:26:03)
+[GCC 4.7.1 20120814 (prerelease)] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import lxc
+__main__:1: Warning: The python-lxc API isn't yet stable and may change at any p
+oint in the future.
+>>> c=lxc.Container("C1")
+>>> c.create("ubuntu")
+True
+>>> c.start()
+True
+>>> c.wait("STOPPED")
+True
+```
 
-## Security {#lxc-security}
-
+### Security 
 A namespace maps ids to resources. By not providing a container any id with
 which to reference a resource, the resource can be protected. This is the
 basis of some of the security afforded to container users. For instance, IPC
@@ -1859,8 +2026,7 @@ container to an unprivileged host userid. This prevents access to `/proc` and
 `/sys` files representing host resources, as well as any other files owned by
 root on the host.
 
-### Exploitable system calls {#lxc-seccomp}
-
+#### Exploitable system calls 
 It is a core container feature that containers share a kernel with the host.
 Therefore if the kernel contains any exploitable system calls the container
 can exploit these as well. Once the container controls the kernel it can fully
@@ -1883,8 +2049,7 @@ by removing the 32-bit compatibility system calls in a 64-bit container. See
 the lxc.container.conf manual page for details of how to configure a container
 to use seccomp. By default, no seccomp policy is loaded.
 
-## Resources {#lxc-resources}
-
+### Resources 
 -   The DeveloperWorks article [LXC: Linux container tools] was an early
     introduction to the use of containers.
 
@@ -1893,8 +2058,10 @@ to use seccomp. By default, no seccomp policy is loaded.
 
 -   Manual pages referenced above can be found at:
 
-        capabilities
-        lxc.conf
+```bash
+    capabilities
+    lxc.conf
+```
 
 -   The upstream LXC project is hosted at [linuxcontainers.org].
 

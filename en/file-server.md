@@ -4,8 +4,7 @@ If you have more than one computer on a single network. At some point you will
 probably need to share files between them. In this section we cover installing
 and configuring FTP, NFS, and CUPS.
 
-# FTP Server
-
+## FTP Server
 File Transfer Protocol (FTP) is a TCP protocol for downloading files between
 computers. In the past, it has also been used for uploading but, as that
 method does not use encryption, user credentials as well as data transferred
@@ -35,19 +34,21 @@ login. As a general rule, the FTP daemon will hide the root directory of the
 FTP server and change it to the FTP Home directory. This hides the rest of the
 file system from remote sessions.
 
-## vsftpd - FTP Server Installation {#vsftpd-ftp-server-installation}
-
+### vsftpd - FTP Server Installation 
 vsftpd is an FTP daemon available in Ubuntu. It is easy to install, set up,
 and maintain. To install vsftpd you can run the following command:
 
-    sudo apt install vsftpd
+```bash
+sudo apt install vsftpd
+```
 
-## Anonymous FTP Configuration {#vsftpd-anonymous-configuration}
-
+### Anonymous FTP Configuration 
 By default vsftpd is *not* configured to allow anonymous download. If you wish
 to enable anonymous download edit `/etc/vsftpd.conf` by changing:
 
-    anonymous_enable=Yes
+```bash
+anonymous_enable=Yes
+```
 
 During installation a *ftp* user is created with a home directory of
 `/srv/ftp`. This is the default FTP directory.
@@ -56,28 +57,35 @@ If you wish to change this location, to `/srv/files/ftp` for example, simply
 create a directory in another location and change the *ftp* user's home
 directory:
 
-    sudo mkdir /srv/files/ftp
-    sudo usermod -d /srv/files/ftp ftp 
+```bash
+sudo mkdir /srv/files/ftp
+sudo usermod -d /srv/files/ftp ftp 
+```
 
 After making the change restart vsftpd:
 
-    sudo restart vsftpd
+```bash
+sudo restart vsftpd
+```
 
 Finally, copy any files and directories you would like to make available
 through anonymous FTP to `/srv/files/ftp`, or `/srv/ftp` if you wish to use
 the default.
 
-## User Authenticated FTP Configuration {#vsftpd-userauth-configuration}
-
+### User Authenticated FTP Configuration 
 By default vsftpd is configured to authenticate system users and allow them to
 download files. If you want users to be able to upload files, edit
 `/etc/vsftpd.conf`:
 
-    write_enable=YES
+```bash
+write_enable=YES
+```
 
 Now restart vsftpd:
 
-    sudo restart vsftpd
+```bash
+sudo restart vsftpd
+```
 
 Now when system users login to FTP they will start in their *home* directories
 where they can download, upload, create directories, etc.
@@ -86,34 +94,39 @@ Similarly, by default, anonymous users are not allowed to upload files to FTP
 server. To change this setting, you should uncomment the following line, and
 restart vsftpd:
 
-    anon_upload_enable=YES
+```bash
+anon_upload_enable=YES
+```
 
-> **Warning**
->
-> Enabling anonymous FTP upload can be an extreme security risk. It is best to
-> not enable anonymous upload on servers accessed directly from the Internet.
+!!! Warning: Enabling anonymous FTP upload can be an extreme security risk. It is best to
+not enable anonymous upload on servers accessed directly from the Internet.
 
 The configuration file consists of many configuration parameters. The
 information about each parameter is available in the configuration file.
 Alternatively, you can refer to the man page, `man 5 vsftpd.conf` for details
 of each parameter.
 
-## Securing FTP {#vsftpd-security}
-
+### Securing FTP 
 There are options in `/etc/vsftpd.conf` to help make vsftpd more secure. For
 example users can be limited to their home directories by uncommenting:
 
-    chroot_local_user=YES
+```bash
+chroot_local_user=YES
+```
 
 You can also limit a specific list of users to just their home directories:
 
-    chroot_list_enable=YES
-    chroot_list_file=/etc/vsftpd.chroot_list
+```bash
+chroot_list_enable=YES
+chroot_list_file=/etc/vsftpd.chroot_list
+```
 
 After uncommenting the above options, create a `/etc/vsftpd.chroot_list`
 containing a list of users one per line. Then restart vsftpd:
 
-    sudo restart vsftpd
+```bash
+sudo restart vsftpd
+```
 
 Also, the `/etc/ftpusers` file is a list of users that are *disallowed* FTP
 access. The default list includes root, daemon, nobody, etc. To disable FTP
@@ -129,12 +142,16 @@ disable shell interaction. See the section on OpenSSH-Server for more.
 
 To configure *FTPS*, edit `/etc/vsftpd.conf` and at the bottom add:
 
-    ssl_enable=Yes
+```bash
+ssl_enable=Yes
+```
 
 Also, notice the certificate and key related options:
 
-    rsa_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
-    rsa_private_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+```bash
+rsa_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+rsa_private_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+```
 
 By default these options are set to the certificate and key provided by the
 ssl-cert package. In a production environment these should be replaced with a
@@ -143,31 +160,37 @@ certificates see [???][1].
 
 Now restart vsftpd, and non-anonymous users will be forced to use *FTPS*:
 
-    sudo restart vsftpd
+```bash
+sudo restart vsftpd
+```
 
 To allow users with a shell of `/usr/sbin/nologin` access to FTP, but have no
 shell access, edit `/etc/shells` adding the *nologin* shell:
 
-    # /etc/shells: valid login shells
-    /bin/csh
-    /bin/sh
-    /usr/bin/es
-    /usr/bin/ksh
-    /bin/ksh
-    /usr/bin/rc
-    /usr/bin/tcsh
-    /bin/tcsh
-    /usr/bin/esh
-    /bin/dash
-    /bin/bash
-    /bin/rbash
-    /usr/bin/screen
-    /usr/sbin/nologin
+```bash
+# /etc/shells: valid login shells
+/bin/csh
+/bin/sh
+/usr/bin/es
+/usr/bin/ksh
+/bin/ksh
+/usr/bin/rc
+/usr/bin/tcsh
+/bin/tcsh
+/usr/bin/esh
+/bin/dash
+/bin/bash
+/bin/rbash
+/usr/bin/screen
+/usr/sbin/nologin
+```
 
 This is necessary because, by default vsftpd uses PAM for authentication, and
 the `/etc/pam.d/vsftpd` configuration file contains:
 
-    auth    required        pam_shells.so
+```bash
+auth    required        pam_shells.so
+```
 
 The *shells* PAM module restricts access to shells listed in the `/etc/shells`
 file.
@@ -175,14 +198,12 @@ file.
 Most popular FTP clients can be configured to connect using FTPS. The lftp
 command line FTP client has the ability to use FTPS as well.
 
-## References {#vsftpd-references}
-
+### References 
 -   See the [vsftpd website] for more information.
 
 -   For detailed `/etc/vsftpd.conf` options see the [vsftpd.conf man page].
 
-# Network File System (NFS) {#network-file-system}
-
+## Network File System (NFS) 
 NFS allows a system to share directories and files with others over a network.
 By using NFS, users and programs can access files on remote systems almost as
 if they were local files.
@@ -201,19 +222,21 @@ Some of the most notable benefits that NFS can provide are:
     can be used by other machines on the network. This may reduce the number
     of removable media drives throughout the network.
 
-## Installation {#nfs-installation}
-
+### Installation 
 At a terminal prompt enter the following command to install the NFS Server:
 
-    sudo apt install nfs-kernel-server
+```bash
+sudo apt install nfs-kernel-server
+```
 
-## Configuration {#nfs-configuration}
-
+### Configuration 
 You can configure the directories to be exported by adding them to the
 `/etc/exports` file. For example:
 
-    /ubuntu  *(ro,sync,no_root_squash)
-    /home    *(rw,sync,no_root_squash)
+```bash
+/ubuntu  *(ro,sync,no_root_squash)
+/home    *(rw,sync,no_root_squash)
+```
 
 You can replace \* with one of the hostname formats. Make the hostname
 declaration as specific as possible so unwanted systems cannot access the NFS
@@ -222,19 +245,20 @@ mount.
 To start the NFS server, you can run the following command at a terminal
 prompt:
 
-    sudo systemctl start nfs-kernel-server.service
+```bash
+sudo systemctl start nfs-kernel-server.service
+```
 
-## NFS Client Configuration
-
+### NFS Client Configuration
 Use the mount command to mount a shared NFS directory from another machine, by
 typing a command line similar to the following at a terminal prompt:
 
-    sudo mount example.hostname.com:/ubuntu /local/ubuntu
+```bash
+sudo mount example.hostname.com:/ubuntu /local/ubuntu
+```
 
-> **Warning**
->
-> The mount point directory `/local/ubuntu` must exist. There should be no
-> files or subdirectories in the `/local/ubuntu` directory.
+!!! Warning: The mount point directory `/local/ubuntu` must exist. There should be no
+files or subdirectories in the `/local/ubuntu` directory.
 
 An alternate way to mount an NFS share from another machine is to add a line
 to the `/etc/fstab` file. The line must state the hostname of the NFS server,
@@ -243,22 +267,24 @@ machine where the NFS share is to be mounted.
 
 The general syntax for the line in `/etc/fstab` file is as follows:
 
-    example.hostname.com:/ubuntu /local/ubuntu nfs rsize=8192,wsize=8192,timeo=14,intr
+```bash
+example.hostname.com:/ubuntu /local/ubuntu nfs rsize=8192,wsize=8192,timeo=14,intr
+```
 
 If you have trouble mounting an NFS share, make sure the nfs-common package is
 installed on your client. To install nfs-common enter the following command at
 the terminal prompt:
 
-    sudo apt install nfs-common
+```bash
+sudo apt install nfs-common
+```
 
-## References {#nfs-references}
-
+### References 
 [Linux NFS faq]
 
 [Ubuntu Wiki NFS Howto]
 
-# iSCSI Initiator
-
+## iSCSI Initiator
 *iSCSI* (Internet Small Computer System Interface) is a protocol that allows
 SCSI commands to be transmitted over a network. Typically iSCSI is implemented
 in a SAN (Storage Area Network) to allow servers to access a large store of
@@ -272,24 +298,28 @@ have the appropriate rights to connect to it. The instructions for setting up
 a target vary greatly between hardware providers, so consult your vendor
 documentation to configure your specific iSCSI target.
 
-## iSCSI Initiator Install
-
+### iSCSI Initiator Install
 To configure Ubuntu Server as an iSCSI initiator install the open-iscsi
 package. In a terminal enter:
 
-    sudo apt install open-iscsi
+```bash
+sudo apt install open-iscsi
+```
 
-## iSCSI Initiator Configuration {#iscsi-initiator-config}
-
+### iSCSI Initiator Configuration 
 Once the open-iscsi package is installed, edit `/etc/iscsi/iscsid.conf`
 changing the following:
 
-    node.startup = automatic
+```bash
+node.startup = automatic
+```
 
 You can check which targets are available by using the iscsiadm utility. Enter
 the following in a terminal:
 
-    sudo iscsiadm -m discovery -t st -p 192.168.0.10
+```bash
+sudo iscsiadm -m discovery -t st -p 192.168.0.10
+```
 
 -   *-m:* determines the mode that iscsiadm executes in.
 
@@ -297,48 +327,52 @@ the following in a terminal:
 
 -   *-p:* option indicates the target IP address.
 
-> **Note**
->
-> Change example *192.168.0.10* to the target IP address on your network.
+!!! Note: Change example *192.168.0.10* to the target IP address on your network.
 
 If the target is available you should see output similar to the following:
 
 
-    192.168.0.10:3260,1 iqn.1992-05.com.emc:sl7b92030000520000-2
+```bash
+192.168.0.10:3260,1 iqn.1992-05.com.emc:sl7b92030000520000-2
+```
 
-> **Note**
->
-> The *iqn* number and IP address above will vary depending on your hardware.
+!!! Note: The *iqn* number and IP address above will vary depending on your hardware.
 
 You should now be able to connect to the iSCSI target, and depending on your
 target setup you may have to enter user credentials. Login to the iSCSI node:
 
-    sudo iscsiadm -m node --login
+```bash
+sudo iscsiadm -m node --login
+```
 
 Check to make sure that the new disk has been detected using dmesg:
 
-    dmesg | grep sd
+```bash
+dmesg | grep sd
+```
 
-    [    4.322384] sd 2:0:0:0: Attached scsi generic sg1 type 0
-    [    4.322797] sd 2:0:0:0: [sda] 41943040 512-byte logical blocks: (21.4 GB/20.0 GiB)
-    [    4.322843] sd 2:0:0:0: [sda] Write Protect is off
-    [    4.322846] sd 2:0:0:0: [sda] Mode Sense: 03 00 00 00
-    [    4.322896] sd 2:0:0:0: [sda] Cache data unavailable
-    [    4.322899] sd 2:0:0:0: [sda] Assuming drive cache: write through
-    [    4.323230] sd 2:0:0:0: [sda] Cache data unavailable
-    [    4.323233] sd 2:0:0:0: [sda] Assuming drive cache: write through
-    [    4.325312]  sda: sda1 sda2 < sda5 >
-    [    4.325729] sd 2:0:0:0: [sda] Cache data unavailable
-    [    4.325732] sd 2:0:0:0: [sda] Assuming drive cache: write through
-    [    4.325735] sd 2:0:0:0: [sda] Attached SCSI disk
-    [ 2486.941805] sd 4:0:0:3: Attached scsi generic sg3 type 0
-    [ 2486.952093] sd 4:0:0:3: [sdb] 1126400000 512-byte logical blocks: (576 GB/537 GiB)
-    [ 2486.954195] sd 4:0:0:3: [sdb] Write Protect is off
-    [ 2486.954200] sd 4:0:0:3: [sdb] Mode Sense: 8f 00 00 08
-    [ 2486.954692] sd 4:0:0:3: [sdb] Write cache: disabled, read cache: enabled, doesn't
-     support DPO or FUA
-    [ 2486.960577]  sdb: sdb1
-    [ 2486.964862] sd 4:0:0:3: [sdb] Attached SCSI disk
+```bash
+[    4.322384] sd 2:0:0:0: Attached scsi generic sg1 type 0
+[    4.322797] sd 2:0:0:0: [sda] 41943040 512-byte logical blocks: (21.4 GB/20.0 GiB)
+[    4.322843] sd 2:0:0:0: [sda] Write Protect is off
+[    4.322846] sd 2:0:0:0: [sda] Mode Sense: 03 00 00 00
+[    4.322896] sd 2:0:0:0: [sda] Cache data unavailable
+[    4.322899] sd 2:0:0:0: [sda] Assuming drive cache: write through
+[    4.323230] sd 2:0:0:0: [sda] Cache data unavailable
+[    4.323233] sd 2:0:0:0: [sda] Assuming drive cache: write through
+[    4.325312]  sda: sda1 sda2 < sda5 >
+[    4.325729] sd 2:0:0:0: [sda] Cache data unavailable
+[    4.325732] sd 2:0:0:0: [sda] Assuming drive cache: write through
+[    4.325735] sd 2:0:0:0: [sda] Attached SCSI disk
+[ 2486.941805] sd 4:0:0:3: Attached scsi generic sg3 type 0
+[ 2486.952093] sd 4:0:0:3: [sdb] 1126400000 512-byte logical blocks: (576 GB/537 GiB)
+[ 2486.954195] sd 4:0:0:3: [sdb] Write Protect is off
+[ 2486.954200] sd 4:0:0:3: [sdb] Mode Sense: 8f 00 00 08
+[ 2486.954692] sd 4:0:0:3: [sdb] Write cache: disabled, read cache: enabled, doesn't
+ support DPO or FUA
+[ 2486.960577]  sdb: sdb1
+[ 2486.964862] sd 4:0:0:3: [sdb] Attached SCSI disk
+```
 
 In the output above *sdb* is the new iSCSI disk. Remember this is just an
 example; the output you see on your screen will vary.
@@ -346,38 +380,40 @@ example; the output you see on your screen will vary.
 Next, create a partition, format the file system, and mount the new iSCSI
 disk. In a terminal enter:
 
-    sudo fdisk /dev/sdb
-    n
-    p
-    enter
-    w
+```bash
+sudo fdisk /dev/sdb
+n
+p
+enter
+w
+```
 
-> **Note**
->
-> The above commands are from inside the fdisk utility; see `man fdisk` for
-> more detailed instructions. Also, the cfdisk utility is sometimes more user
-> friendly.
+!!! Note: The above commands are from inside the fdisk utility; see `man fdisk` for
+more detailed instructions. Also, the cfdisk utility is sometimes more user
+friendly.
 
 Now format the file system and mount it to `/srv` as an example:
 
-    sudo mkfs.ext4 /dev/sdb1
-    sudo mount /dev/sdb1 /srv
+```bash
+sudo mkfs.ext4 /dev/sdb1
+sudo mount /dev/sdb1 /srv
+```
 
 Finally, add an entry to `/etc/fstab` to mount the iSCSI drive during boot:
 
-    /dev/sdb1       /srv        ext4    defaults,auto,_netdev 0 0
+```bash
+/dev/sdb1       /srv        ext4    defaults,auto,_netdev 0 0
+```
 
 It is a good idea to make sure everything is working as expected by rebooting
 the server.
 
-## References {#iscsi-initiator-references}
-
+### References 
 [Open-iSCSI Website]
 
 [Debian Open-iSCSI page]
 
-# CUPS - Print Server {#cups}
-
+## CUPS - Print Server 
 The primary mechanism for Ubuntu printing and print services is the **Common
 UNIX Printing System** (CUPS). This printing system is a freely available,
 portable printing layer which has become the new standard for printing in most
@@ -390,14 +426,15 @@ also supports PostScript Printer Description (PPD) and auto-detection of
 network printers, and features a simple web-based configuration and
 administration tool.
 
-## Installation {#cups-installation}
-
+### Installation 
 To install CUPS on your Ubuntu computer, simply use sudo with the apt command
 and give the packages to install as the first parameter. A complete CUPS
 install has many package dependencies, but they may all be specified on the
 same command line. Enter the following at a terminal prompt to install CUPS:
 
-    sudo apt install cups
+```bash
+sudo apt install cups
+```
 
 Upon authenticating with your user password, the packages should be downloaded
 and installed without error. Upon the conclusion of installation, the CUPS
@@ -412,8 +449,7 @@ everything, from the default of "info". If you make this change, remember to
 change it back once you've solved your problem, to prevent the log file from
 becoming overly large.
 
-## Configuration {#cups-configuration}
-
+### Configuration 
 The Common UNIX Printing System server's behavior is configured through the
 directives contained in the file `/etc/cups/cupsd.conf`. The CUPS
 configuration file follows the same syntax as the primary configuration file
@@ -422,17 +458,16 @@ configuration file should feel at ease when editing the CUPS configuration
 file. Some examples of settings you may wish to change initially will be
 presented here.
 
-> **Tip**
->
-> Prior to editing the configuration file, you should make a copy of the
-> original file and protect it from writing, so you will have the original
-> settings as a reference, and to reuse as necessary.
->
-> Copy the `/etc/cups/cupsd.conf` file and protect it from writing with the
-> following commands, issued at a terminal prompt:
+!!! Tip: Prior to editing the configuration file, you should make a copy of the
+original file and protect it from writing, so you will have the original
+settings as a reference, and to reuse as necessary.
+Copy the `/etc/cups/cupsd.conf` file and protect it from writing with the
+following commands, issued at a terminal prompt:
 
-    sudo cp /etc/cups/cupsd.conf /etc/cups/cupsd.conf.original
-    sudo chmod a-w /etc/cups/cupsd.conf.original
+```bash
+sudo cp /etc/cups/cupsd.conf /etc/cups/cupsd.conf.original
+sudo chmod a-w /etc/cups/cupsd.conf.original
+```
 
 -   **ServerAdmin**: To configure the email address of the designated
     administrator of the CUPS server, simply edit the `/etc/cups/cupsd.conf`
@@ -441,7 +476,9 @@ presented here.
     for the CUPS server, and your e-mail address is 'bjoy@somebigco.com', then
     you would modify the ServerAdmin line to appear as such:
 
-        ServerAdmin bjoy@somebigco.com
+```bash
+    ServerAdmin bjoy@somebigco.com
+```
 
 -   **Listen**: By default on Ubuntu, the CUPS server installation listens
     only on the loopback interface at IP address *127.0.0.1*. In order to
@@ -453,44 +490,53 @@ presented here.
     accessible to the other systems on this subnetwork, you would edit the
     `/etc/cups/cupsd.conf` and add a Listen directive, as such:
 
-        Listen 127.0.0.1:631           # existing loopback Listen
-        Listen /var/run/cups/cups.sock # existing socket Listen
-        Listen 192.168.10.250:631      # Listen on the LAN interface, Port 631 (IPP)
+```bash
+    Listen 127.0.0.1:631           # existing loopback Listen
+    Listen /var/run/cups/cups.sock # existing socket Listen
+    Listen 192.168.10.250:631      # Listen on the LAN interface, Port 631 (IPP)
+```
 
-    In the example above, you may comment out or remove the reference to the
-    Loopback address (127.0.0.1) if you do not wish cupsd to listen on that
-    interface, but would rather have it only listen on the Ethernet interfaces
-    of the Local Area Network (LAN). To enable listening for all network
-    interfaces for which a certain hostname is bound, including the Loopback,
-    you could create a Listen entry for the hostname *socrates* as such:
+```bash
+In the example above, you may comment out or remove the reference to the
+Loopback address (127.0.0.1) if you do not wish cupsd to listen on that
+interface, but would rather have it only listen on the Ethernet interfaces
+of the Local Area Network (LAN). To enable listening for all network
+interfaces for which a certain hostname is bound, including the Loopback,
+you could create a Listen entry for the hostname *socrates* as such:
+```
 
-        Listen socrates:631  # Listen on all interfaces for the hostname 'socrates'
+```bash
+    Listen socrates:631  # Listen on all interfaces for the hostname 'socrates'
+```
 
-    or by omitting the Listen directive and using *Port* instead, as in:
+```bash
+or by omitting the Listen directive and using *Port* instead, as in:
+```
 
-        Port 631  # Listen on port 631 on all interfaces
+```bash
+    Port 631  # Listen on port 631 on all interfaces
+```
 
 For more examples of configuration directives in the CUPS server configuration
 file, view the associated system manual page by entering the following command
 at a terminal prompt:
 
-    man cupsd.conf
+```bash
+man cupsd.conf
+```
 
-> **Note**
->
-> Whenever you make changes to the `/etc/cups/cupsd.conf` configuration file,
-> you'll need to restart the CUPS server by typing the following command at a
-> terminal prompt:
+!!! Note: Whenever you make changes to the `/etc/cups/cupsd.conf` configuration file,
+you'll need to restart the CUPS server by typing the following command at a
+terminal prompt:
 
-    sudo systemctl restart cups.service
+```bash
+sudo systemctl restart cups.service
+```
 
-## Web Interface {#cups-web}
-
-> **Tip**
->
-> CUPS can be configured and monitored using a web interface, which by default
-> is available at <http://localhost:631/admin>. The web interface can be used
-> to perform all printer management tasks.
+### Web Interface 
+!!! Tip: CUPS can be configured and monitored using a web interface, which by default
+is available at <http://localhost:631/admin>. The web interface can be used
+to perform all printer management tasks.
 
 In order to perform administrative tasks via the web interface, you must
 either have the root account enabled on your server, or authenticate as a user
@@ -499,13 +545,14 @@ that doesn't have a password.
 
 To add a user to the *lpadmin* group, run at the terminal prompt:
 
-    sudo usermod -aG lpadmin username
+```bash
+sudo usermod -aG lpadmin username
+```
 
 Further documentation is available in the *Documentation/Help* tab of the web
 interface.
 
-## References {#cups-references}
-
+### References 
 [CUPS Website]
 
 [Debian Open-iSCSI page]

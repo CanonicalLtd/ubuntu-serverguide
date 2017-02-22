@@ -9,90 +9,93 @@ This section provides general and specific information pertaining to
 networking, including an overview of network concepts and detailed discussion
 of popular network protocols.
 
-# Network Configuration
-
+## Network Configuration
 Ubuntu ships with a number of graphical utilities to configure your network
 devices. This document is geared toward server administrators and will focus
 on managing your network on the command line.
 
-## Ethernet Interfaces
-
+### Ethernet Interfaces
 Ethernet interfaces are identified by the system using the naming convention
 of *ethX*, where *X* represents a numeric value. The first Ethernet interface
 is typically identified as *eth0*, the second as *eth1*, and all others should
 move up in numerical order.
 
-### Identify Ethernet Interfaces
-
+#### Identify Ethernet Interfaces
 To quickly identify all available Ethernet interfaces, you can use the
 ifconfig command as shown below.
 
-    ifconfig -a | grep eth
-    eth0      Link encap:Ethernet  HWaddr 00:15:c5:4a:16:5a
+```bash
+ifconfig -a | grep eth
+eth0      Link encap:Ethernet  HWaddr 00:15:c5:4a:16:5a
+```
 
 Another application that can help identify all network interfaces available to
 your system is the lshw command. In the example below, lshw shows a single
 Ethernet interface with the logical name of *eth0* along with bus information,
 driver details and all supported capabilities.
 
-    sudo lshw -class network
-      *-network
-           description: Ethernet interface
-           product: BCM4401-B0 100Base-TX
-           vendor: Broadcom Corporation
-           physical id: 0
-           bus info: pci@0000:03:00.0
-           logical name: eth0
-           version: 02
-           serial: 00:15:c5:4a:16:5a
-           size: 10MB/s
-           capacity: 100MB/s
-           width: 32 bits
-           clock: 33MHz
-           capabilities: (snipped for brevity)
-           configuration: (snipped for brevity)
-           resources: irq:17 memory:ef9fe000-ef9fffff
+```bash
+sudo lshw -class network
+  *-network
+       description: Ethernet interface
+       product: BCM4401-B0 100Base-TX
+       vendor: Broadcom Corporation
+       physical id: 0
+       bus info: pci@0000:03:00.0
+       logical name: eth0
+       version: 02
+       serial: 00:15:c5:4a:16:5a
+       size: 10MB/s
+       capacity: 100MB/s
+       width: 32 bits
+       clock: 33MHz
+       capabilities: (snipped for brevity)
+       configuration: (snipped for brevity)
+       resources: irq:17 memory:ef9fe000-ef9fffff
+```
 
-### Ethernet Interface Logical Names {#ethernet-interface-names}
-
+#### Ethernet Interface Logical Names 
 Interface logical names are configured in the file
 `/etc/udev/rules.d/70-persistent-net.rules.` If you would like control which
 interface receives a particular logical name, find the line matching the
 interfaces physical MAC address and modify the value of *NAME=ethX* to the
 desired logical name. Reboot the system to commit your changes.
 
-### Ethernet Interface Settings
-
+#### Ethernet Interface Settings
 ethtool is a program that displays and changes Ethernet card settings such as
 auto-negotiation, port speed, duplex mode, and Wake-on-LAN. It is not
 installed by default, but is available for installation in the repositories.
 
-    sudo apt install ethtool
+```bash
+sudo apt install ethtool
+```
 
 The following is an example of how to view supported features and configured
 settings of an Ethernet interface.
 
-    sudo ethtool eth0
-    Settings for eth0:
-            Supported ports: [ TP ]
-            Supported link modes:   10baseT/Half 10baseT/Full 
-                                    100baseT/Half 100baseT/Full 
-                                    1000baseT/Half 1000baseT/Full 
-            Supports auto-negotiation: Yes
-            Advertised link modes:  10baseT/Half 10baseT/Full 
-                                    100baseT/Half 100baseT/Full 
-                                    1000baseT/Half 1000baseT/Full 
-            Advertised auto-negotiation: Yes
-            Speed: 1000Mb/s
-            Duplex: Full
-            Port: Twisted Pair
-            PHYAD: 1
-            Transceiver: internal
-            Auto-negotiation: on
-            Supports Wake-on: g
-            Wake-on: d
-            Current message level: 0x000000ff (255)
-            Link detected: yes
+```bash
+sudo ethtool eth0
+Settings for eth0:
+        Supported ports: [ TP ]
+        Supported link modes:   10baseT/Half 10baseT/Full 
+                                100baseT/Half 100baseT/Full 
+                                1000baseT/Half 1000baseT/Full 
+        Supports auto-negotiation: Yes
+        Advertised link modes:  10baseT/Half 10baseT/Full 
+                                100baseT/Half 100baseT/Full 
+                                1000baseT/Half 1000baseT/Full 
+        Advertised auto-negotiation: Yes
+        Speed: 1000Mb/s
+        Duplex: Full
+        Port: Twisted Pair
+        PHYAD: 1
+        Transceiver: internal
+        Auto-negotiation: on
+        Supports Wake-on: g
+        Wake-on: d
+        Current message level: 0x000000ff (255)
+        Link detected: yes
+```
 
 Changes made with the ethtool command are temporary and will be lost after a
 reboot. If you would like to retain settings, simply add the desired ethtool
@@ -103,25 +106,23 @@ The following is an example of how the interface identified as *eth0* could be
 permanently configured with a port speed of 1000Mb/s running in full duplex
 mode.
 
-    auto eth0
-    iface eth0 inet static
-    pre-up /sbin/ethtool -s eth0 speed 1000 duplex full
+```bash
+auto eth0
+iface eth0 inet static
+pre-up /sbin/ethtool -s eth0 speed 1000 duplex full
+```
 
-> **Note**
->
-> Although the example above shows the interface configured to use the
-> *static* method, it actually works with other methods as well, such as DHCP.
-> The example is meant to demonstrate only proper placement of the *pre-up*
-> statement in relation to the rest of the interface configuration.
+!!! Note: Although the example above shows the interface configured to use the
+*static* method, it actually works with other methods as well, such as DHCP.
+The example is meant to demonstrate only proper placement of the *pre-up*
+statement in relation to the rest of the interface configuration.
 
-## IP Addressing
-
+### IP Addressing
 The following section describes the process of configuring your systems IP
 address and default gateway needed for communicating on a local area network
 and the Internet.
 
-### Temporary IP Address Assignment {#temp-ip-assignment}
-
+#### Temporary IP Address Assignment 
 For temporary network configurations, you can use standard commands such as
 ip, ifconfig and route, which are also found on most other GNU/Linux operating
 systems. These commands allow you to configure settings which take effect
@@ -131,35 +132,43 @@ To temporarily configure an IP address, you can use the ifconfig command in
 the following manner. Just modify the IP address and subnet mask to match your
 network requirements.
 
-    sudo ifconfig eth0 10.0.0.100 netmask 255.255.255.0
+```bash
+sudo ifconfig eth0 10.0.0.100 netmask 255.255.255.0
+```
 
 To verify the IP address configuration of eth0, you can use the ifconfig
 command in the following manner.
 
-    ifconfig eth0
-    eth0      Link encap:Ethernet  HWaddr 00:15:c5:4a:16:5a  
-              inet addr:10.0.0.100  Bcast:10.0.0.255  Mask:255.255.255.0
-              inet6 addr: fe80::215:c5ff:fe4a:165a/64 Scope:Link
-              UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-              RX packets:466475604 errors:0 dropped:0 overruns:0 frame:0
-              TX packets:403172654 errors:0 dropped:0 overruns:0 carrier:0
-              collisions:0 txqueuelen:1000 
-              RX bytes:2574778386 (2.5 GB)  TX bytes:1618367329 (1.6 GB)
-              Interrupt:16 
+```bash
+ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 00:15:c5:4a:16:5a  
+          inet addr:10.0.0.100  Bcast:10.0.0.255  Mask:255.255.255.0
+          inet6 addr: fe80::215:c5ff:fe4a:165a/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:466475604 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:403172654 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:2574778386 (2.5 GB)  TX bytes:1618367329 (1.6 GB)
+          Interrupt:16 
+```
 
 To configure a default gateway, you can use the route command in the following
 manner. Modify the default gateway address to match your network requirements.
 
-    sudo route add default gw 10.0.0.1 eth0
+```bash
+sudo route add default gw 10.0.0.1 eth0
+```
 
 To verify your default gateway configuration, you can use the route command in
 the following manner.
 
-    route -n
-    Kernel IP routing table
-    Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-    10.0.0.0        0.0.0.0         255.255.255.0   U     1      0        0 eth0
-    0.0.0.0         10.0.0.1        0.0.0.0         UG    0      0        0 eth0
+```bash
+route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.0.0        0.0.0.0         255.255.255.0   U     1      0        0 eth0
+0.0.0.0         10.0.0.1        0.0.0.0         UG    0      0        0 eth0
+```
 
 If you require DNS for your temporary network configuration, you can add DNS
 server IP addresses in the file `/etc/resolv.conf`. In general, editing
@@ -169,45 +178,51 @@ servers to `/etc/resolv.conf`, which should be changed to servers appropriate
 for your network. A more lengthy description of the proper persistent way to
 do DNS client configuration is in a following section.
 
-    nameserver 8.8.8.8
-    nameserver 8.8.4.4
+```bash
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+```
 
 If you no longer need this configuration and wish to purge all IP
 configuration from an interface, you can use the ip command with the flush
 option as shown below.
 
-    ip addr flush eth0
+```bash
+ip addr flush eth0
+```
 
-> **Note**
->
-> Flushing the IP configuration using the ip command does not clear the
-> contents of `/etc/resolv.conf`. You must remove or modify those entries
-> manually, or re-boot which should also cause `/etc/resolv.conf`, which is
-> actually now a symlink to `/run/resolvconf/resolv.conf`, to be re-written.
+!!! Note: Flushing the IP configuration using the ip command does not clear the
+contents of `/etc/resolv.conf`. You must remove or modify those entries
+manually, or re-boot which should also cause `/etc/resolv.conf`, which is
+actually now a symlink to `/run/resolvconf/resolv.conf`, to be re-written.
 
-### Dynamic IP Address Assignment (DHCP Client) {#dynamic-ip-addressing}
-
+#### Dynamic IP Address Assignment (DHCP Client) 
 To configure your server to use DHCP for dynamic address assignment, add the
 *dhcp* method to the inet address family statement for the appropriate
 interface in the file `/etc/network/interfaces`. The example below assumes you
 are configuring your first Ethernet interface identified as *eth0*.
 
-    auto eth0
-    iface eth0 inet dhcp
+```bash
+auto eth0
+iface eth0 inet dhcp
+```
 
 By adding an interface configuration as shown above, you can manually enable
 the interface through the ifup command which initiates the DHCP process via
 dhclient.
 
-    sudo ifup eth0
+```bash
+sudo ifup eth0
+```
 
 To manually disable the interface, you can use the ifdown command, which in
 turn will initiate the DHCP release process and shut down the interface.
 
-    sudo ifdown eth0
+```bash
+sudo ifdown eth0
+```
 
-### Static IP Address Assignment {#static-ip-addressing}
-
+#### Static IP Address Assignment 
 To configure your system to use a static IP address assignment, add the
 *static* method to the inet address family statement for the appropriate
 interface in the file `/etc/network/interfaces`. The example below assumes you
@@ -215,53 +230,60 @@ are configuring your first Ethernet interface identified as *eth0*. Change the
 *address*, *netmask*, and *gateway* values to meet the requirements of your
 network.
 
-    auto eth0
-    iface eth0 inet static
-    address 10.0.0.100
-    netmask 255.255.255.0
-    gateway 10.0.0.1
+```bash
+auto eth0
+iface eth0 inet static
+address 10.0.0.100
+netmask 255.255.255.0
+gateway 10.0.0.1
+```
 
 By adding an interface configuration as shown above, you can manually enable
 the interface through the ifup command.
 
-    sudo ifup eth0
+```bash
+sudo ifup eth0
+```
 
 To manually disable the interface, you can use the ifdown command.
 
-    sudo ifdown eth0
+```bash
+sudo ifdown eth0
+```
 
-### Loopback Interface
-
+#### Loopback Interface
 The loopback interface is identified by the system as *lo* and has a default
 IP address of 127.0.0.1. It can be viewed using the ifconfig command.
 
-    ifconfig lo
-    lo        Link encap:Local Loopback  
-              inet addr:127.0.0.1  Mask:255.0.0.0
-              inet6 addr: ::1/128 Scope:Host
-              UP LOOPBACK RUNNING  MTU:16436  Metric:1
-              RX packets:2718 errors:0 dropped:0 overruns:0 frame:0
-              TX packets:2718 errors:0 dropped:0 overruns:0 carrier:0
-              collisions:0 txqueuelen:0 
-              RX bytes:183308 (183.3 KB)  TX bytes:183308 (183.3 KB)
+```bash
+ifconfig lo
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:2718 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:2718 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:183308 (183.3 KB)  TX bytes:183308 (183.3 KB)
+```
 
 By default, there should be two lines in `/etc/network/interfaces` responsible
 for automatically configuring your loopback interface. It is recommended that
 you keep the default settings unless you have a specific purpose for changing
 them. An example of the two default lines are shown below.
 
-    auto lo
-    iface lo inet loopback
+```bash
+auto lo
+iface lo inet loopback
+```
 
-## Name Resolution
-
+### Name Resolution
 Name resolution as it relates to IP networking is the process of mapping IP
 addresses to hostnames, making it easier to identify resources on a network.
 The following section will explain how to properly configure your system for
 name resolution using DNS and static hostname records.
 
-### DNS Client Configuration
-
+#### DNS Client Configuration
 Traditionally, the file `/etc/resolv.conf` was a static configuration file
 that rarely needed to be changed or automatically changed via DCHP client
 hooks. Nowadays, a computer can switch from one network to another quite often
@@ -276,7 +298,9 @@ Instead, resolvconf uses DHCP client hooks, and `/etc/network/interfaces` to
 generate a list of nameservers and domains to put in `/etc/resolv.conf`, which
 is now a symlink:
 
-    /etc/resolv.conf -> ../run/resolvconf/resolv.conf
+```bash
+/etc/resolv.conf -> ../run/resolvconf/resolv.conf
+```
 
 To configure the resolver, add the IP addresses of the nameservers that are
 appropriate for your network in the file `/etc/network/interfaces`. You can
@@ -285,12 +309,14 @@ names. For each other valid resolv.conf configuration option, you can include,
 in the stanza, one line beginning with that option name with a **dns-**
 prefix. The resulting file might look like the following:
 
-    iface eth0 inet static
-        address 192.168.3.3
-        netmask 255.255.255.0
-        gateway 192.168.3.1
-        dns-search example.com
-        dns-nameservers 192.168.3.45 192.168.8.10
+```bash
+iface eth0 inet static
+    address 192.168.3.3
+    netmask 255.255.255.0
+    gateway 192.168.3.1
+    dns-search example.com
+    dns-nameservers 192.168.3.45 192.168.8.10
+```
 
 The *search* option can also be used with multiple domain names so that DNS
 queries will be appended in the order in which they are entered. For example,
@@ -300,12 +326,14 @@ your network may have multiple sub-domains to search; a parent domain of
 If you have multiple domains you wish to search, your configuration might look
 like the following:
 
-    iface eth0 inet static
-        address 192.168.3.3
-        netmask 255.255.255.0
-        gateway 192.168.3.1
-        dns-search example.com sales.example.com dev.example.com
-        dns-nameservers 192.168.3.45 192.168.8.10
+```bash
+iface eth0 inet static
+    address 192.168.3.3
+    netmask 255.255.255.0
+    gateway 192.168.3.1
+    dns-search example.com sales.example.com dev.example.com
+    dns-nameservers 192.168.3.45 192.168.8.10
+```
 
 If you try to ping a host with the name of *server1*, your system will
 automatically query DNS for its Fully Qualified Domain Name (FQDN) in the
@@ -320,8 +348,7 @@ following order:
 If no matches are found, the DNS server will provide a result of *notfound*
 and the DNS query will fail.
 
-### Static Hostnames
-
+#### Static Hostnames
 Static hostnames are locally defined hostname-to-IP mappings located in the
 file `/etc/hosts`. Entries in the `hosts` file will have precedence over DNS
 by default. This means that if your system tries to resolve a hostname and it
@@ -334,22 +361,21 @@ The following is an example of a `hosts` file where a number of local servers
 have been identified by simple hostnames, aliases and their equivalent Fully
 Qualified Domain Names (FQDN's).
 
-    127.0.0.1   localhost
-    127.0.1.1   ubuntu-server
-    10.0.0.11   server1 server1.example.com vpn
-    10.0.0.12   server2 server2.example.com mail
-    10.0.0.13   server3 server3.example.com www
-    10.0.0.14   server4 server4.example.com file
+```bash
+127.0.0.1   localhost
+127.0.1.1   ubuntu-server
+10.0.0.11   server1 server1.example.com vpn
+10.0.0.12   server2 server2.example.com mail
+10.0.0.13   server3 server3.example.com www
+10.0.0.14   server4 server4.example.com file
+```
 
-> **Note**
->
-> In the above example, notice that each of the servers have been given
-> aliases in addition to their proper names and FQDN's. *Server1* has been
-> mapped to the name *vpn*, *server2* is referred to as *mail*, *server3* as
-> *www*, and *server4* as *file*.
+!!! Note: In the above example, notice that each of the servers have been given
+aliases in addition to their proper names and FQDN's. *Server1* has been
+mapped to the name *vpn*, *server2* is referred to as *mail*, *server3* as
+*www*, and *server4* as *file*.
 
-### Name Service Switch Configuration {#name-service-switch-config}
-
+#### Name Service Switch Configuration 
 The order in which your system selects a method of resolving hostnames to IP
 addresses is controlled by the Name Service Switch (NSS) configuration file
 `/etc/nsswitch.conf`. As mentioned in the previous section, typically static
@@ -357,7 +383,9 @@ hostnames defined in the systems `/etc/hosts` file have precedence over names
 resolved from DNS. The following is an example of the line responsible for
 this order of hostname lookups in the file `/etc/nsswitch.conf`.
 
-    hosts:          files mdns4_minimal [NOTFOUND=return] dns mdns4
+```bash
+hosts:          files mdns4_minimal [NOTFOUND=return] dns mdns4
+```
 
 -   **files** first tries to resolve static hostnames located in `/etc/hosts`.
 
@@ -376,10 +404,11 @@ simply change the *hosts:* string to the value of your choosing. For example,
 if you prefer to use legacy Unicast DNS versus Multicast DNS, you can change
 the string in `/etc/nsswitch.conf` as shown below.
 
-    hosts:          files dns [NOTFOUND=return] mdns4_minimal mdns4
+```bash
+hosts:          files dns [NOTFOUND=return] mdns4_minimal mdns4
+```
 
-## Bridging
-
+### Bridging
 Bridging multiple interfaces is a more advanced configuration, but is very
 useful in multiple scenarios. One scenario is setting up a bridge with
 multiple network interfaces, then using a firewall to filter traffic between
@@ -390,40 +419,45 @@ following example covers the latter scenario.
 Before configuring a bridge you will need to install the bridge-utils package.
 To install the package, in a terminal enter:
 
-    sudo apt install bridge-utils
+```bash
+sudo apt install bridge-utils
+```
 
 Next, configure the bridge by editing `/etc/network/interfaces`:
 
-    auto lo
-    iface lo inet loopback
+```bash
+auto lo
+iface lo inet loopback
+```
 
-    auto br0
-    iface br0 inet static
-            address 192.168.0.10
-            network 192.168.0.0
-            netmask 255.255.255.0
-            broadcast 192.168.0.255
-            gateway 192.168.0.1
-            bridge_ports eth0
-            bridge_fd 9
-            bridge_hello 2
-            bridge_maxage 12
-            bridge_stp off
+```bash
+auto br0
+iface br0 inet static
+        address 192.168.0.10
+        network 192.168.0.0
+        netmask 255.255.255.0
+        broadcast 192.168.0.255
+        gateway 192.168.0.1
+        bridge_ports eth0
+        bridge_fd 9
+        bridge_hello 2
+        bridge_maxage 12
+        bridge_stp off
+```
 
-> **Note**
->
-> Enter the appropriate values for your physical interface and network.
+!!! Note: Enter the appropriate values for your physical interface and network.
 
 Now bring up the bridge:
 
-    sudo ifup br0
+```bash
+sudo ifup br0
+```
 
 The new bridge interface should now be up and running. The brctl provides
 useful information about the state of the bridge, controls which interfaces
 are part of the bridge, etc. See `man brctl` for more information.
 
-## Resources {#network-config-resources}
-
+### Resources 
 -   The [Ubuntu Wiki Network page] has links to articles covering more
     advanced network configuration.
 
@@ -442,16 +476,14 @@ are part of the bridge, etc. See `man brctl` for more information.
 -   For more information on *bridging* see the [brctl man page] and the Linux
     Foundation's [Networking-Bridge] page.
 
-# TCP/IP
-
+## TCP/IP
 The Transmission Control Protocol and Internet Protocol (TCP/IP) is a standard
 set of protocols developed in the late 1970s by the Defense Advanced Research
 Projects Agency (DARPA) as a means of communication between different types of
 computers and computer networks. TCP/IP is the driving force of the Internet,
 and thus it is the most popular set of network protocols on Earth.
 
-## TCP/IP Introduction
-
+### TCP/IP Introduction
 The two protocol components of TCP/IP deal with different aspects of computer
 networking. *Internet Protocol*, the "IP" of TCP/IP is a connectionless
 protocol which deals only with network packet routing using the *IP Datagram*
@@ -462,8 +494,7 @@ to exchange data streams. TCP also guarantees that the data between
 connections is delivered and that it arrives at one network host in the same
 order as sent from another network host.
 
-## TCP/IP Configuration
-
+### TCP/IP Configuration
 The TCP/IP protocol configuration consists of several elements which must be
 set by editing the appropriate configuration files, or deploying solutions
 such as the Dynamic Host Configuration Protocol (DHCP) server which in turn,
@@ -531,20 +562,25 @@ The common configuration elements of TCP/IP and their purposes are as follows:
     such as the Level3 (Verizon) servers with IP addresses from 4.2.2.1
     to 4.2.2.6.
 
-    > **Tip**
-    >
-    > The IP address, Netmask, Network Address, Broadcast Address, Gateway
-    > Address, and Nameserver Addresses are typically specified via the
-    > appropriate directives in the file `/etc/network/interfaces`. For more
-    > information, view the system manual page for `interfaces`, with the
-    > following command typed at a terminal prompt:
+```bash
+> **Tip**
+>
+> The IP address, Netmask, Network Address, Broadcast Address, Gateway
+> Address, and Nameserver Addresses are typically specified via the
+> appropriate directives in the file `/etc/network/interfaces`. For more
+> information, view the system manual page for `interfaces`, with the
+> following command typed at a terminal prompt:
+```
 
-    Access the system manual page for `interfaces` with the following command:
+```bash
+Access the system manual page for `interfaces` with the following command:
+```
 
-        man interfaces
+```bash
+    man interfaces
+```
 
-## IP Routing
-
+### IP Routing
 IP routing is a means of specifying and discovering paths in a TCP/IP network
 along which network data may be sent. Routing uses a set of *routing tables*
 to direct the forwarding of network data packets from their source to the
@@ -578,8 +614,7 @@ perfect, however, and presents disadvantages such as heightened complexity and
 additional network overhead from router communications, which does not
 immediately benefit the end users, but still consumes network bandwidth.
 
-## TCP and UDP
-
+### TCP and UDP
 TCP is a connection-based protocol, offering error correction and guaranteed
 delivery of data via what is known as *flow control*. Flow control determines
 when the flow of a data stream needs to be stopped, and previously sent data
@@ -596,8 +631,7 @@ where it is considerably faster than TCP due to the lack of error correction
 and flow control, and where the loss of a few packets is not generally
 catastrophic.
 
-## ICMP
-
+### ICMP
 The Internet Control Messaging Protocol (ICMP) is an extension to the Internet
 Protocol (IP) as defined in the Request For Comments (RFC) \#792 and supports
 network packets containing control, error, and informational messages. ICMP is
@@ -606,8 +640,7 @@ availability of a network host or device. Examples of some error messages
 returned by ICMP which are useful to both network hosts and devices such as
 routers, include *Destination Unreachable* and *Time Exceeded*.
 
-## Daemons
-
+### Daemons
 Daemons are special system applications which typically execute continuously
 in the background and await requests for the functions they provide from other
 applications. Many daemons are network-centric; that is, a large number of
@@ -618,8 +651,7 @@ functionality; the *Secure SHell Daemon* (sshd), which provides secure remote
 login shell and file transfer capabilities; and the *Internet Message Access
 Protocol Daemon* (imapd), which provides E-Mail services.
 
-## Resources {#tcpip-resources}
-
+### Resources 
 -   There are man pages for [TCP] and [IP] that contain more
     useful information.
 
@@ -627,8 +659,7 @@ Protocol Daemon* (imapd), which provides E-Mail services.
 
 -   Another resource is O'Reilly's [TCP/IP Network Administration].
 
-# Dynamic Host Configuration Protocol (DHCP) {#dhcp}
-
+## Dynamic Host Configuration Protocol (DHCP) 
 The Dynamic Host Configuration Protocol (DHCP) is a network service that
 enables host computers to be automatically assigned settings from a server as
 opposed to manually configuring each network host. Computers configured to be
@@ -700,11 +731,12 @@ installed on all computers required to be automatically configured. Both
 programs are easy to install and configure and will be automatically started
 at system boot.
 
-## Installation {#dhcp-installation}
-
+### Installation 
 At a terminal prompt, enter the following command to install dhcpd:
 
-    sudo apt install isc-dhcp-server
+```bash
+sudo apt install isc-dhcp-server
+```
 
 You will probably need to change the default configuration by editing
 /etc/dhcp/dhcpd.conf to suit your needs and particular configuration.
@@ -715,24 +747,27 @@ interfaces dhcpd should listen to.
 NOTE: dhcpd's messages are being sent to syslog. Look there for diagnostics
 messages.
 
-## Configuration {#dhcp-configuration}
-
+### Configuration 
 The error message the installation ends with might be a little confusing, but
 the following steps will help you configure the service:
 
 Most commonly, what you want to do is assign an IP address randomly. This can
 be done with settings as follows:
 
-    # minimal sample /etc/dhcp/dhcpd.conf
-    default-lease-time 600;
-    max-lease-time 7200;
+```bash
+# minimal sample /etc/dhcp/dhcpd.conf
+default-lease-time 600;
+max-lease-time 7200;
+```
 
-    subnet 192.168.1.0 netmask 255.255.255.0 {
-     range 192.168.1.150 192.168.1.200;
-     option routers 192.168.1.254;
-     option domain-name-servers 192.168.1.1, 192.168.1.2;
-     option domain-name "mydomain.example";
-    } 
+```bash
+subnet 192.168.1.0 netmask 255.255.255.0 {
+ range 192.168.1.150 192.168.1.200;
+ option routers 192.168.1.254;
+ option domain-name-servers 192.168.1.1, 192.168.1.2;
+ option domain-name "mydomain.example";
+} 
+```
 
 This will result in the DHCP server giving clients an IP address from the
 range 192.168.1.150-192.168.1.200. It will lease an IP address for 600 seconds
@@ -743,18 +778,18 @@ its DNS servers.
 
 After changing the config file you have to restart the dhcpd:
 
-    sudo systemctl restart isc-dhcp-server.service
+```bash
+sudo systemctl restart isc-dhcp-server.service
+```
 
-## References {#dhcp-references}
-
+### References 
 -   The [dhcp3-server Ubuntu Wiki] page has more information.
 
 -   For more `/etc/dhcp/dhcpd.conf` options see the [dhcpd.conf man page].
 
 -   [ISC dhcp-server]
 
-# Time Synchronisation with NTP {#NTP}
-
+## Time Synchronisation with NTP 
 NTP is a TCP/IP protocol for synchronising time over a network. Basically a
 client requests the current time from a server, and uses it to set its own
 clock.
@@ -769,8 +804,7 @@ But luckily all that complexity is hidden from you!
 
 Ubuntu uses ntpdate and ntpd.
 
-## timedatectl
-
+### timedatectl
 In recent Ubuntu releases *timedatectl* replaces *ntpdate*. By default
 *timedatectl* syncs the time once on boot and later on uses socket activation
 to recheck once network connections become active.
@@ -782,8 +816,7 @@ upgrade. But it also implies that on an upgrade from a former release
 ntp/ntpdate might still be installed and therefore renders the new systemd
 based services disabled.
 
-## timesyncd
-
+### timesyncd
 In recent Ubuntu releases *timesyncd* replaces the client portion of *ntpd*.
 By default *timesyncd* regularly checks and keeps the time in sync. It also
 stores time updates locally, so that after reboots monotonically advances if
@@ -792,14 +825,16 @@ applicable.
 The current status of time and time configuration via *timedatectl* and
 *timesyncd* can be checked with *timedatectl status*.
 
-    timedatectl status
-          Local time: Fri 2016-04-29 06:32:57 UTC
-      Universal time: Fri 2016-04-29 06:32:57 UTC
-            RTC time: Fri 2016-04-29 07:44:02
-           Time zone: Etc/UTC (UTC, +0000)
-     Network time on: yes
-    NTP synchronized: no
-     RTC in local TZ: no
+```bash
+timedatectl status
+      Local time: Fri 2016-04-29 06:32:57 UTC
+  Universal time: Fri 2016-04-29 06:32:57 UTC
+        RTC time: Fri 2016-04-29 07:44:02
+       Time zone: Etc/UTC (UTC, +0000)
+ Network time on: yes
+NTP synchronized: no
+ RTC in local TZ: no
+```
 
 If NTP is installed and replaces the activity of *timedatectl* the line "NTP
 synchronized" is set to yes.
@@ -808,8 +843,7 @@ The nameserver to fetch time for *timedatectl* and *timesyncd* from can be
 specified in /etc/systemd/timesyncd.conf and with flexible additional config
 files in /etc/systemd/timesyncd.conf.d/.
 
-## ntpdate
-
+### ntpdate
 *ntpdate* is considered deprecated in favour of *timedatectl* and thereby no
 more installed by default. If installed it will run once at boot time to set
 up your time according to Ubuntu's NTP server. Later on anytime a new
@@ -817,75 +851,77 @@ interface comes up it retries to update the time - while doing so it will try
 to slowly drift time as long as the delta it has to cover isn't too big. That
 behaviour can be controlled with the *-B/-b* switches.
 
-    ntpdate ntp.ubuntu.com
+```bash
+ntpdate ntp.ubuntu.com
+```
 
-## timeservers
-
+### timeservers
 By default the systemd based tools request time information at ntp.ubuntu.com.
 In classic ntpd based service uses the pool of \[0-3\].ubuntu.pool.ntp.org Of
 the pool number 2.ubuntu.pool.ntp.org as well as ntp.ubuntu.com also support
 ipv6 if needed. If one needs to force ipv6 there also is ipv6.ntp.ubuntu.com
 which is not configured by default.
 
-## ntpd
-
+### ntpd
 The ntp daemon ntpd calculates the drift of your system clock and continuously
 adjusts it, so there are no large corrections that could lead to inconsistent
 logs for instance. The cost is a little processing power and memory, but for a
 modern server this is negligible.
 
-## Installation {#ntp-installation}
-
+### Installation 
 To install ntpd, from a terminal prompt enter:
 
-    sudo apt install ntp
+```bash
+sudo apt install ntp
+```
 
-## Configuration {#timeservers-conf}
-
+### Configuration 
 Edit `/etc/ntp.conf` to add/remove server lines. By default these servers are
 configured:
 
-    # Use servers from the NTP Pool Project. Approved by Ubuntu Technical Board
-    # on 2011-02-08 (LP: #104525). See http://www.pool.ntp.org/join.html for
-    # more information.
-    server 0.ubuntu.pool.ntp.org
-    server 1.ubuntu.pool.ntp.org
-    server 2.ubuntu.pool.ntp.org
-    server 3.ubuntu.pool.ntp.org
+```bash
+# Use servers from the NTP Pool Project. Approved by Ubuntu Technical Board
+# on 2011-02-08 (LP: #104525). See http://www.pool.ntp.org/join.html for
+# more information.
+server 0.ubuntu.pool.ntp.org
+server 1.ubuntu.pool.ntp.org
+server 2.ubuntu.pool.ntp.org
+server 3.ubuntu.pool.ntp.org
+```
 
 After changing the config file you have to reload the ntpd:
 
-    sudo systemctl reload ntp.service
+```bash
+sudo systemctl reload ntp.service
+```
 
-## View status {#ntp-status}
-
+### View status 
 Use ntpq to see more info:
 
-    # sudo ntpq -p
-         remote           refid      st t when poll reach   delay   offset  jitter
-    ==============================================================================
-    +stratum2-2.NTP. 129.70.130.70    2 u    5   64  377   68.461  -44.274 110.334
-    +ntp2.m-online.n 212.18.1.106     2 u    5   64  377   54.629  -27.318  78.882
-    *145.253.66.170  .DCFa.           1 u   10   64  377   83.607  -30.159  68.343
-    +stratum2-3.NTP. 129.70.130.70    2 u    5   64  357   68.795  -68.168 104.612
-    +europium.canoni 193.79.237.14    2 u   63   64  337   81.534  -67.968  92.792
+```bash
+# sudo ntpq -p
+     remote           refid      st t when poll reach   delay   offset  jitter
+==============================================================================
++stratum2-2.NTP. 129.70.130.70    2 u    5   64  377   68.461  -44.274 110.334
++ntp2.m-online.n 212.18.1.106     2 u    5   64  377   54.629  -27.318  78.882
+*145.253.66.170  .DCFa.           1 u   10   64  377   83.607  -30.159  68.343
++stratum2-3.NTP. 129.70.130.70    2 u    5   64  357   68.795  -68.168 104.612
++europium.canoni 193.79.237.14    2 u   63   64  337   81.534  -67.968  92.792
+```
 
-## PPS Support {#ntp-pps}
-
+### PPS Support 
 Since 16.04 ntp supports PPS discipline which can be used to augment ntp with
 local timesources for better accuracy. For more details on configuration see
 the external pps ressource listed below.
 
-## References {#ntp-references}
-
+### References 
 -   See the [Ubuntu Time] wiki page for more information.
 
 -   [ntp.org, home of the Network Time Protocol project]
 
 -   [ntp.org faq on configuring PPS]
 
-# Data Plane Development Kit {#DPDK}
-
+## Data Plane Development Kit 
 The DPDK is a set of libraries and drivers for fast packet processing and runs
 mostly in Linux userland. It is a set of libraries that provide the so called
 "Environment Abstraction Layer" (EAL). The EAL hides the details of the
@@ -900,8 +936,7 @@ was Intel x86 and it is now extended to IBM Power 8, EZchip TILE-Gx and ARM.
 Ubuntu currently supports DPDK version 2.2 and provides some infrastructure to
 ease its usability.
 
-## Prerequisites {#dpdk-prerequisites}
-
+### Prerequisites 
 This package is currently compiled for the lowest possible CPU requirements.
 Which still requires at least SSE3 to be supported by the CPU.
 
@@ -962,8 +997,12 @@ getting to work more easily.
 The newer vfio-pci requires that you activate the following kernel parameters
 to enable iommu.
 
-    iommu=pt intel_iommu=on
-              
+```bash
+iommu=pt intel_iommu=on
+```
+```bash
+          
+```
 
 On top for vfio-pci you then have to configure and assign the iommu groups
 accordingly.
@@ -977,65 +1016,92 @@ uio\_pci\_generic to those devices.
 Manual configuration and status checks can be done via sysfs or with the tool
 dpdk\_nic\_bind
 
-    dpdk_nic_bind --help
+```bash
+dpdk_nic_bind --help
+```
 
-    Usage:
-    ------
+```bash
+Usage:
+------
+```
 
-         dpdk_nic_bind [options] DEVICE1 DEVICE2 ....
+```bash
+     dpdk_nic_bind [options] DEVICE1 DEVICE2 ....
+```
 
-         where DEVICE1, DEVICE2 etc, are specified via PCI "domain:bus:slot.func" syntax
-         or "bus:slot.func" syntax. For devices bound to Linux kernel drivers, they may
-         also be referred to by Linux interface name e.g. eth0, eth1, em0, em1, etc.
+```bash
+     where DEVICE1, DEVICE2 etc, are specified via PCI "domain:bus:slot.func" syntax
+     or "bus:slot.func" syntax. For devices bound to Linux kernel drivers, they may
+     also be referred to by Linux interface name e.g. eth0, eth1, em0, em1, etc.
+```
 
-         Options:
-             --help, --usage:
-             Display usage information and quit
+```bash
+     Options:
+         --help, --usage:
+         Display usage information and quit
+```
 
-         -s, --status:
-                 Print the current status of all known network interfaces.
-                 For each device, it displays the PCI domain, bus, slot and function,
-                 along with a text description of the device. Depending upon whether the
-                 device is being used by a kernel driver, the igb_uio driver, or no
-                 driver, other relevant information will be displayed:
-                 * the Linux interface name e.g. if=eth0
-                 * the driver being used e.g. drv=igb_uio
-                 * any suitable drivers not currently using that device
-                     e.g. unused=igb_uio
-             NOTE: if this flag is passed along with a bind/unbind option, the status
-             display will always occur after the other operations have taken place.
+```bash
+     -s, --status:
+             Print the current status of all known network interfaces.
+             For each device, it displays the PCI domain, bus, slot and function,
+             along with a text description of the device. Depending upon whether the
+             device is being used by a kernel driver, the igb_uio driver, or no
+             driver, other relevant information will be displayed:
+             * the Linux interface name e.g. if=eth0
+             * the driver being used e.g. drv=igb_uio
+             * any suitable drivers not currently using that device
+                 e.g. unused=igb_uio
+         NOTE: if this flag is passed along with a bind/unbind option, the status
+         display will always occur after the other operations have taken place.
+```
 
-         -b driver, --bind=driver:
-                 Select the driver to use or "none" to unbind the device
+```bash
+     -b driver, --bind=driver:
+             Select the driver to use or "none" to unbind the device
+```
 
-             -u, --unbind:
-             Unbind a device (Equivalent to "-b none")
+```bash
+         -u, --unbind:
+         Unbind a device (Equivalent to "-b none")
+```
 
-         --force:
-                 By default, devices which are used by Linux - as indicated by having
-                 routes in the routing table - cannot be modified. Using the --force
-                 flag overrides this behavior, allowing active links to be forcibly
-                 unbound.
-                 WARNING: This can lead to loss of network connection and should be used
-                 with caution.
+```bash
+     --force:
+             By default, devices which are used by Linux - as indicated by having
+             routes in the routing table - cannot be modified. Using the --force
+             flag overrides this behavior, allowing active links to be forcibly
+             unbound.
+             WARNING: This can lead to loss of network connection and should be used
+             with caution.
+```
 
-         Examples:
-         ---------
+```bash
+     Examples:
+     ---------
+```
 
-         To display current device status:
-                 dpdk_nic_bind --status
+```bash
+     To display current device status:
+             dpdk_nic_bind --status
+```
 
-         To bind eth1 from the current driver and move to use igb_uio
-                 dpdk_nic_bind --bind=igb_uio eth1
+```bash
+     To bind eth1 from the current driver and move to use igb_uio
+             dpdk_nic_bind --bind=igb_uio eth1
+```
 
-         To unbind 0000:01:00.0 from using any driver
-                 dpdk_nic_bind -u 0000:01:00.0
+```bash
+     To unbind 0000:01:00.0 from using any driver
+             dpdk_nic_bind -u 0000:01:00.0
+```
 
-         To bind 0000:02:00.0 and 0000:02:00.1 to the ixgbe kernel driver
-                 dpdk_nic_bind -b ixgbe 02:00.0 02:00.
+```bash
+     To bind 0000:02:00.0 and 0000:02:00.1 to the ixgbe kernel driver
+             dpdk_nic_bind -b ixgbe 02:00.0 02:00.
+```
 
-## DPDK Device configuration {#dpdk-config-dev}
-
+### DPDK Device configuration 
 The package *dpdk* provides init scripts that ease configuration of device
 assignment and huge pages. It also makes them persistent accross reboots.
 
@@ -1043,46 +1109,59 @@ The following is an example of the file /etc/dpdk/interfaces configuring two
 ports of a network card. One with uio\_pci\_generic and the other one with
 vfio-pci
 
-    # <bus>         Currently only "pci" is supported
-    # <id>          Device ID on the specified bus
-    # <driver>      Driver to bind against (vfio-pci or uio_pci_generic)
-    #
-    # Be aware that the two DPDK compatible drivers uio_pci_generic and vfio-pci are
-    # part of linux-image-extra-<VERSION> package.
-    # This package is not always installed by default - for example in cloud-images.
-    # So please install it in case you run into missing module issues.
-    #
-    # <bus> <id>     <driver>
-    pci 0000:04:00.0 uio_pci_generic
-    pci 0000:04:00.1 vfio-pci
-              
+```bash
+# <bus>         Currently only "pci" is supported
+# <id>          Device ID on the specified bus
+# <driver>      Driver to bind against (vfio-pci or uio_pci_generic)
+#
+# Be aware that the two DPDK compatible drivers uio_pci_generic and vfio-pci are
+# part of linux-image-extra-<VERSION> package.
+# This package is not always installed by default - for example in cloud-images.
+# So please install it in case you run into missing module issues.
+#
+# <bus> <id>     <driver>
+pci 0000:04:00.0 uio_pci_generic
+pci 0000:04:00.1 vfio-pci
+```
+```bash
+          
+```
 
 Cards are identified by their PCI-ID. If you are unsure you might use the tool
 dpdk\_nic\_bind to show the current available devices and the drivers they are
 assigned to.
 
-    dpdk_nic_bind --status
+```bash
+dpdk_nic_bind --status
+```
 
-    Network devices using DPDK-compatible driver
-    ============================================
-    0000:04:00.0 'Ethernet Controller 10-Gigabit X540-AT2' drv=uio_pci_generic unused=ixgbe
+```bash
+Network devices using DPDK-compatible driver
+============================================
+0000:04:00.0 'Ethernet Controller 10-Gigabit X540-AT2' drv=uio_pci_generic unused=ixgbe
+```
 
-    Network devices using kernel driver
-    ===================================
-    0000:02:00.0 'NetXtreme BCM5719 Gigabit Ethernet PCIe' if=eth0 drv=tg3 unused=uio_pci_generic *Active*
-    0000:02:00.1 'NetXtreme BCM5719 Gigabit Ethernet PCIe' if=eth1 drv=tg3 unused=uio_pci_generic 
-    0000:02:00.2 'NetXtreme BCM5719 Gigabit Ethernet PCIe' if=eth2 drv=tg3 unused=uio_pci_generic 
-    0000:02:00.3 'NetXtreme BCM5719 Gigabit Ethernet PCIe' if=eth3 drv=tg3 unused=uio_pci_generic 
-    0000:04:00.1 'Ethernet Controller 10-Gigabit X540-AT2' if=eth5 drv=ixgbe unused=uio_pci_generic 
+```bash
+Network devices using kernel driver
+===================================
+0000:02:00.0 'NetXtreme BCM5719 Gigabit Ethernet PCIe' if=eth0 drv=tg3 unused=uio_pci_generic *Active*
+0000:02:00.1 'NetXtreme BCM5719 Gigabit Ethernet PCIe' if=eth1 drv=tg3 unused=uio_pci_generic 
+0000:02:00.2 'NetXtreme BCM5719 Gigabit Ethernet PCIe' if=eth2 drv=tg3 unused=uio_pci_generic 
+0000:02:00.3 'NetXtreme BCM5719 Gigabit Ethernet PCIe' if=eth3 drv=tg3 unused=uio_pci_generic 
+0000:04:00.1 'Ethernet Controller 10-Gigabit X540-AT2' if=eth5 drv=ixgbe unused=uio_pci_generic 
+```
 
-    Other network devices
-    =====================
-    <none>
+```bash
+Other network devices
+=====================
+<none>
+```
 
-              
+```bash
+          
+```
 
-## DPDK HugePage configuration {#dpdk-config-hp}
-
+### DPDK HugePage configuration 
 DPDK makes heavy use of huge pages to eliminate pressure on the TLB. Therefore
 hugepages have to be configured in your system.
 
@@ -1095,9 +1174,13 @@ to get DPDK configured for your needs.
 
 Here an example configuring 1024 Hugepages of 2M each and 4 1G pages.
 
-    NR_2M_PAGES=1024
-    NR_1G_PAGES=4
-              
+```bash
+NR_2M_PAGES=1024
+NR_1G_PAGES=4
+```
+```bash
+          
+```
 
 As shown this supports configuring 2M and the larger 1G hugepages (or a mix of
 both). It will make sure there are proper hugetlbfs mountpoints for DPDK to
@@ -1111,8 +1194,7 @@ inside the DPDK memory alloactions. Also it can be harder to grab enough free
 space to set up a certain amount of 1G pages later in the lifecycle of a
 system.
 
-## Compile DPDK Applications {#dpdk-apps}
-
+### Compile DPDK Applications 
 Currently there are not a lot consumers of the DPDK library that are stable
 and released. OpenVswitch-DPDK being an exception to that (see below), but in
 general it is very likely that you might want / have to compile an app against
@@ -1126,19 +1208,26 @@ variables you can source the file /usr/share/dpdk/dpdk-sdk-env.sh before
 building your application. Here an excerpt building the l2fwd example
 application delivered with the dpdk-doc package.
 
-    sudo apt-get install dpdk-dev libdpdk-dev
-    . /usr/share/dpdk/dpdk-sdk-env.sh
-    make -C /usr/share/dpdk/examples/l2fwd
-              
+```bash
+sudo apt-get install dpdk-dev libdpdk-dev
+. /usr/share/dpdk/dpdk-sdk-env.sh
+make -C /usr/share/dpdk/examples/l2fwd
+```
+```bash
+          
+```
 
 Depending on what you build it might be a good addition to install all of DPDK
 build dependencies before the make.
 
-    sudo apt-get install build-dep dpdk
-              
+```bash
+sudo apt-get install build-dep dpdk
+```
+```bash
+          
+```
 
-## OpenVswitch-DPDK {#dpdk-openvswitch}
-
+### OpenVswitch-DPDK 
 Being a library it doesn't do a lot on its own, so it depends on emerging
 projects making use of it. One consumer of the library that already is bundled
 in the Ubuntu 16.04 release is OpenVswitch with DPDK support in the package
@@ -1147,11 +1236,15 @@ openvswitch-switch-dpdk.
 Here an example how to install and configure a basic OpenVswitch using DPDK
 for later use via libvirt/qemu-kvm.
 
-    sudo apt-get install openvswitch-switch-dpdk
-    sudo update-alternatives --set ovs-vswitchd /usr/lib/openvswitch-switch-dpdk/ovs-vswitchd-dpdk
-    echo "DPDK_OPTS='--dpdk -c 0x1 -n 4 -m 2048 --vhost-owner libvirt-qemu:kvm --vhost-perm 0664'" | sudo tee -a /etc/default/openvswitch-switch
-    sudo service openvswitch-switch restart
-              
+```bash
+sudo apt-get install openvswitch-switch-dpdk
+sudo update-alternatives --set ovs-vswitchd /usr/lib/openvswitch-switch-dpdk/ovs-vswitchd-dpdk
+echo "DPDK_OPTS='--dpdk -c 0x1 -n 4 -m 2048 --vhost-owner libvirt-qemu:kvm --vhost-perm 0664'" | sudo tee -a /etc/default/openvswitch-switch
+sudo service openvswitch-switch restart
+```
+```bash
+          
+```
 
 Please remember that you have to assign devices to DPDK compatible drivers
 (see above) before restarting.
@@ -1174,40 +1267,35 @@ The OpenVswitch you now started supports all port types OpenVswitch usually
 does, plus DPDK port types. Here an example how to create a bridge and -
 instead of a normal external port - add an external DPDK port to it.
 
-    ovs-vsctl add-br ovsdpdkbr0 -- set bridge ovsdpdkbr0 datapath_type=netdev
-    ovs-vsctl add-port ovsdpdkbr0 dpdk0 -- set Interface dpdk0 type=dpdk
-              
+```bash
+ovs-vsctl add-br ovsdpdkbr0 -- set bridge ovsdpdkbr0 datapath_type=netdev
+ovs-vsctl add-port ovsdpdkbr0 dpdk0 -- set Interface dpdk0 type=dpdk
+```
+```bash
+          
+```
 
-> **Note**
->
-> The enablement of DPDK in Open vSwitch has changed in version 2.6. So for
-> users of releases &gt;=16.10, but also for users of the [Ubuntu Cloud
-> Archive] &gt;=neutron the enablement has changed compared to that for users
-> of Ubuntu 16.04. The options formerly passed via *DPDK\_OPTS* are now
-> configured via ovs-vsctl into the Open vSwitch configuration database.
->
-> The same example as above would in the new way look like:
->
->     # Enable DPDK
->     ovs-vsctl set Open_vSwitch . "other_config:dpdk-init=true"
->     # run on core 0
->     ovs-vsctl set Open_vSwitch . "other_config:dpdk-lcore-mask=0x1"
->     # Allocate 2G huge pages (not Numa node aware)
->     ovs-vsctl set Open_vSwitch . "other_config:dpdk-alloc-mem=2048"
->     # group/permissions for vhost-user sockets (required to work with libvirt/qemu)
->     ovs-vsctl set Open_vSwitch . \
->        "other_config:dpdk-extra=--vhost-owner libvirt-qemu:kvm --vhost-perm 0666"
->               
->
-> Please see the associated upstream documentation and the man page of the
-> vswitch configuration as provided by the package for more details:
->
-> -   `/usr/share/doc/openvswitch-common/INSTALL.DPDK.md.gz`
->
-> -   `/usr/share/doc/openvswitch-common/INSTALL.DPDK-ADVANCED.md.gz`
->
-> -   `man ovs-vswitchd.conf.db`
->
+!!! Note: The enablement of DPDK in Open vSwitch has changed in version 2.6. So for
+users of releases &gt;=16.10, but also for users of the [Ubuntu Cloud
+Archive] &gt;=neutron the enablement has changed compared to that for users
+of Ubuntu 16.04. The options formerly passed via *DPDK\_OPTS* are now
+configured via ovs-vsctl into the Open vSwitch configuration database.
+The same example as above would in the new way look like:
+    # Enable DPDK
+    ovs-vsctl set Open_vSwitch . "other_config:dpdk-init=true"
+    # run on core 0
+    ovs-vsctl set Open_vSwitch . "other_config:dpdk-lcore-mask=0x1"
+    # Allocate 2G huge pages (not Numa node aware)
+    ovs-vsctl set Open_vSwitch . "other_config:dpdk-alloc-mem=2048"
+    # group/permissions for vhost-user sockets (required to work with libvirt/qemu)
+    ovs-vsctl set Open_vSwitch . \
+       "other_config:dpdk-extra=--vhost-owner libvirt-qemu:kvm --vhost-perm 0666"
+              
+Please see the associated upstream documentation and the man page of the
+vswitch configuration as provided by the package for more details:
+-   `/usr/share/doc/openvswitch-common/INSTALL.DPDK.md.gz`
+-   `/usr/share/doc/openvswitch-common/INSTALL.DPDK-ADVANCED.md.gz`
+-   `man ovs-vswitchd.conf.db`
 ## OpenVswitch DPDK to KVM Guests {#dpdk-openvswitch-guest}
 
 If you are not building some sort of SDN switch or NFV on top of DPDK it is
@@ -1221,30 +1309,42 @@ To ensure in general that libvirt/qemu-kvm finds a proper hugepage mountpoint
 you can just enable KVM\_HUGEPAGES in /etc/default/qemu-kvm. Afterwards
 restart the service to pick up the changed configuration.
 
-    sed -ri -e 's,(KVM_HUGEPAGES=).*,\11,' /etc/default/qemu-kvm
-    service qemu-kvm restart
-              
+```bash
+sed -ri -e 's,(KVM_HUGEPAGES=).*,\11,' /etc/default/qemu-kvm
+service qemu-kvm restart
+```
+```bash
+          
+```
 
 To let a guest be backed by hugepages is now also supported via recent
 libvirt, just add the following snippet to your virsh xml (or the equivalent
 libvirt interface you use). Those xmls can also be used as templates to easily
 spawn guests with "uvt-kvm create".
 
-    <numa>
-    <cell id='0' cpus='0' memory='6291456' unit='KiB' memAccess='shared'/>
-    </numa>
-    [...]
-    <memoryBacking>
-    <hugepages/>
-    </memoryBacking>
-              
+```bash
+<numa>
+<cell id='0' cpus='0' memory='6291456' unit='KiB' memAccess='shared'/>
+</numa>
+[...]
+<memoryBacking>
+<hugepages/>
+</memoryBacking>
+```
+```bash
+          
+```
 
 The new and recommended way to get to a KVM guest is using vhost\_user. This
 will cause DPDK to create a socket that qemu will connect the guest to. Here
 an example how to add such a port to the bridge you created (see above).
 
-    ovs-vsctl add-port ovsdpdkbr0 vhost-user-1 -- set Interface vhost-user-1 type=dpdkvhostuser
-              
+```bash
+ovs-vsctl add-port ovsdpdkbr0 vhost-user-1 -- set Interface vhost-user-1 type=dpdkvhostuser
+```
+```bash
+          
+```
 
 This will create a vhost\_user socket at /var/run/openvswitch/vhost-user-1
 
@@ -1252,16 +1352,19 @@ To let libvirt/kvm consume this socket and create a guest virtio network
 device for it add a snippet like this to your guest definition as the network
 definition.
 
-    <interface type='vhostuser'>
-    <source type='unix'
-    path='/var/run/openvswitch/vhost-user-1'
-    mode='client'/>
-    <model type='virtio'/>
-    </interface>
-              
+```bash
+<interface type='vhostuser'>
+<source type='unix'
+path='/var/run/openvswitch/vhost-user-1'
+mode='client'/>
+<model type='virtio'/>
+</interface>
+```
+```bash
+          
+```
 
-## DPDK in KVM Guests {#dpdk-in-guest}
-
+### DPDK in KVM Guests 
 If you have no access to DPDK supported network cards you can still work with
 DPDK by using its support for virtio. To do so you have to create guests
 backed by hugepages (see above).
@@ -1272,19 +1375,27 @@ that passed the proper feature flag - and of course have a Host system that
 supportes it. An example can be found in following snippet to your virsh xml
 (or the equivalent virsh interface you use).
 
-    <cpu mode='host-passthrough'>
-              
+```bash
+<cpu mode='host-passthrough'>
+```
+```bash
+          
+```
 
 This example is rather offensive and passes all host features. That in turn
 makes the guest not very migratable as the target would need all the features
 as well. A "softer" way is to just add sse3 to the default model like the
 following example.
 
-    <cpu mode='custom' match='exact'>
-    <model fallback='allow'>qemu64</model>
-    <feature policy='require' name='ssse3'/>
-    </cpu>
-              
+```bash
+<cpu mode='custom' match='exact'>
+<model fallback='allow'>qemu64</model>
+<feature policy='require' name='ssse3'/>
+</cpu>
+```
+```bash
+          
+```
 
 Also virtio nowadays supports multiqueue which DPDK in turn can exploit for
 better speed. To modify a normal virtio definition to have multiple queues add
@@ -1292,17 +1403,24 @@ the following to your interface definition. This is about enhancing a normal
 virtio nic to have multiple queues, to later on be consumed e.g. by DPDK in
 the guest.
 
-    <driver name="vhost" queues="4"/>
-              
+```bash
+<driver name="vhost" queues="4"/>
+```
+```bash
+          
+```
 
-## Tuning Openvswitch-DPDK {#ovs-dpdk-tuning}
-
+### Tuning Openvswitch-DPDK 
 DPDK has plenty of options - in combination with Openvswitch-DPDK the two most
 commonly used are:
 
-    ovs-vsctl set Open_vSwitch . other_config:n-dpdk-rxqs=2
-    ovs-vsctl set Open_vSwitch . other_config:pmd-cpu-mask=0x6
-              
+```bash
+ovs-vsctl set Open_vSwitch . other_config:n-dpdk-rxqs=2
+ovs-vsctl set Open_vSwitch . other_config:pmd-cpu-mask=0x6
+```
+```bash
+          
+```
 
 The first select how many rx queues are to be used for each DPDK interface,
 while the second controls how many and where to run PMD threads. The example
@@ -1313,8 +1431,7 @@ installation" at the end of this document for more.
 As usual with tunings you have to know your system and workload really well -
 so please verify any tunings with workloads matching your real use case.
 
-## Support and Troubleshooting {#dpdk-support}
-
+### Support and Troubleshooting 
 DPDK is a fast evolving project. In any case of a search for support and
 further guides it is highly recommended to first check if they apply to the
 current version.
@@ -1336,11 +1453,15 @@ the setup and initialization. Here an example how a proper initialization of a
 device looks - this can be found in the syslog/journal when starting Open
 vSwitch with DPDK enabled.
 
-    ovs-ctl[3560]: EAL: PCI device 0000:04:00.1 on NUMA socket 0
-    ovs-ctl[3560]: EAL:   probe driver: 8086:1528 rte_ixgbe_pmd
-    ovs-ctl[3560]: EAL:   PCI memory mapped at 0x7f2140000000
-    ovs-ctl[3560]: EAL:   PCI memory mapped at 0x7f2140200000
-              
+```bash
+ovs-ctl[3560]: EAL: PCI device 0000:04:00.1 on NUMA socket 0
+ovs-ctl[3560]: EAL:   probe driver: 8086:1528 rte_ixgbe_pmd
+ovs-ctl[3560]: EAL:   PCI memory mapped at 0x7f2140000000
+ovs-ctl[3560]: EAL:   PCI memory mapped at 0x7f2140200000
+```
+```bash
+          
+```
 
 If this is missing, either by ignored cards, failed initialization or other
 reasons, later on there will be no DPDK device to refer to. Unfortunately the
@@ -1348,196 +1469,227 @@ logging is spread across syslog/journal and the openvswitch log. To allow some
 cross checking here an example what can be found in these logs, relative to
 the entered command.
 
-    #Note: This log was taken with dpdk 2.2 and openvswitch 2.5
-    Captions:
-    CMD: that you enter
-    SYSLOG: (Inlcuding EAL and OVS Messages)
-    OVS-LOG: (Openvswitch messages)
+```bash
+#Note: This log was taken with dpdk 2.2 and openvswitch 2.5
+Captions:
+CMD: that you enter
+SYSLOG: (Inlcuding EAL and OVS Messages)
+OVS-LOG: (Openvswitch messages)
+```
 
-    #PREPARATION
-    Bind an interface to DPDK UIO drivers, make Hugepages available, enable DPDK on OVS
+```bash
+#PREPARATION
+Bind an interface to DPDK UIO drivers, make Hugepages available, enable DPDK on OVS
+```
 
-    CMD: sudo service openvswitch-switch restart
+```bash
+CMD: sudo service openvswitch-switch restart
+```
 
-    SYSLOG:
-    2016-01-22T08:58:31.372Z|00003|daemon_unix(monitor)|INFO|pid 3329 died, killed (Terminated), exiting
-    2016-01-22T08:58:33.377Z|00002|vlog|INFO|opened log file /var/log/openvswitch/ovs-vswitchd.log
-    2016-01-22T08:58:33.381Z|00003|ovs_numa|INFO|Discovered 12 CPU cores on NUMA node 0
-    2016-01-22T08:58:33.381Z|00004|ovs_numa|INFO|Discovered 1 NUMA nodes and 12 CPU cores
-    2016-01-22T08:58:33.381Z|00005|reconnect|INFO|unix:/var/run/openvswitch/db.sock: connecting...
-    2016-01-22T08:58:33.383Z|00006|reconnect|INFO|unix:/var/run/openvswitch/db.sock: connected
-    2016-01-22T08:58:33.386Z|00007|bridge|INFO|ovs-vswitchd (Open vSwitch) 2.5.0
+```bash
+SYSLOG:
+2016-01-22T08:58:31.372Z|00003|daemon_unix(monitor)|INFO|pid 3329 died, killed (Terminated), exiting
+2016-01-22T08:58:33.377Z|00002|vlog|INFO|opened log file /var/log/openvswitch/ovs-vswitchd.log
+2016-01-22T08:58:33.381Z|00003|ovs_numa|INFO|Discovered 12 CPU cores on NUMA node 0
+2016-01-22T08:58:33.381Z|00004|ovs_numa|INFO|Discovered 1 NUMA nodes and 12 CPU cores
+2016-01-22T08:58:33.381Z|00005|reconnect|INFO|unix:/var/run/openvswitch/db.sock: connecting...
+2016-01-22T08:58:33.383Z|00006|reconnect|INFO|unix:/var/run/openvswitch/db.sock: connected
+2016-01-22T08:58:33.386Z|00007|bridge|INFO|ovs-vswitchd (Open vSwitch) 2.5.0
+```
 
-    OVS-LOG:
-    systemd[1]: Stopping Open vSwitch...
-    systemd[1]: Stopped Open vSwitch.
-    systemd[1]: Stopping Open vSwitch Internal Unit...
-    ovs-ctl[3541]: * Killing ovs-vswitchd (3329)
-    ovs-ctl[3541]: * Killing ovsdb-server (3318)
-    systemd[1]: Stopped Open vSwitch Internal Unit.
-    systemd[1]: Starting Open vSwitch Internal Unit...
-    ovs-ctl[3560]: * Starting ovsdb-server
-    ovs-vsctl: ovs|00001|vsctl|INFO|Called as ovs-vsctl --no-wait -- init -- set Open_vSwitch . db-version=7.12.1
-    ovs-vsctl: ovs|00001|vsctl|INFO|Called as ovs-vsctl --no-wait set Open_vSwitch . ovs-version=2.5.0 "external-ids:system-id=\"e7c5ba80-bb14-45c1-b8eb-628f3ad03903\"" "system-type=\"Ubuntu\"" "system-version=\"16.04-xenial\""
-    ovs-ctl[3560]: * Configuring Open vSwitch system IDs
-    ovs-ctl[3560]: 2016-01-22T08:58:31Z|00001|dpdk|INFO|No -vhost_sock_dir provided - defaulting to /var/run/openvswitch
-    ovs-vswitchd: ovs|00001|dpdk|INFO|No -vhost_sock_dir provided - defaulting to /var/run/openvswitch
-    ovs-ctl[3560]: EAL: Detected lcore 0 as core 0 on socket 0
-    ovs-ctl[3560]: EAL: Detected lcore 1 as core 1 on socket 0
-    ovs-ctl[3560]: EAL: Detected lcore 2 as core 2 on socket 0
-    ovs-ctl[3560]: EAL: Detected lcore 3 as core 3 on socket 0
-    ovs-ctl[3560]: EAL: Detected lcore 4 as core 4 on socket 0
-    ovs-ctl[3560]: EAL: Detected lcore 5 as core 5 on socket 0
-    ovs-ctl[3560]: EAL: Detected lcore 6 as core 0 on socket 0
-    ovs-ctl[3560]: EAL: Detected lcore 7 as core 1 on socket 0
-    ovs-ctl[3560]: EAL: Detected lcore 8 as core 2 on socket 0
-    ovs-ctl[3560]: EAL: Detected lcore 9 as core 3 on socket 0
-    ovs-ctl[3560]: EAL: Detected lcore 10 as core 4 on socket 0
-    ovs-ctl[3560]: EAL: Detected lcore 11 as core 5 on socket 0
-    ovs-ctl[3560]: EAL: Support maximum 128 logical core(s) by configuration.
-    ovs-ctl[3560]: EAL: Detected 12 lcore(s)
-    ovs-ctl[3560]: EAL: VFIO modules not all loaded, skip VFIO support...
-    ovs-ctl[3560]: EAL: Setting up physically contiguous memory...
-    ovs-ctl[3560]: EAL: Ask a virtual area of 0x100000000 bytes
-    ovs-ctl[3560]: EAL: Virtual area found at 0x7f2040000000 (size = 0x100000000)
-    ovs-ctl[3560]: EAL: Requesting 4 pages of size 1024MB from socket 0
-    ovs-ctl[3560]: EAL: TSC frequency is ~2397202 KHz
-    ovs-vswitchd[3592]: EAL: TSC frequency is ~2397202 KHz
-    ovs-vswitchd[3592]: EAL: Master lcore 0 is ready (tid=fc6cbb00;cpuset=[0])
-    ovs-vswitchd[3592]: EAL: PCI device 0000:04:00.0 on NUMA socket 0
-    ovs-vswitchd[3592]: EAL:   probe driver: 8086:1528 rte_ixgbe_pmd
-    ovs-vswitchd[3592]: EAL:   Not managed by a supported kernel driver, skipped
-    ovs-vswitchd[3592]: EAL: PCI device 0000:04:00.1 on NUMA socket 0
-    ovs-vswitchd[3592]: EAL:   probe driver: 8086:1528 rte_ixgbe_pmd
-    ovs-vswitchd[3592]: EAL:   PCI memory mapped at 0x7f2140000000
-    ovs-vswitchd[3592]: EAL:   PCI memory mapped at 0x7f2140200000
-    ovs-ctl[3560]: EAL: Master lcore 0 is ready (tid=fc6cbb00;cpuset=[0])
-    ovs-ctl[3560]: EAL: PCI device 0000:04:00.0 on NUMA socket 0
-    ovs-ctl[3560]: EAL:   probe driver: 8086:1528 rte_ixgbe_pmd
-    ovs-ctl[3560]: EAL:   Not managed by a supported kernel driver, skipped
-    ovs-ctl[3560]: EAL: PCI device 0000:04:00.1 on NUMA socket 0
-    ovs-ctl[3560]: EAL:   probe driver: 8086:1528 rte_ixgbe_pmd
-    ovs-ctl[3560]: EAL:   PCI memory mapped at 0x7f2140000000
-    ovs-ctl[3560]: EAL:   PCI memory mapped at 0x7f2140200000
-    ovs-vswitchd[3592]: PMD: eth_ixgbe_dev_init(): MAC: 4, PHY: 3
-    ovs-vswitchd[3592]: PMD: eth_ixgbe_dev_init(): port 0 vendorID=0x8086 deviceID=0x1528
-    ovs-ctl[3560]: PMD: eth_ixgbe_dev_init(): MAC: 4, PHY: 3
-    ovs-ctl[3560]: PMD: eth_ixgbe_dev_init(): port 0 vendorID=0x8086 deviceID=0x1528
-    ovs-ctl[3560]: Zone 0: name:<RG_MP_log_history>, phys:0x83fffdec0, len:0x2080, virt:0x7f213fffdec0, socket_id:0, flags:0
-    ovs-ctl[3560]: Zone 1: name:<MP_log_history>, phys:0x83fd73d40, len:0x28a0c0, virt:0x7f213fd73d40, socket_id:0, flags:0
-    ovs-ctl[3560]: Zone 2: name:<rte_eth_dev_data>, phys:0x83fd43380, len:0x2f700, virt:0x7f213fd43380, socket_id:0, flags:0
-    ovs-ctl[3560]: * Starting ovs-vswitchd
-    ovs-ctl[3560]: * Enabling remote OVSDB managers
-    systemd[1]: Started Open vSwitch Internal Unit.
-    systemd[1]: Starting Open vSwitch...
-    systemd[1]: Started Open vSwitch.
-
-
-    CMD: sudo ovs-vsctl add-br ovsdpdkbr0 -- set bridge ovsdpdkbr0 datapath_type=netdev
-
-    SYSLOG:
-    2016-01-22T08:58:56.344Z|00008|memory|INFO|37256 kB peak resident set size after 24.5 seconds
-    2016-01-22T08:58:56.346Z|00009|ofproto_dpif|INFO|netdev@ovs-netdev: Datapath supports recirculation
-    2016-01-22T08:58:56.346Z|00010|ofproto_dpif|INFO|netdev@ovs-netdev: MPLS label stack length probed as 3
-    2016-01-22T08:58:56.346Z|00011|ofproto_dpif|INFO|netdev@ovs-netdev: Datapath supports unique flow ids
-    2016-01-22T08:58:56.346Z|00012|ofproto_dpif|INFO|netdev@ovs-netdev: Datapath does not support ct_state
-    2016-01-22T08:58:56.346Z|00013|ofproto_dpif|INFO|netdev@ovs-netdev: Datapath does not support ct_zone
-    2016-01-22T08:58:56.346Z|00014|ofproto_dpif|INFO|netdev@ovs-netdev: Datapath does not support ct_mark
-    2016-01-22T08:58:56.346Z|00015|ofproto_dpif|INFO|netdev@ovs-netdev: Datapath does not support ct_label
-    2016-01-22T08:58:56.360Z|00016|bridge|INFO|bridge ovsdpdkbr0: added interface ovsdpdkbr0 on port 65534
-    2016-01-22T08:58:56.361Z|00017|bridge|INFO|bridge ovsdpdkbr0: using datapath ID 00005a4a1ed0a14d
-    2016-01-22T08:58:56.361Z|00018|connmgr|INFO|ovsdpdkbr0: added service controller "punix:/var/run/openvswitch/ovsdpdkbr0.mgmt"
-
-    OVS-LOG:
-    ovs-vsctl: ovs|00001|vsctl|INFO|Called as ovs-vsctl add-br ovsdpdkbr0 -- set bridge ovsdpdkbr0 datapath_type=netdev
-    systemd-udevd[3607]: Could not generate persistent MAC address for ovs-netdev: No such file or directory
-    kernel: [50165.886554] device ovs-netdev entered promiscuous mode
-    kernel: [50165.901261] device ovsdpdkbr0 entered promiscuous mode
+```bash
+OVS-LOG:
+systemd[1]: Stopping Open vSwitch...
+systemd[1]: Stopped Open vSwitch.
+systemd[1]: Stopping Open vSwitch Internal Unit...
+ovs-ctl[3541]: * Killing ovs-vswitchd (3329)
+ovs-ctl[3541]: * Killing ovsdb-server (3318)
+systemd[1]: Stopped Open vSwitch Internal Unit.
+systemd[1]: Starting Open vSwitch Internal Unit...
+ovs-ctl[3560]: * Starting ovsdb-server
+ovs-vsctl: ovs|00001|vsctl|INFO|Called as ovs-vsctl --no-wait -- init -- set Open_vSwitch . db-version=7.12.1
+ovs-vsctl: ovs|00001|vsctl|INFO|Called as ovs-vsctl --no-wait set Open_vSwitch . ovs-version=2.5.0 "external-ids:system-id=\"e7c5ba80-bb14-45c1-b8eb-628f3ad03903\"" "system-type=\"Ubuntu\"" "system-version=\"16.04-xenial\""
+ovs-ctl[3560]: * Configuring Open vSwitch system IDs
+ovs-ctl[3560]: 2016-01-22T08:58:31Z|00001|dpdk|INFO|No -vhost_sock_dir provided - defaulting to /var/run/openvswitch
+ovs-vswitchd: ovs|00001|dpdk|INFO|No -vhost_sock_dir provided - defaulting to /var/run/openvswitch
+ovs-ctl[3560]: EAL: Detected lcore 0 as core 0 on socket 0
+ovs-ctl[3560]: EAL: Detected lcore 1 as core 1 on socket 0
+ovs-ctl[3560]: EAL: Detected lcore 2 as core 2 on socket 0
+ovs-ctl[3560]: EAL: Detected lcore 3 as core 3 on socket 0
+ovs-ctl[3560]: EAL: Detected lcore 4 as core 4 on socket 0
+ovs-ctl[3560]: EAL: Detected lcore 5 as core 5 on socket 0
+ovs-ctl[3560]: EAL: Detected lcore 6 as core 0 on socket 0
+ovs-ctl[3560]: EAL: Detected lcore 7 as core 1 on socket 0
+ovs-ctl[3560]: EAL: Detected lcore 8 as core 2 on socket 0
+ovs-ctl[3560]: EAL: Detected lcore 9 as core 3 on socket 0
+ovs-ctl[3560]: EAL: Detected lcore 10 as core 4 on socket 0
+ovs-ctl[3560]: EAL: Detected lcore 11 as core 5 on socket 0
+ovs-ctl[3560]: EAL: Support maximum 128 logical core(s) by configuration.
+ovs-ctl[3560]: EAL: Detected 12 lcore(s)
+ovs-ctl[3560]: EAL: VFIO modules not all loaded, skip VFIO support...
+ovs-ctl[3560]: EAL: Setting up physically contiguous memory...
+ovs-ctl[3560]: EAL: Ask a virtual area of 0x100000000 bytes
+ovs-ctl[3560]: EAL: Virtual area found at 0x7f2040000000 (size = 0x100000000)
+ovs-ctl[3560]: EAL: Requesting 4 pages of size 1024MB from socket 0
+ovs-ctl[3560]: EAL: TSC frequency is ~2397202 KHz
+ovs-vswitchd[3592]: EAL: TSC frequency is ~2397202 KHz
+ovs-vswitchd[3592]: EAL: Master lcore 0 is ready (tid=fc6cbb00;cpuset=[0])
+ovs-vswitchd[3592]: EAL: PCI device 0000:04:00.0 on NUMA socket 0
+ovs-vswitchd[3592]: EAL:   probe driver: 8086:1528 rte_ixgbe_pmd
+ovs-vswitchd[3592]: EAL:   Not managed by a supported kernel driver, skipped
+ovs-vswitchd[3592]: EAL: PCI device 0000:04:00.1 on NUMA socket 0
+ovs-vswitchd[3592]: EAL:   probe driver: 8086:1528 rte_ixgbe_pmd
+ovs-vswitchd[3592]: EAL:   PCI memory mapped at 0x7f2140000000
+ovs-vswitchd[3592]: EAL:   PCI memory mapped at 0x7f2140200000
+ovs-ctl[3560]: EAL: Master lcore 0 is ready (tid=fc6cbb00;cpuset=[0])
+ovs-ctl[3560]: EAL: PCI device 0000:04:00.0 on NUMA socket 0
+ovs-ctl[3560]: EAL:   probe driver: 8086:1528 rte_ixgbe_pmd
+ovs-ctl[3560]: EAL:   Not managed by a supported kernel driver, skipped
+ovs-ctl[3560]: EAL: PCI device 0000:04:00.1 on NUMA socket 0
+ovs-ctl[3560]: EAL:   probe driver: 8086:1528 rte_ixgbe_pmd
+ovs-ctl[3560]: EAL:   PCI memory mapped at 0x7f2140000000
+ovs-ctl[3560]: EAL:   PCI memory mapped at 0x7f2140200000
+ovs-vswitchd[3592]: PMD: eth_ixgbe_dev_init(): MAC: 4, PHY: 3
+ovs-vswitchd[3592]: PMD: eth_ixgbe_dev_init(): port 0 vendorID=0x8086 deviceID=0x1528
+ovs-ctl[3560]: PMD: eth_ixgbe_dev_init(): MAC: 4, PHY: 3
+ovs-ctl[3560]: PMD: eth_ixgbe_dev_init(): port 0 vendorID=0x8086 deviceID=0x1528
+ovs-ctl[3560]: Zone 0: name:<RG_MP_log_history>, phys:0x83fffdec0, len:0x2080, virt:0x7f213fffdec0, socket_id:0, flags:0
+ovs-ctl[3560]: Zone 1: name:<MP_log_history>, phys:0x83fd73d40, len:0x28a0c0, virt:0x7f213fd73d40, socket_id:0, flags:0
+ovs-ctl[3560]: Zone 2: name:<rte_eth_dev_data>, phys:0x83fd43380, len:0x2f700, virt:0x7f213fd43380, socket_id:0, flags:0
+ovs-ctl[3560]: * Starting ovs-vswitchd
+ovs-ctl[3560]: * Enabling remote OVSDB managers
+systemd[1]: Started Open vSwitch Internal Unit.
+systemd[1]: Starting Open vSwitch...
+systemd[1]: Started Open vSwitch.
+```
 
 
-    CMD: sudo ovs-vsctl add-port ovsdpdkbr0 dpdk0 -- set Interface dpdk0 type=dpdk
+```bash
+CMD: sudo ovs-vsctl add-br ovsdpdkbr0 -- set bridge ovsdpdkbr0 datapath_type=netdev
+```
 
-    SYSLOG:
-    2016-01-22T08:59:06.369Z|00019|memory|INFO|peak resident set size grew 155% in last 10.0 seconds, from 37256 kB to 95008 kB
-    2016-01-22T08:59:06.369Z|00020|memory|INFO|handlers:4 ports:1 revalidators:2 rules:5
-    2016-01-22T08:59:30.989Z|00021|dpdk|INFO|Port 0: 8c:dc:d4:b3:6d:e9
-    2016-01-22T08:59:31.520Z|00022|dpdk|INFO|Port 0: 8c:dc:d4:b3:6d:e9
-    2016-01-22T08:59:31.521Z|00023|dpif_netdev|INFO|Created 1 pmd threads on numa node 0
-    2016-01-22T08:59:31.522Z|00001|dpif_netdev(pmd16)|INFO|Core 0 processing port 'dpdk0'
-    2016-01-22T08:59:31.522Z|00024|bridge|INFO|bridge ovsdpdkbr0: added interface dpdk0 on port 1
-    2016-01-22T08:59:31.522Z|00025|bridge|INFO|bridge ovsdpdkbr0: using datapath ID 00008cdcd4b36de9
-    2016-01-22T08:59:31.523Z|00002|dpif_netdev(pmd16)|INFO|Core 0 processing port 'dpdk0'
+```bash
+SYSLOG:
+2016-01-22T08:58:56.344Z|00008|memory|INFO|37256 kB peak resident set size after 24.5 seconds
+2016-01-22T08:58:56.346Z|00009|ofproto_dpif|INFO|netdev@ovs-netdev: Datapath supports recirculation
+2016-01-22T08:58:56.346Z|00010|ofproto_dpif|INFO|netdev@ovs-netdev: MPLS label stack length probed as 3
+2016-01-22T08:58:56.346Z|00011|ofproto_dpif|INFO|netdev@ovs-netdev: Datapath supports unique flow ids
+2016-01-22T08:58:56.346Z|00012|ofproto_dpif|INFO|netdev@ovs-netdev: Datapath does not support ct_state
+2016-01-22T08:58:56.346Z|00013|ofproto_dpif|INFO|netdev@ovs-netdev: Datapath does not support ct_zone
+2016-01-22T08:58:56.346Z|00014|ofproto_dpif|INFO|netdev@ovs-netdev: Datapath does not support ct_mark
+2016-01-22T08:58:56.346Z|00015|ofproto_dpif|INFO|netdev@ovs-netdev: Datapath does not support ct_label
+2016-01-22T08:58:56.360Z|00016|bridge|INFO|bridge ovsdpdkbr0: added interface ovsdpdkbr0 on port 65534
+2016-01-22T08:58:56.361Z|00017|bridge|INFO|bridge ovsdpdkbr0: using datapath ID 00005a4a1ed0a14d
+2016-01-22T08:58:56.361Z|00018|connmgr|INFO|ovsdpdkbr0: added service controller "punix:/var/run/openvswitch/ovsdpdkbr0.mgmt"
+```
 
-    OVS-LOG:
-    ovs-vsctl: ovs|00001|vsctl|INFO|Called as ovs-vsctl add-port ovsdpdkbr0 dpdk0 -- set Interface dpdk0 type=dpdk
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a79ebc0 hw_ring=0x7f211a7a6c00 dma_addr=0x81a7a6c00
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_rx_queue_setup(): sw_ring=0x7f211a78a6c0 sw_sc_ring=0x7f211a786580 hw_ring=0x7f211a78e800 dma_addr=0x81a78e800
-    ovs-vswitchd[3595]: PMD: ixgbe_set_rx_function(): Vector rx enabled, please make sure RX burst size no less than 4 (port=0).
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a79ebc0 hw_ring=0x7f211a7a6c00 dma_addr=0x81a7a6c00
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a76e4c0 hw_ring=0x7f211a776500 dma_addr=0x81a776500
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a756440 hw_ring=0x7f211a75e480 dma_addr=0x81a75e480
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a73e3c0 hw_ring=0x7f211a746400 dma_addr=0x81a746400
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a726340 hw_ring=0x7f211a72e380 dma_addr=0x81a72e380
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a70e2c0 hw_ring=0x7f211a716300 dma_addr=0x81a716300
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a6f6240 hw_ring=0x7f211a6fe280 dma_addr=0x81a6fe280
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a6de1c0 hw_ring=0x7f211a6e6200 dma_addr=0x81a6e6200
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a6c6140 hw_ring=0x7f211a6ce180 dma_addr=0x81a6ce180
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a6ae0c0 hw_ring=0x7f211a6b6100 dma_addr=0x81a6b6100
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a696040 hw_ring=0x7f211a69e080 dma_addr=0x81a69e080
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a67dfc0 hw_ring=0x7f211a686000 dma_addr=0x81a686000
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a665e40 hw_ring=0x7f211a66de80 dma_addr=0x81a66de80
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
-    ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
-    ovs-vswitchd[3595]: PMD: ixgbe_dev_rx_queue_setup(): sw_ring=0x7f211a78a6c0 sw_sc_ring=0x7f211a786580 hw_ring=0x7f211a78e800 dma_addr=0x81a78e800
-    ovs-vswitchd[3595]: PMD: ixgbe_set_rx_function(): Vector rx enabled, please make sure RX burst size no less than 4 (port=0).
+```bash
+OVS-LOG:
+ovs-vsctl: ovs|00001|vsctl|INFO|Called as ovs-vsctl add-br ovsdpdkbr0 -- set bridge ovsdpdkbr0 datapath_type=netdev
+systemd-udevd[3607]: Could not generate persistent MAC address for ovs-netdev: No such file or directory
+kernel: [50165.886554] device ovs-netdev entered promiscuous mode
+kernel: [50165.901261] device ovsdpdkbr0 entered promiscuous mode
+```
 
 
-    CMD: sudo ovs-vsctl add-port ovsdpdkbr0 vhost-user-1 -- set Interface vhost-user-1 type=dpdkvhostuser
+```bash
+CMD: sudo ovs-vsctl add-port ovsdpdkbr0 dpdk0 -- set Interface dpdk0 type=dpdk
+```
 
-    OVS-LOG:
-    2016-01-22T09:00:35.145Z|00026|dpdk|INFO|Socket /var/run/openvswitch/vhost-user-1 created for vhost-user port vhost-user-1
-    2016-01-22T09:00:35.145Z|00003|dpif_netdev(pmd16)|INFO|Core 0 processing port 'dpdk0'
-    2016-01-22T09:00:35.145Z|00004|dpif_netdev(pmd16)|INFO|Core 0 processing port 'vhost-user-1'
-    2016-01-22T09:00:35.145Z|00027|bridge|INFO|bridge ovsdpdkbr0: added interface vhost-user-1 on port 2
+```bash
+SYSLOG:
+2016-01-22T08:59:06.369Z|00019|memory|INFO|peak resident set size grew 155% in last 10.0 seconds, from 37256 kB to 95008 kB
+2016-01-22T08:59:06.369Z|00020|memory|INFO|handlers:4 ports:1 revalidators:2 rules:5
+2016-01-22T08:59:30.989Z|00021|dpdk|INFO|Port 0: 8c:dc:d4:b3:6d:e9
+2016-01-22T08:59:31.520Z|00022|dpdk|INFO|Port 0: 8c:dc:d4:b3:6d:e9
+2016-01-22T08:59:31.521Z|00023|dpif_netdev|INFO|Created 1 pmd threads on numa node 0
+2016-01-22T08:59:31.522Z|00001|dpif_netdev(pmd16)|INFO|Core 0 processing port 'dpdk0'
+2016-01-22T08:59:31.522Z|00024|bridge|INFO|bridge ovsdpdkbr0: added interface dpdk0 on port 1
+2016-01-22T08:59:31.522Z|00025|bridge|INFO|bridge ovsdpdkbr0: using datapath ID 00008cdcd4b36de9
+2016-01-22T08:59:31.523Z|00002|dpif_netdev(pmd16)|INFO|Core 0 processing port 'dpdk0'
+```
 
-    SYSLOG:
-    ovs-vsctl: ovs|00001|vsctl|INFO|Called as ovs-vsctl add-port ovsdpdkbr0 vhost-user-1 -- set Interface vhost-user-1 type=dpdkvhostuser
-    ovs-vswitchd[3595]: VHOST_CONFIG: socket created, fd:46
-    ovs-vswitchd[3595]: VHOST_CONFIG: bind to /var/run/openvswitch/vhost-user-1
+```bash
+OVS-LOG:
+ovs-vsctl: ovs|00001|vsctl|INFO|Called as ovs-vsctl add-port ovsdpdkbr0 dpdk0 -- set Interface dpdk0 type=dpdk
+ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a79ebc0 hw_ring=0x7f211a7a6c00 dma_addr=0x81a7a6c00
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
+ovs-vswitchd[3595]: PMD: ixgbe_dev_rx_queue_setup(): sw_ring=0x7f211a78a6c0 sw_sc_ring=0x7f211a786580 hw_ring=0x7f211a78e800 dma_addr=0x81a78e800
+ovs-vswitchd[3595]: PMD: ixgbe_set_rx_function(): Vector rx enabled, please make sure RX burst size no less than 4 (port=0).
+ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a79ebc0 hw_ring=0x7f211a7a6c00 dma_addr=0x81a7a6c00
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
+ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a76e4c0 hw_ring=0x7f211a776500 dma_addr=0x81a776500
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
+ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a756440 hw_ring=0x7f211a75e480 dma_addr=0x81a75e480
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
+ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a73e3c0 hw_ring=0x7f211a746400 dma_addr=0x81a746400
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
+ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a726340 hw_ring=0x7f211a72e380 dma_addr=0x81a72e380
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
+ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a70e2c0 hw_ring=0x7f211a716300 dma_addr=0x81a716300
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
+ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a6f6240 hw_ring=0x7f211a6fe280 dma_addr=0x81a6fe280
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
+ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a6de1c0 hw_ring=0x7f211a6e6200 dma_addr=0x81a6e6200
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
+ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a6c6140 hw_ring=0x7f211a6ce180 dma_addr=0x81a6ce180
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
+ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a6ae0c0 hw_ring=0x7f211a6b6100 dma_addr=0x81a6b6100
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
+ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a696040 hw_ring=0x7f211a69e080 dma_addr=0x81a69e080
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
+ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a67dfc0 hw_ring=0x7f211a686000 dma_addr=0x81a686000
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
+ovs-vswitchd[3595]: PMD: ixgbe_dev_tx_queue_setup(): sw_ring=0x7f211a665e40 hw_ring=0x7f211a66de80 dma_addr=0x81a66de80
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Using simple tx code path
+ovs-vswitchd[3595]: PMD: ixgbe_set_tx_function(): Vector tx enabled.
+ovs-vswitchd[3595]: PMD: ixgbe_dev_rx_queue_setup(): sw_ring=0x7f211a78a6c0 sw_sc_ring=0x7f211a786580 hw_ring=0x7f211a78e800 dma_addr=0x81a78e800
+ovs-vswitchd[3595]: PMD: ixgbe_set_rx_function(): Vector rx enabled, please make sure RX burst size no less than 4 (port=0).
+```
 
-    Eventually we can see the poll thread in top
-      PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
-     3595 root      10 -10 4975344 103936   9916 S 100.0  0.3  33:13.56 ovs-vswitchd
-              
 
-## Resources {#dpdk-references}
+```bash
+CMD: sudo ovs-vsctl add-port ovsdpdkbr0 vhost-user-1 -- set Interface vhost-user-1 type=dpdkvhostuser
+```
 
+```bash
+OVS-LOG:
+2016-01-22T09:00:35.145Z|00026|dpdk|INFO|Socket /var/run/openvswitch/vhost-user-1 created for vhost-user port vhost-user-1
+2016-01-22T09:00:35.145Z|00003|dpif_netdev(pmd16)|INFO|Core 0 processing port 'dpdk0'
+2016-01-22T09:00:35.145Z|00004|dpif_netdev(pmd16)|INFO|Core 0 processing port 'vhost-user-1'
+2016-01-22T09:00:35.145Z|00027|bridge|INFO|bridge ovsdpdkbr0: added interface vhost-user-1 on port 2
+```
+
+```bash
+SYSLOG:
+ovs-vsctl: ovs|00001|vsctl|INFO|Called as ovs-vsctl add-port ovsdpdkbr0 vhost-user-1 -- set Interface vhost-user-1 type=dpdkvhostuser
+ovs-vswitchd[3595]: VHOST_CONFIG: socket created, fd:46
+ovs-vswitchd[3595]: VHOST_CONFIG: bind to /var/run/openvswitch/vhost-user-1
+```
+
+```bash
+Eventually we can see the poll thread in top
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+ 3595 root      10 -10 4975344 103936   9916 S 100.0  0.3  33:13.56 ovs-vswitchd
+```
+```bash
+          
+```
+
+### Resources 
 -   [DPDK Documentation]
 
 -   [Release Notes matching the version packages in Ubuntu 16.04]
