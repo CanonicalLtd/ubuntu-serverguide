@@ -1,0 +1,224 @@
+navigation:
+  - title: Introduction
+
+    children:
+   
+      - title: Introduction
+        location: introduction.md
+
+  - title: Installation
+
+    children:
+      
+      - title: Installation
+      location: installation.md
+
+      -title: Preparing to install
+      location: preparing-to-install.md
+
+      -title: Installing from CD
+      location: installing-from-cd.md
+
+      -title: Upgrading
+      location: installing-upgrading.md
+
+      -title: Advanced Installation
+      location: advanced-installation.md
+
+      -title: Kernel Crash Dump
+      location: kernel-crash-dump.md
+
+  - title: Package Management
+
+    children:
+
+      -title: Package Management 
+      location: package-management.md
+
+      -title: Introduction
+      location: package-management-introduction.md
+
+      -title: dpkg
+      location: dpkg.md
+
+      -title: Apt
+      location: apt.md
+
+      -title: Aptitude
+      location: aptitude.md
+
+      -title: Automatic updates
+      location: automatic-updates.md
+
+      -title: Configuration
+      location: configuration.md
+
+      -title: References
+      location: package-management-references.md
+
+      -title: 
+      location:
+
+
+
+  - title: Networking
+
+    children:
+
+      -title: 
+      location:
+
+  - title: DM-Multipath
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Remote Administration
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Network Authentication
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Domain Name Service (DNS)
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Security
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Monitoring
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Web Servers
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Databases
+
+    children:
+
+      -title: 
+      location:
+
+  - title: LAMP Applications
+
+    children:
+
+      -title: 
+      location:
+
+  - title: File Servers
+
+    children:
+
+      -title: 
+      location:
+
+  - title: E-mail Services
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Chat Applications
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Version Control System
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Chat Applications
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Samba
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Backups
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Virtualisation
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Control Groups
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Clustering
+
+    children:
+
+      -title: 
+      location:
+
+  - title: VPN
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Other Useful Applications
+
+    children:
+
+      -title: 
+      location:
+
+  - title: Appendix
+
+    children:
+
+      -title: 
+      location:
+
