@@ -1,15 +1,18 @@
-# Chat Applications {#chat-servers}
+# Chat Applications 
 
 ## Overview 
+
 In this section, we will discuss how to install and configure a IRC server,
 ircd-irc2. We will also discuss how to install and configure Jabber, an
 instance messaging server.
 
 ## IRC Server
+
 The Ubuntu repository has many Internet Relay Chat servers. This section
 explains how to install and configure the original IRC server ircd-irc2.
 
 ### Installation 
+
 To install ircd-irc2, run the following command in the command prompt:
 
 ```bash
@@ -20,6 +23,7 @@ The configuration files are stored in `/etc/ircd` directory. The documents are
 available in `/usr/share/doc/ircd-irc2` directory.
 
 ### Configuration 
+
 The IRC settings can be done in the configuration file `/etc/ircd/ircd.conf`.
 You can set the IRC host name in this file by editing the following line:
 
@@ -54,18 +58,21 @@ sudo systemctl restart ircd-irc2.service
 ```
 
 ### References 
+
 You may also be interested to take a look at other IRC servers available in
 Ubuntu Repository. It includes, ircd-ircu and ircd-hybrid.
 
 -   Refer to [IRCD FAQ] for more details about the IRC Server.
 
-## Jabber Instant Messaging Server 
+## Jabber Instant Messaging Server
+
 *Jabber* a popular instant message protocol is based on XMPP, an open standard
 for instant messaging, and used by many popular applications. This section
 covers setting up a *Jabberd 2* server on a local LAN. This configuration can
 also be adapted to providing messaging services to users over the Internet.
 
 ### Installation 
+
 To install jabberd2, in a terminal enter:
 
 ```bash
@@ -73,6 +80,7 @@ sudo apt install jabberd2
 ```
 
 ### Configuration 
+
 A couple of XML configuration files will be used to configure jabberd2 for
 *Berkeley DB* user authentication. This is a very simple form of
 authentication. However, jabberd2 can be configured to use LDAP, MySQL,
