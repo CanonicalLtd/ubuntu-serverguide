@@ -6,6 +6,7 @@ along with optional data contents, which usually are Web pages such as HTML
 documents and linked objects (images, etc.).
 
 ## HTTPD - Apache2 Web Server 
+
 Apache is the most commonly used Web server on Linux systems. Web servers are
 used to serve Web pages requested by client computers. Clients typically
 request and view Web pages using Web browser applications such as Firefox,
@@ -14,18 +15,10 @@ Opera, Chromium, or Internet Explorer.
 Users enter a Uniform Resource Locator (URL) to point to a Web server by means
 of its Fully Qualified Domain Name (FQDN) and a path to the required resource.
 For example, to view the home page of the [Ubuntu Web site] a user will enter
-only the FQDN:
-
-```bash
-www.ubuntu.com
-```
+only the FQDN: `www.ubuntu.com`
 
 To view the [community] sub-page, a user will enter the FQDN followed by a
-path:
-
-```bash
-www.ubuntu.com/community
-```
+path:`www.ubuntu.com/community`
 
 The most common protocol used to transfer Web pages is the Hyper Text Transfer
 Protocol (HTTP). Protocols such as Hyper Text Transfer Protocol over Secure
@@ -39,6 +32,7 @@ scripting languages such as Python and Perl. This configuration is termed LAMP
 platform for the development and deployment of Web-based applications.
 
 ### Installation 
+
 The Apache2 web server is available in Ubuntu Linux. To install Apache2:
 
 At a terminal prompt enter the following command:
@@ -48,6 +42,7 @@ sudo apt install apache2
 ```
 
 ### Configuration 
+
 Apache2 is configured by placing *directives* in plain text configuration
 files. These *directives* are separated between the following files and
 directories:
@@ -105,6 +100,7 @@ set by the *TypesConfig* directive, typically via
 and overrides, and is `/etc/mime.types` by default.
 
 #### Basic Settings 
+
 This section explains Apache2 server essential configuration parameters. Refer
 to the [Apache2 Documentation] for more details.
 
@@ -118,29 +114,21 @@ to the [Apache2 Documentation] for more details.
     modify the default virtual host, edit the file
     `/etc/apache2/sites-available/000-default.conf`.
 
-```bash
-> **Note**
->
-> The directives set for a virtual host only apply to that particular
-> virtual host. If a directive is set server-wide and not defined within
-> the virtual host settings, the default setting is used. For example, you
-> can define a Webmaster email address and not define individual email
-> addresses for each virtual host.
-```
+!!! Note: The directives set for a virtual host only apply to that particular
+virtual host. If a directive is set server-wide and not defined within
+the virtual host settings, the default setting is used. For example, you
+can define a Webmaster email address and not define individual email
+addresses for each virtual host.
 
-```bash
 If you wish to configure a new virtual host or site, copy that file into
 the same directory with a name you choose. For example:
-```
 
 ```bash
-    sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/mynewsite.conf
+sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/mynewsite.conf
 ```
 
-```bash
 Edit the new file to configure the new site using some of the directives
 described below.
-```
 
 -   The *ServerAdmin* directive specifies the email address to be advertised
     for the server's administrator. The default value is webmaster@localhost.
@@ -168,17 +156,13 @@ described below.
     file should be ubunturocks.com. Add this directive to the new virtual host
     file you created earlier (`/etc/apache2/sites-available/mynewsite.conf`).
 
-```bash
 You may also want your site to respond to www.ubunturocks.com, since many
 users will assume the www prefix is appropriate. Use the *ServerAlias*
 directive for this. You may also use wildcards in the
 ServerAlias directive.
-```
 
-```bash
 For example, the following configuration will cause your site to respond
 to any domain request ending in *.ubunturocks.com*.
-```
 
 ```bash
     ServerAlias *.ubunturocks.com
@@ -219,21 +203,21 @@ defined within the virtual host settings, the default value is used.
     requests an index of a directory by specifying a forward slash (/) at the
     end of the directory name.
 
-```bash
 For example, when a user requests the page
-http://www.example.com/this\_directory/, he or she will get either the
+`http://www.example.com/this\_directory/`, he or she will get either the
 DirectoryIndex page if it exists, a server-generated directory list if it
 does not and the Indexes option is specified, or a Permission Denied page
 if neither is true. The server will try to find one of the files listed in
 the DirectoryIndex directive and will return the first one it finds. If it
 does not find any of these files and if *Options Indexes* is set for that
 directory, the server will generate and return a list, in HTML format, of
-the subdirectories and files in the directory. The default value, found in
+the subdirectories and files in the directory. 
+
+The default value, found in
 `/etc/apache2/mods-available/dir.conf` is "index.html index.cgi index.pl
 index.php index.xhtml index.htm". Thus, if Apache2 finds a file in a
 requested directory matching any of these names, the first will
 be displayed.
-```
 
 -   The *ErrorDocument* directive allows you to specify a file for Apache2 to
     use for specific error events. For example, if a user requests a resource
@@ -246,14 +230,14 @@ be displayed.
 -   By default, the server writes the transfer log to the file
     `/var/log/apache2/access.log`. You can change this on a per-site basis in
     your virtual host configuration files with the *CustomLog* directive, or
-    omit it to accept the default, specified in `
-              /etc/apache2/conf-available/other-vhosts-access-log.conf`. You
+    omit it to accept the default, specified in
+    `/etc/apache2/conf-available/other-vhosts-access-log.conf`. You
     may also specify the file to which errors are logged, via the *ErrorLog*
     directive, whose default is `/var/log/apache2/error.log`. These are kept
     separate from the transfer logs to aid in troubleshooting problems with
     your Apache2 server. You may also specify the *LogLevel* (the default
-    value is "warn") and the *LogFormat* (see `
-              /etc/apache2/apache2.conf` for the default value).
+    value is "warn") and the *LogFormat* 
+    (see `/etc/apache2/apache2.conf` for the default value).
 
 -   Some options are specified on a per-directory basis rather than
     per-server. *Options* is one of these directives. A Directory stanza is
@@ -265,64 +249,45 @@ be displayed.
     </Directory>
 ```
 
-```bash
 The *Options* directive within a Directory stanza accepts one or more of
 the following values (among others), separated by spaces:
-```
 
-```bash
 -   **ExecCGI** - Allow execution of CGI scripts. CGI scripts are not
     executed if this option is not chosen.
-```
 
-```bash
-    > **Tip**
-    >
-    > Most files should not be executed as CGI scripts. This would be
-    > very dangerous. CGI scripts should kept in a directory separate from
-    > and outside your DocumentRoot, and only this directory should have
-    > the ExecCGI option set. This is the default, and the default
-    > location for CGI scripts is `/usr/lib/cgi-bin`.
-```
 
-```bash
+!!! Tip: Most files should not be executed as CGI scripts. This would be
+very dangerous. CGI scripts should kept in a directory separate from
+and outside your DocumentRoot, and only this directory should have
+the ExecCGI option set. This is the default, and the default
+location for CGI scripts is `/usr/lib/cgi-bin`.
+
 -   **Includes** - Allow server-side includes. Server-side includes allow
     an HTML file to *include* other files. See [Apache SSI documentation
     (Ubuntu community)] for more information.
-```
 
-```bash
 -   **IncludesNOEXEC** - Allow server-side includes, but disable the
     *\#exec* and *\#include* commands in CGI scripts.
-```
 
-```bash
 -   **Indexes** - Display a formatted list of the directory's contents, if
     no *DirectoryIndex* (such as index.html) exists in the
     requested directory.
-```
 
-```bash
-    > **Caution**
-    >
-    > For security reasons, this should usually not be set, and certainly
-    > should not be set on your DocumentRoot directory. Enable this option
-    > carefully on a per-directory basis only if you are certain you want
-    > users to see the entire contents of the directory.
-```
 
-```bash
+!!! Caution: For security reasons, this should usually not be set, and certainly
+should not be set on your DocumentRoot directory. Enable this option
+carefully on a per-directory basis only if you are certain you want
+users to see the entire contents of the directory.
+
 -   **Multiview** - Support content-negotiated multiviews; this option is
     disabled by default for security reasons. See the [Apache2
     documentation on this option].
-```
-
-```bash
+    
 -   **SymLinksIfOwnerMatch** - Only follow symbolic links if the target
     file or directory has the same owner as the link.
-```
 
 #### httpd Settings
+
 This section explains some basic httpd daemon configuration settings.
 
 **LockFile** - The LockFile directive sets the path to the lockfile used when
@@ -341,15 +306,16 @@ requests. This setting determines the server's access. Any files inaccessible
 to this user will also be inaccessible to your website's visitors. The default
 value for User is "www-data".
 
-!!! Warning: Unless you know exactly what you are doing, do not set the User directive to
-root. Using root as the User will create large security holes for your Web
-server.
+!!! Warning: Unless you know exactly what you are doing, do not set the User 
+directive to root. Using root as the User will create large security holes
+for your Web server.
 
 **Group** - The Group directive is similar to the User directive. Group sets
 the group under which the server will answer requests. The default group is
 also "www-data".
 
 #### Apache2 Modules 
+
 Apache2 is a modular server. This implies that only the most basic
 functionality is included in the core server. Extended features are available
 through modules which can be loaded into Apache2. By default, a base set of
@@ -387,9 +353,10 @@ sudo systemctl restart apache2.service
 ```
 
 ### HTTPS Configuration
+
 The mod\_ssl module adds an important feature to the Apache2 server - the
 ability to encrypt communications. Thus, when your browser is communicating
-using SSL, the https:// prefix is used at the beginning of the Uniform
+using SSL, the `https://` prefix is used at the beginning of the Uniform
 Resource Locator (URL) in the browser navigation bar.
 
 The mod\_ssl module is available in apache2-common package. Execute the
@@ -469,6 +436,7 @@ Access Control Lists (ACLs).
     page is a good resource.
 
 ## PHP - Scripting Language 
+
 PHP is a general-purpose scripting language suited for Web development. PHP
 scripts can be embedded into HTML. This section explains how to install and
 configure PHP in an Ubuntu System with Apache2 and MySQL.
@@ -554,6 +522,7 @@ You can save the content in a file `phpinfo.php` and place it under the
 configuration parameters.
 
 ### References 
+
 -   For more in depth information see the [php.net] documentation.
 
 -   There are a plethora of books on PHP. A good book from O'Reilly is
@@ -686,6 +655,7 @@ move and adapt your configuration accordingly.
 [Ubuntu Wiki Squid] page.
 
 ## Ruby on Rails
+
 Ruby on Rails is an open source web framework for developing database backed
 web applications. It is optimized for sustainable productivity of the
 programmer since it lets the programmer to write code by favouring convention
